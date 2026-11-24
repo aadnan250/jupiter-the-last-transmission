@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_Project/Scenes/L02_Meridian.unity
+    guid: 2300313ee88d6e341aa443bd1d8cb03e
+  - enabled: 1
     path: Assets/_Project/Scenes/Sandbox/GreyboxTestRoom.unity
     guid: 841057f0241f9194c9f38896f5dee46d
   m_configObjects:

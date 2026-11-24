@@ -5,13 +5,13 @@ namespace Jupiter.EditorTools
 {
     /// <summary>
     /// When the editor opens on an empty "Untitled" scene (e.g. right after cloning the repo),
-    /// open the grey-box test room so Play goes straight into the game. Runs once per editor session
+    /// open the Meridian level so Play goes straight into the game. Runs once per editor session
     /// and never replaces a scene you already have open.
     /// </summary>
     [InitializeOnLoad]
     static class OpenStartSceneOnLaunch
     {
-        const string StartScene = "Assets/_Project/Scenes/Sandbox/GreyboxTestRoom.unity";
+        const string StartScene = "Assets/_Project/Scenes/L02_Meridian.unity";
         const string SessionKey = "Jupiter.OpenStartSceneOnLaunch.Done";
 
         static OpenStartSceneOnLaunch()

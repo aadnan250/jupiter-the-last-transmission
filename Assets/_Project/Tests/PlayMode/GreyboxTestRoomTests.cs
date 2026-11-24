@@ -24,7 +24,7 @@ namespace Jupiter.Tests
         [UnityTest]
         public IEnumerator Player_SpawnsAndLandsOnFloor()
         {
-            var player = Object.FindFirstObjectByType<PlayerController>();
+            var player = Object.FindAnyObjectByType<PlayerController>();
             Assert.IsNotNull(player, "Scene has no PlayerController");
 
             yield return new WaitForSeconds(1f);
@@ -37,8 +37,8 @@ namespace Jupiter.Tests
         [UnityTest]
         public IEnumerator EuropaZone_SwitchesProfileOnEnterAndRestoresOnExit()
         {
-            var player = Object.FindFirstObjectByType<PlayerController>();
-            var zone = Object.FindFirstObjectByType<EnvironmentZone>();
+            var player = Object.FindAnyObjectByType<PlayerController>();
+            var zone = Object.FindAnyObjectByType<EnvironmentZone>();
             Assert.IsNotNull(zone, "Scene has no EnvironmentZone");
             var cc = player.GetComponent<CharacterController>();
 
@@ -60,8 +60,8 @@ namespace Jupiter.Tests
         [UnityTest]
         public IEnumerator Interaction_DetectsDoorInFrontOfPlayer()
         {
-            var interaction = Object.FindFirstObjectByType<PlayerInteraction>();
-            var player = Object.FindFirstObjectByType<PlayerController>();
+            var interaction = Object.FindAnyObjectByType<PlayerInteraction>();
+            var player = Object.FindAnyObjectByType<PlayerController>();
             var cc = player.GetComponent<CharacterController>();
 
             // Stand 1.5 m in front of the door, facing it (door is at z = -12.25, player faces -Z).
