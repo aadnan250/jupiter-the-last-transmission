@@ -85,7 +85,14 @@ There are **no assault rifles**. This is a science expedition.
 | Pressure doors | 7 | Restore local power to a door while forms approach. |
 | Ascent vehicle launch | 9 | Enter codes and run a solo pre-flight (callouts now read by Sam alone). |
 
-## 8. Story choices (limited by design)
+## 8. Story choices
+
+> **Revised after pre-production (Phase 3):** every conversation offers up to **four replies**, and **every reply has a consequence**
+> (trust with a crew member, or a story flag that later content reads). Significant decisions play an eerie consequence sting.
+> Structure stays fixed (same levels, same deaths), so the project remains finishable; choices change relationships, dialogue,
+> who helps you, and the ending's details. The live list is in [docs/CONSEQUENCES.md](../CONSEQUENCES.md).
+>
+> The original "key choices" below are still planned and now sit inside that larger system.
 
 | Choice | Chapter | Effect |
 |---|---|---|

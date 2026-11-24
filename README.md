@@ -2,42 +2,46 @@
 
 *The mission was supposed to take humanity closer to the stars. It was never supposed to bring something back.*
 
-A first-person science-fiction survival-horror game set in 2183, built in **Unity 6 (URP)** and **C#** for Windows.
+A first-person science-fiction survival-horror game set in 2183, built in **Unity 6 (URP)** and **C#** for Windows. Playable with keyboard and mouse or a **PS5 DualSense** / Xbox controller.
 
 [![Repository checks](https://github.com/aadnan250/jupiter-the-last-transmission/actions/workflows/repo-checks.yml/badge.svg)](https://github.com/aadnan250/jupiter-the-last-transmission/actions/workflows/repo-checks.yml)
 
-> **Status: Phase 2 — Visual prototype complete.** The *Meridian*'s habitat ring is explorable in grey-box form, with lighting, procedural ship audio, readable documents and a placeholder Jupiter outside the observation window. 33 automated tests.
+> **Status: Phase 3 — Story foundation complete.** The crew of the *Meridian* can be talked to. Every reply changes trust or the story, and the big decisions are *felt*. Branching dialogue, radio calls, objectives and save/load are in, covered by 60 automated tests.
 
 | | |
 |---|---|
 | ![Corridor](docs/images/phase2-corridor.png) | ![Observation deck](docs/images/phase2-observation-deck.png) |
 | *Habitat ring corridor* | *Observation deck: Jupiter fills the window* |
 | ![Command](docs/images/phase2-command.png) | ![Galley](docs/images/phase2-galley.png) |
-| *Command deck* | *Galley* |
+| *Command deck* | *Galley: Luca and Hana (placeholder crew)* |
 
 ## About
 
 The first crewed expedition to Europa, one of Jupiter's moons, goes wrong. The crew went to study the ice. Something beneath it was already listening.
 
 - ~60-minute narrative horror experience
-- Scientifically grounded: vacuum silences sound, Jupiter hangs fixed in Europa's sky, and messages from Earth arrive 43 minutes late
+- **Every decision matters:** up to four replies in every conversation, each one changing a crew member's trust or the story's memory
+- Scientifically grounded: vacuum silences sound, Jupiter hangs fixed in Europa's sky, and messages from Earth arrive with real light-delay
 - Original creatures driven by a vibration-based detection AI
-- Radio-driven storytelling with full voice acting
 - Designed to run on integrated graphics (Intel Iris Xe)
 
-## Technical highlights (so far)
+## Technical highlights
 
-- **Environment profiles.** Gravity and movement come from ScriptableObjects: Earth (1 g), the *Meridian*'s spin ring (0.6 g) and Europa (0.134 g, the real value). The same controller works everywhere; walking through a trigger volume swaps the profile.
-- **Testable movement maths.** All movement physics (jump velocity from `v² = 2gh`, gravity integration, air control) lives in a pure static class with **EditMode unit tests**.
-- **Event-driven interaction.** `IInteractable` + raycast; the HUD listens to a `TargetChanged` event instead of polling.
-- **Procedural audio, 100% original.** Room tones (ring drone, ventilation, equipment hum, medical monitor), doors, switches and footsteps are synthesised in C# and written to WAV by an editor tool: deterministic, seamless loops (tested), no licensing risk.
-- **Footsteps from distance travelled**, not timers, so the step rate always matches speed; crouching is near-silent. This feeds the creature hearing system in Phase 5.
-- **Generated levels.** The *Meridian* level, the test room, the player prefab and the Jupiter placeholder texture are built by editor scripts, so the whole grey-box can be regenerated and reviewed as code (**Jupiter → Rebuild All Generated Content**).
-- **Environmental storytelling.** `Readable` documents raise a static event that the reading UI listens to, so documents can be placed anywhere without wiring.
-- **Performance budget for Intel Iris Xe.** URP Forward+, no additional-light shadows, 30 m / 2-cascade main shadows, MSAA off; press **F3** in-game for a frame-time overlay.
-- **Input System** action asset with keyboard/mouse and gamepad schemes.
-- **Assembly definitions** separate runtime, editor tooling and tests.
-- **CI:** GitHub Actions checks repository hygiene (no generated folders, every asset has its `.meta`, no oversized files outside LFS).
+### Narrative systems
+- **Custom dialogue language + parser.** Conversations are plain-text scripts with nodes, conditions, effects and up to four replies ([format](docs/DIALOGUE_FORMAT.md)). The parser reports errors with file and line numbers.
+- **Pure-C# dialogue runner** (no Unity dependency) walks the graph against a `StoryState` of trust values (−5..+5) and flags. Fully unit tested, including infinite-loop detection.
+- **Consequences are enforced by tests:** a content test fails the build if any reply in any conversation has no effect, or any conversation lacks a significant decision. See the [consequence ledger](docs/CONSEQUENCES.md).
+- **Significant choices are felt, not explained:** an original synthesised sting (reversed breath, sub impact, a detuning dissonant cluster over a whispering formant bed), a dark screen pulse, a heartbeat rumble, and the **DualSense light bar bleeding red**.
+- **Reactive content:** a document read in the science bay unlocks a hidden reply for the Commander; who radios you on the observation deck depends on what you told whom.
+- **Radio calls** with squelch and a `[RADIO]` tag, objective tracking driven by story events, and **save/load** (JSON, versioned, atomic writes, autosave after every conversation).
+
+### Engine and tools
+- **Controller support:** Input System action maps for Player and Dialogue; on-screen prompts switch live between keyboard, PlayStation (▲ ● X ■) and Xbox glyphs based on the last device used.
+- **Environment profiles.** Gravity and movement come from ScriptableObjects: Earth (1 g), the *Meridian*'s spin ring (0.6 g) and Europa (0.134 g, the real value).
+- **Procedural audio, 100% original.** Room tones, doors, soft footsteps, radio squelch and the consequence sting are synthesised in C# (including an RBJ biquad filter) and written to WAV by an editor tool: deterministic, seamless loops (tested), no licensing risk.
+- **Generated levels.** The *Meridian* level, crew placement, the player prefab and placeholder textures are built by editor scripts (**Jupiter → Rebuild All Generated Content**).
+- **Performance budget for Intel Iris Xe.** URP Forward+, no additional-light shadows, 30 m / 2-cascade main shadows, MSAA off; press **F3** for a frame-time overlay.
+- **Assembly definitions** separate runtime, editor tooling and tests. **CI** checks repository hygiene on every push.
 
 ## Getting started
 
@@ -49,21 +53,23 @@ git clone https://github.com/aadnan250/jupiter-the-last-transmission.git
 ```
 
 1. In Unity Hub: **Add → Add project from disk** and select the cloned folder.
-2. The *Meridian* level (`Assets/_Project/Scenes/L02_Meridian.unity`) opens automatically. Press **Play**. The movement test room is in `Scenes/Sandbox/`.
-3. To regenerate all generated levels, audio and prefabs: **Jupiter → Rebuild All Generated Content**.
+2. Open `Assets/_Project/Scenes/L02_Meridian.unity` (it opens automatically on a fresh clone) and press **Play**.
+3. Talk to the crew: Luca and Hana in the galley, Mara in the workshop, Commander Ashford in command. Then go to the observation deck.
+4. To regenerate all generated levels, audio and prefabs: **Jupiter → Rebuild All Generated Content**.
 
 ### Controls
 
-| Action | Keyboard / Mouse | Gamepad |
-|---|---|---|
-| Move | WASD / Arrows | Left stick |
-| Look | Mouse | Right stick |
-| Run | Left Shift | Left stick press |
-| Crouch (toggle) | Left Ctrl / C | B / Circle |
-| Jump | Space | A / Cross |
-| Interact | E | X / Square |
-| Performance overlay | F3 | — |
-| Release cursor | Esc | — |
+| Action | Keyboard / Mouse | PlayStation (DualSense) | Xbox |
+|---|---|---|---|
+| Move / Look | WASD / Mouse | Left / right stick | Left / right stick |
+| Run | Left Shift | L3 | LS |
+| Crouch (toggle) | Left Ctrl / C | ● Circle | B |
+| Jump | Space | X Cross | A |
+| Interact / Talk | E | ■ Square | X |
+| Continue dialogue | E / Space / Click | X Cross | A |
+| Replies 1–4 | 1 / 2 / 3 / 4 | ▲ / ● / X / ■ | Y / B / A / X |
+| Quick save / load | F5 / F9 | (autosave after conversations) | |
+| Performance overlay | F3 | | |
 
 ### Running tests
 
@@ -77,23 +83,24 @@ In Unity: **Window → General → Test Runner**, then run **EditMode** and **Pl
 
 ```
 Assets/_Project/
-  Scripts/Player/    Controller, camera, input, interaction
-  Scripts/Audio/     Procedural synthesis, WAV encoder, room tones, footsteps
-  Scripts/World/     Environment profiles and zones, doors, switches, readables
-  Scripts/UI/        HUD, reading panel, performance overlay
-  Scripts/Editor/    Level, prefab, audio and texture generators
-  Tests/EditMode/    Unit tests
-  Tests/PlayMode/    Scene smoke tests
-  Audio/Generated/   Procedurally generated sounds
-  Prefabs/Player/    PlayerRig prefab
-  Data/              ScriptableObject assets
-  Settings/Input/    Input actions
-docs/                Design and technical documentation
+  Scripts/Core/        Game session, save system
+  Scripts/Narrative/   Dialogue parser, runner, manager, crew, triggers, objectives, consequences
+  Scripts/Player/      Controller, camera, input, interaction, device-aware button prompts
+  Scripts/Audio/       Procedural synthesis, WAV encoder, room tones, footsteps
+  Scripts/World/       Environment profiles and zones, doors, switches, readables
+  Scripts/UI/          HUD, dialogue panel, reading panel, performance overlay
+  Scripts/Editor/      Level, prefab, audio and texture generators
+  Narrative/Dialogue/  Conversation scripts (.txt)
+  Tests/EditMode/      Unit and content-validation tests
+  Tests/PlayMode/      Scene and end-to-end dialogue tests
+docs/                  Design and technical documentation
 ```
 
 ## Documentation
 
 - [Pre-production design document](docs/preproduction/README.md)
+- [Dialogue script format](docs/DIALOGUE_FORMAT.md)
+- [Consequence ledger](docs/CONSEQUENCES.md)
 - [Asset licence register](docs/ASSET_LICENSES.md)
 
 ## Roadmap
@@ -102,16 +109,17 @@ docs/                Design and technical documentation
 |---|---|
 | 0. Pre-production | Done |
 | 1. Project foundation | Done |
-| 2. Visual prototype (*Meridian* grey-box, lighting, interactions, ambience) | **Done** |
-| 3. Story foundation (dialogue, radio, mission, save) | Next |
-| 4. Vertical slice (Chapters 6–7) | Planned |
+| 2. Visual prototype (*Meridian* grey-box, lighting, interactions, ambience) | Done |
+| 3. Story foundation (dialogue, consequences, radio, objectives, save, controller support) | **Done** |
+| 4. Vertical slice (Chapters 6–7 on Europa) | Next |
 | 5–12. Full production and release | Planned |
 
 ## Known limitations
 
-- Grey-box art only; sounds and the Jupiter texture are procedural placeholders.
-- The habitat ring is modelled as locally flat (its real curvature over a 50 m section is small).
-- Lighting is real-time during grey-boxing; baked lighting comes with the art pass.
+- Grey-box art only; crew are placeholder capsules. Sounds and the Jupiter texture are procedural placeholders.
+- No voice acting yet: dialogue is subtitled. Radio voice processing arrives with recorded lines.
+- DualSense support uses Unity's Input System (rumble and light bar); adaptive triggers are not used.
+- The habitat ring is modelled as locally flat. Lighting is real-time during grey-boxing; baked lighting comes with the art pass.
 - Unity test runs are local for now. Running them in CI needs a Unity licence stored as repository secrets (planned).
 
 ## Author
