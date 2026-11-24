@@ -143,6 +143,39 @@ namespace Jupiter.Tests
         }
 
         [UnityTest]
+        public IEnumerator CrewAreRealisticRiggedCharactersWithLipSync()
+        {
+            foreach (var crew in Object.FindObjectsByType<CrewMember>())
+            {
+                var renderers = crew.GetComponentsInChildren<SkinnedMeshRenderer>();
+                Assert.GreaterOrEqual(renderers.Length, 5, $"{crew.CharacterId} should be a full character (body, eyes, hair, clothes...)");
+                foreach (var r in renderers)
+                    foreach (var m in r.sharedMaterials)
+                        Assert.IsNotNull(m != null ? m.GetTexture("_BaseMap") : null, $"{crew.CharacterId}/{r.name} is untextured");
+
+                var lip = crew.GetComponentInChildren<LipSync>();
+                Assert.IsNotNull(lip, $"{crew.CharacterId} has no lip sync");
+                Assert.IsNotNull(crew.GetComponentInChildren<CharacterIdleMotion>(), $"{crew.CharacterId} has no idle motion");
+                Assert.IsNotNull(crew.Voice, $"{crew.CharacterId} has no voice source");
+            }
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator CrewLinesPlayTheirVoiceFromTheCharacter()
+        {
+            var player = Object.FindAnyObjectByType<PlayerController>().gameObject;
+            var mara = Crew("MARA");
+            mara.Interact(player);
+            yield return null;
+
+            Assert.AreEqual("MARA", dialogue.Runner.CurrentLine.Speaker);
+            Assert.IsNotNull(mara.Voice.clip, "Mara's first line should load a voice clip");
+            StringAssert.StartsWith("ch02_workshop_mara_L", mara.Voice.clip.name);
+            SkipLines();
+        }
+
+        [UnityTest]
         public IEnumerator FinishedCrewMemberFallsBackToIdleLine()
         {
             story.MarkCompleted("ch02_workshop_mara");

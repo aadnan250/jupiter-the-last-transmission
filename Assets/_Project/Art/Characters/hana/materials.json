@@ -1,0 +1,68 @@
+{
+  "hana.bob02": {
+    "all_images": [
+      "bob02_diffuse.png"
+    ],
+    "object": "hana.bob02",
+    "texture": "bob02_diffuse.png"
+  },
+  "hana.body": {
+    "all_images": [
+      "young_lightskinned_female_diffuse3.png"
+    ],
+    "object": "hana.hana.female_generic",
+    "texture": "young_lightskinned_female_diffuse3.png"
+  },
+  "hana.eyebrow011": {
+    "all_images": [
+      "eyebrow011.png",
+      "eyebrow011.png"
+    ],
+    "object": "hana.eyebrow011",
+    "texture": "eyebrow011.png"
+  },
+  "hana.eyelashes01": {
+    "all_images": [
+      "eyelashes01.png"
+    ],
+    "object": "hana.eyelashes01",
+    "texture": "eyelashes01.png"
+  },
+  "hana.female_casualsuit01": {
+    "all_images": [
+      "female_casualsuit01_diffuse.png",
+      "female_casualsuit01_ao.png",
+      "female_casualsuit01_normal.png"
+    ],
+    "object": "hana.female_casualsuit01",
+    "texture": "female_casualsuit01_diffuse.png"
+  },
+  "hana.low-poly": {
+    "all_images": [
+      "brown_eye.png"
+    ],
+    "object": "hana.low-poly",
+    "texture": "brown_eye.png"
+  },
+  "hana.shoes05": {
+    "all_images": [
+      "shoes05_diffuse.png"
+    ],
+    "object": "hana.shoes05",
+    "texture": "shoes05_diffuse.png"
+  },
+  "hana.teeth_base": {
+    "all_images": [
+      "teeth.png"
+    ],
+    "object": "hana.teeth_base",
+    "texture": "teeth.png"
+  },
+  "hana.tongue01": {
+    "all_images": [
+      "tongue01_diffuse.png"
+    ],
+    "object": "hana.tongue01",
+    "texture": "tongue01_diffuse.png"
+  }
+}

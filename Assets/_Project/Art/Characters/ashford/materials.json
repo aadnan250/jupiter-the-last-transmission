@@ -1,0 +1,68 @@
+{
+  "ashford.body": {
+    "all_images": [
+      "middleage_lightskinned_male_diffuse.png"
+    ],
+    "object": "ashford.ashford.male_generic",
+    "texture": "middleage_lightskinned_male_diffuse.png"
+  },
+  "ashford.eyebrow003": {
+    "all_images": [
+      "eyebrow003.png",
+      "eyebrow003.png"
+    ],
+    "object": "ashford.eyebrow003",
+    "texture": "eyebrow003.png"
+  },
+  "ashford.eyelashes01": {
+    "all_images": [
+      "eyelashes01.png"
+    ],
+    "object": "ashford.eyelashes01",
+    "texture": "eyelashes01.png"
+  },
+  "ashford.low-poly": {
+    "all_images": [
+      "brown_eye.png"
+    ],
+    "object": "ashford.low-poly",
+    "texture": "brown_eye.png"
+  },
+  "ashford.male_casualsuit01": {
+    "all_images": [
+      "male_casualsuit01_diffuse.png",
+      "male_casualsuit01_ao.png",
+      "male_casualsuit01_normal.png"
+    ],
+    "object": "ashford.male_casualsuit01",
+    "texture": "male_casualsuit01_diffuse.png"
+  },
+  "ashford.shoes02": {
+    "all_images": [
+      "shoes02_diffuse.png"
+    ],
+    "object": "ashford.shoes02",
+    "texture": "shoes02_diffuse.png"
+  },
+  "ashford.short04": {
+    "all_images": [
+      "short04_diffuse.png"
+    ],
+    "object": "ashford.short04",
+    "texture": "short04_diffuse.png"
+  },
+  "ashford.teeth_base": {
+    "all_images": [
+      "teeth.png"
+    ],
+    "object": "ashford.teeth_base",
+    "texture": "teeth.png"
+  },
+  "ashford.tongue01": {
+    "all_images": [
+      "tongue01_diffuse.png"
+    ],
+    "object": "ashford.tongue01",
+    "texture": "tongue01_diffuse.png"
+  }
+}

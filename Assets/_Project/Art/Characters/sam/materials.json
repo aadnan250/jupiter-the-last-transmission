@@ -1,0 +1,68 @@
+{
+  "sam.body": {
+    "all_images": [
+      "young_darkskinned_male_diffuse.png"
+    ],
+    "object": "sam.sam.male_generic",
+    "texture": "young_darkskinned_male_diffuse.png"
+  },
+  "sam.eyebrow001": {
+    "all_images": [
+      "eyebrow001.png",
+      "eyebrow001.png"
+    ],
+    "object": "sam.eyebrow001",
+    "texture": "eyebrow001.png"
+  },
+  "sam.eyelashes01": {
+    "all_images": [
+      "eyelashes01.png"
+    ],
+    "object": "sam.eyelashes01",
+    "texture": "eyelashes01.png"
+  },
+  "sam.low-poly": {
+    "all_images": [
+      "brown_eye.png"
+    ],
+    "object": "sam.low-poly",
+    "texture": "brown_eye.png"
+  },
+  "sam.male_worksuit01": {
+    "all_images": [
+      "male_worksuit01_diffuse.png",
+      "male_worksuit01_ao.png",
+      "male_worksuit01_normal.png"
+    ],
+    "object": "sam.male_worksuit01",
+    "texture": "male_worksuit01_diffuse.png"
+  },
+  "sam.shoes02": {
+    "all_images": [
+      "shoes02_diffuse.png"
+    ],
+    "object": "sam.shoes02",
+    "texture": "shoes02_diffuse.png"
+  },
+  "sam.short02": {
+    "all_images": [
+      "short02_diffuse.png"
+    ],
+    "object": "sam.short02",
+    "texture": "short02_diffuse.png"
+  },
+  "sam.teeth_base": {
+    "all_images": [
+      "teeth.png"
+    ],
+    "object": "sam.teeth_base",
+    "texture": "teeth.png"
+  },
+  "sam.tongue01": {
+    "all_images": [
+      "tongue01_diffuse.png"
+    ],
+    "object": "sam.tongue01",
+    "texture": "tongue01_diffuse.png"
+  }
+}

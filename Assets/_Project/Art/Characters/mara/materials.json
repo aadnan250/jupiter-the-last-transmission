@@ -1,0 +1,68 @@
+{
+  "mara.body": {
+    "all_images": [
+      "middleage_lightskinned_female_diffuse.png"
+    ],
+    "object": "mara.mara.female_generic",
+    "texture": "middleage_lightskinned_female_diffuse.png"
+  },
+  "mara.eyebrow010": {
+    "all_images": [
+      "eyebrow010.png",
+      "eyebrow010.png"
+    ],
+    "object": "mara.eyebrow010",
+    "texture": "eyebrow010.png"
+  },
+  "mara.eyelashes01": {
+    "all_images": [
+      "eyelashes01.png"
+    ],
+    "object": "mara.eyelashes01",
+    "texture": "eyelashes01.png"
+  },
+  "mara.low-poly": {
+    "all_images": [
+      "brown_eye.png"
+    ],
+    "object": "mara.low-poly",
+    "texture": "brown_eye.png"
+  },
+  "mara.male_worksuit01": {
+    "all_images": [
+      "male_worksuit01_diffuse.png",
+      "male_worksuit01_ao.png",
+      "male_worksuit01_normal.png"
+    ],
+    "object": "mara.male_worksuit01",
+    "texture": "male_worksuit01_diffuse.png"
+  },
+  "mara.ponytail01": {
+    "all_images": [
+      "ponytail01_diffuse.png"
+    ],
+    "object": "mara.ponytail01",
+    "texture": "ponytail01_diffuse.png"
+  },
+  "mara.shoes06": {
+    "all_images": [
+      "shoes06_diffuse.png"
+    ],
+    "object": "mara.shoes06",
+    "texture": "shoes06_diffuse.png"
+  },
+  "mara.teeth_base": {
+    "all_images": [
+      "teeth.png"
+    ],
+    "object": "mara.teeth_base",
+    "texture": "teeth.png"
+  },
+  "mara.tongue01": {
+    "all_images": [
+      "tongue01_diffuse.png"
+    ],
+    "object": "mara.tongue01",
+    "texture": "tongue01_diffuse.png"
+  }
+}
