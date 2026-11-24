@@ -15,17 +15,23 @@ namespace Jupiter.Player
 
         InputAction move, look, lookStick, run, crouch, jump, interact;
 
-        public Vector2 Move => move != null ? move.ReadValue<Vector2>() : Vector2.zero;
+        /// <summary>
+        /// When true, movement, look, run, crouch and jump read as idle (e.g. while reading a document).
+        /// Interact still works so the same key can close what it opened.
+        /// </summary>
+        public bool GameplayBlocked { get; set; }
+
+        public Vector2 Move => !GameplayBlocked && move != null ? move.ReadValue<Vector2>() : Vector2.zero;
 
         /// <summary>Mouse delta in pixels for this frame (not scaled by time).</summary>
-        public Vector2 LookPointer => look != null ? look.ReadValue<Vector2>() : Vector2.zero;
+        public Vector2 LookPointer => !GameplayBlocked && look != null ? look.ReadValue<Vector2>() : Vector2.zero;
 
         /// <summary>Gamepad stick, -1..1 (must be scaled by time).</summary>
-        public Vector2 LookStick => lookStick != null ? lookStick.ReadValue<Vector2>() : Vector2.zero;
+        public Vector2 LookStick => !GameplayBlocked && lookStick != null ? lookStick.ReadValue<Vector2>() : Vector2.zero;
 
-        public bool RunHeld => run != null && run.IsPressed();
-        public bool CrouchPressedThisFrame => crouch != null && crouch.WasPressedThisFrame();
-        public bool JumpPressedThisFrame => jump != null && jump.WasPressedThisFrame();
+        public bool RunHeld => !GameplayBlocked && run != null && run.IsPressed();
+        public bool CrouchPressedThisFrame => !GameplayBlocked && crouch != null && crouch.WasPressedThisFrame();
+        public bool JumpPressedThisFrame => !GameplayBlocked && jump != null && jump.WasPressedThisFrame();
         public bool InteractPressedThisFrame => interact != null && interact.WasPressedThisFrame();
 
         void Awake()
