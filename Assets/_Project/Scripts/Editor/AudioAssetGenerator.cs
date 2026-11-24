@@ -22,9 +22,11 @@ namespace Jupiter.EditorTools
         public const string DoorOpen = Folder + "/sfx_door_open.wav";
         public const string DoorClose = Folder + "/sfx_door_close.wav";
         public const string SwitchClick = Folder + "/sfx_switch_click.wav";
-        public const int FootstepVariants = 4;
+        public const string ConsequenceSting = Folder + "/sfx_consequence_sting.wav";
+        public const string RadioSquelch = Folder + "/sfx_radio_squelch.wav";
+        public const int FootstepVariants = 6;
 
-        public static string Footstep(int i) => $"{Folder}/sfx_footstep_metal_{i + 1:00}.wav";
+        public static string Footstep(int i) => $"{Folder}/sfx_footstep_soft_{i + 1:00}.wav";
 
         [MenuItem("Jupiter/Generate Placeholder Audio")]
         public static void Generate()
@@ -39,7 +41,9 @@ namespace Jupiter.EditorTools
             Write(DoorClose, ProceduralAudio.DoorClose(), loop: false);
             Write(SwitchClick, ProceduralAudio.SwitchClick(), loop: false);
             for (int i = 0; i < FootstepVariants; i++)
-                Write(Footstep(i), ProceduralAudio.FootstepMetal(i), loop: false);
+                Write(Footstep(i), ProceduralAudio.FootstepSoft(i), loop: false);
+            Write(ConsequenceSting, ProceduralAudio.ConsequenceSting(), loop: false);
+            Write(RadioSquelch, ProceduralAudio.RadioSquelch(), loop: false);
 
             Debug.Log("[AudioAssetGenerator] Placeholder audio generated.");
         }

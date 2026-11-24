@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Jupiter.Audio;
+using Jupiter.Narrative;
 using Jupiter.World;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -88,6 +89,8 @@ namespace Jupiter.EditorTools
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = Color.black;
             PrefabUtility.RecordPrefabInstancePropertyModifications(cam); // keep as a scene override
+
+            BuildStory(rig);
 
             RenderSettings.skybox = null;
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
@@ -284,7 +287,8 @@ namespace Jupiter.EditorTools
                 "He doesn't ask why we need this much resolution on the deep returns, which I'm grateful for.\n\n" +
                 "Lindqvist filed another objection to the power allocation. She wants the hours for lander testing. " +
                 "She isn't wrong, and I told her so. The priority stands.\n\n" +
-                "Crew morale good. Ferreira has started a card league. Mori is winning.\n\nD. Ashford");
+                "Crew morale good. Ferreira has started a card league. Mori is winning.\n\nD. Ashford",
+                setsFlag: "read_commander_log");
             Tone(audio, "Tone_Command", new Vector3(5.5f, 1f, 9f), AudioAssetGenerator.ElectricalHum, 0.2f, 7f);
 
             // --- Science bay (east, z 10-20)
@@ -297,7 +301,8 @@ namespace Jupiter.EditorTools
                 "Ice-penetrating radar: calibration summary",
                 "Sounding bands: 9 MHz / 60 MHz (dual)\nTarget: Conamara Chaos region, Europa\n" +
                 "Depth objective: full ice shell (estimated 15-25 km)\n\nCalibration: PASS\n\n" +
-                "Deep-return gain profile set per COMMAND DIRECTIVE 7.\n(Directive 7 reference document: RESTRICTED)");
+                "Deep-return gain profile set per COMMAND DIRECTIVE 7.\n(Directive 7 reference document: RESTRICTED)",
+                setsFlag: "read_directive7");
             Tone(audio, "Tone_Science", new Vector3(5f, 1.2f, 19f), AudioAssetGenerator.ElectricalHum, 0.25f, 7f);
 
             // --- Comms (east, z 20-28)
@@ -399,13 +404,117 @@ namespace Jupiter.EditorTools
         static Light RoomLight(Transform parent, string name, Vector3 position, Color color, float intensity, float range)
             => PointLight(parent, name, position, color, intensity * RoomLightBoost, range);
 
-        static void Readable(Transform parent, string name, Vector3 position, string title, string body)
+        static void Readable(Transform parent, string name, Vector3 position, string title, string body, string setsFlag = null)
         {
             var go = Box(parent, name, position, new Vector3(0.3f, 0.02f, 0.4f), paperMat);
             go.isStatic = false;
             var readable = go.AddComponent<Readable>();
-            readable.SetContent(title, body);
+            readable.SetContent(title, body, setsFlag);
             EditorUtility.SetDirty(readable);
+        }
+
+        // ------------------------------------------------------------------ crew and story
+
+        const string DialogueFolder = "Assets/_Project/Narrative/Dialogue/Chapter02";
+        const string ConvGalley = "ch02_galley_luca_hana";
+        const string ConvMara = "ch02_workshop_mara";
+        const string ConvAshford = "ch02_command_ashford";
+        const string ConvObservation = "ch02_observation_radio";
+
+        static TextAsset Dialogue(string name)
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<TextAsset>($"{DialogueFolder}/{name}.txt");
+            if (asset == null) Debug.LogError($"[MeridianGreyboxBuilder] Missing dialogue {name}");
+            return asset;
+        }
+
+        static void BuildStory(GameObject rig)
+        {
+            new GameObject("GameSession").AddComponent<Core.GameSession>();
+
+            var dialogue = rig.GetComponentInChildren<DialogueManager>();
+            var crew = new GameObject("Crew").transform;
+
+            // Placeholder crew: coloured capsules with a dark visor showing which way they face.
+            Crew(crew, "LUCA", new Vector3(-7.6f, 0f, 17.2f), 135f, new Color(0.85f, 0.6f, 0.25f), dialogue,
+                "Back to work, Okafor. Some of us fly spaceships.", Dialogue(ConvGalley));
+            Crew(crew, "HANA", new Vector3(-4.0f, 0f, 17.4f), -135f, new Color(0.45f, 0.7f, 0.45f), dialogue,
+                "Sleep, Sam. Doctor's orders.", Dialogue(ConvGalley));
+            Crew(crew, "MARA", new Vector3(-7.7f, 0f, 34.5f), -90f, new Color(0.3f, 0.55f, 0.7f), dialogue,
+                "I'm working, Okafor.", Dialogue(ConvMara));
+            Crew(crew, "ASHFORD", new Vector3(4.0f, 0f, 7.3f), 20f, new Color(0.75f, 0.72f, 0.6f), dialogue,
+                "Carry on, Sam.", Dialogue(ConvAshford));
+
+            // Radio call on the observation deck, once every crew conversation is done.
+            var trig = new GameObject("Trigger_ObservationRadio");
+            trig.transform.position = new Vector3(0f, 1.4f, 44f);
+            var col = trig.AddComponent<BoxCollider>();
+            col.isTrigger = true;
+            col.size = new Vector3(19f, 2.8f, 11.5f);
+            var dt = trig.AddComponent<DialogueTrigger>();
+            Set(dt, "conversation", Dialogue(ConvObservation));
+            Set(dt, "setsFlagOnEnter", "reached_observation");
+            Set(dt, "dialogue", dialogue);
+            var so = new SerializedObject(dt);
+            SetStringArray(so.FindProperty("requiresCompleted"), ConvGalley, ConvMara, ConvAshford);
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            // Objectives
+            var mission = new GameObject("Mission").AddComponent<MissionManager>();
+            Set(mission, "dialogue", dialogue);
+            Set(mission, "objectiveText", rig.transform.Find("HUD/Objective").GetComponent<UnityEngine.UI.Text>());
+            Set(mission, "completeText", "Chapter 2 prototype complete");
+            var mso = new SerializedObject(mission);
+            var list = mso.FindProperty("objectives");
+            list.arraySize = 2;
+            var o1 = list.GetArrayElementAtIndex(0);
+            o1.FindPropertyRelative("text").stringValue = "Check in with the crew";
+            SetStringArray(o1.FindPropertyRelative("requiredConversations"), ConvGalley, ConvMara, ConvAshford);
+            SetStringArray(o1.FindPropertyRelative("requiredFlags"));
+            var o2 = list.GetArrayElementAtIndex(1);
+            o2.FindPropertyRelative("text").stringValue = "Go to the observation deck";
+            SetStringArray(o2.FindPropertyRelative("requiredConversations"));
+            SetStringArray(o2.FindPropertyRelative("requiredFlags"), "reached_observation");
+            mso.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void Crew(Transform parent, string id, Vector3 position, float yaw, Color color, DialogueManager dialogue, string idle, TextAsset conversation)
+        {
+            var root = new GameObject($"Crew_{id}");
+            root.transform.SetParent(parent, false);
+            root.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, yaw, 0f));
+            var col = root.AddComponent<CapsuleCollider>();
+            col.height = 1.75f;
+            col.radius = 0.3f;
+            col.center = new Vector3(0f, 0.875f, 0f);
+
+            var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            body.name = "Body";
+            Object.DestroyImmediate(body.GetComponent<Collider>());
+            body.transform.SetParent(root.transform, false);
+            body.transform.localPosition = new Vector3(0f, 0.875f, 0f);
+            body.transform.localScale = new Vector3(0.55f, 0.875f, 0.45f);
+            body.GetComponent<Renderer>().sharedMaterial = Mat($"MER_Crew_{id}", color);
+
+            var visor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            visor.name = "Visor";
+            Object.DestroyImmediate(visor.GetComponent<Collider>());
+            visor.transform.SetParent(root.transform, false);
+            visor.transform.localPosition = new Vector3(0f, 1.52f, 0.2f);
+            visor.transform.localScale = new Vector3(0.32f, 0.12f, 0.08f);
+            visor.GetComponent<Renderer>().sharedMaterial = darkMat;
+
+            var member = root.AddComponent<CrewMember>();
+            Set(member, "characterId", id);
+            Set(member, "idleLine", idle);
+            Set(member, "dialogue", dialogue);
+            Set(member, "conversations", new[] { conversation });
+        }
+
+        static void SetStringArray(SerializedProperty prop, params string[] values)
+        {
+            prop.arraySize = values.Length;
+            for (int i = 0; i < values.Length; i++) prop.GetArrayElementAtIndex(i).stringValue = values[i];
         }
 
         static void Tone(Transform parent, string name, Vector3 position, string clipPath, float volume, float maxDistance)

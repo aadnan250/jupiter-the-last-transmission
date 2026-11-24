@@ -1,4 +1,5 @@
 using Jupiter.Audio;
+using Jupiter.Narrative;
 using Jupiter.Player;
 using Jupiter.UI;
 using Jupiter.World;
@@ -10,8 +11,9 @@ using UnityEngine.UI;
 namespace Jupiter.EditorTools
 {
     /// <summary>
-    /// Builds the reusable PlayerRig prefab: first-person controller, camera, interaction, footsteps and HUD.
-    /// Every level instantiates this prefab, so player changes happen in one place.
+    /// Builds the reusable PlayerRig prefab: first-person controller, camera, interaction, footsteps,
+    /// HUD (prompt, reading panel, dialogue with four replies, objective tracker), the dialogue manager,
+    /// consequence feedback and controller-aware button prompts. Every level instantiates this prefab.
     /// </summary>
     public static class PlayerRigBuilder
     {
@@ -40,6 +42,7 @@ namespace Jupiter.EditorTools
             var inputAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputAssetPath);
             if (inputAsset == null) Debug.LogError($"Input actions not found at {InputAssetPath}");
             GreyboxKit.Set(input, "actions", inputAsset);
+            root.AddComponent<InputDeviceWatcher>();
 
             var controller = root.AddComponent<PlayerController>();
             GreyboxKit.Set(controller, "input", input);
@@ -100,27 +103,66 @@ namespace Jupiter.EditorTools
 
             var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
+            // Consequence pulse sits behind everything else on the HUD.
+            var pulse = NewUI<Image>(hud.transform, "ConsequencePulse");
+            Stretch(pulse.rectTransform);
+            pulse.color = new Color(0.12f, 0f, 0.02f, 0f);
+
             var cross = NewUI<Image>(hud.transform, "Crosshair");
             cross.rectTransform.sizeDelta = new Vector2(4, 4);
-            cross.raycastTarget = false;
 
             var prompt = NewText(hud.transform, "Prompt", font, 18, TextAnchor.UpperCenter, new Color(1, 1, 1, 0.9f));
             prompt.rectTransform.anchoredPosition = new Vector2(0, -24);
-            prompt.rectTransform.sizeDelta = new Vector2(300, 30);
+            prompt.rectTransform.sizeDelta = new Vector2(420, 30);
 
             var help = NewText(hud.transform, "ControlsHelp", font, 13, TextAnchor.LowerLeft, new Color(1, 1, 1, 0.5f));
             help.rectTransform.anchorMin = help.rectTransform.anchorMax = help.rectTransform.pivot = Vector2.zero;
             help.rectTransform.anchoredPosition = new Vector2(16, 12);
-            help.rectTransform.sizeDelta = new Vector2(1000, 22);
-            help.text = "WASD move   Shift run   Ctrl/C crouch   Space jump   E interact   F3 performance   Esc free cursor";
+            help.rectTransform.sizeDelta = new Vector2(1100, 22);
 
             var promptUi = hud.AddComponent<InteractionPromptUI>();
             GreyboxKit.Set(promptUi, "interaction", interaction);
             GreyboxKit.Set(promptUi, "promptText", prompt);
             GreyboxKit.Set(promptUi, "crosshair", cross);
+            GreyboxKit.Set(promptUi, "controlsHelpText", help);
 
-            // Reading panel
-            var panel = NewUI<Image>(hud.transform, "ReadPanel");
+            // Objective tracker (top right). Filled in by the level's MissionManager.
+            var objective = NewText(hud.transform, "Objective", font, 16, TextAnchor.UpperRight, new Color(1, 1, 1, 0.85f));
+            objective.rectTransform.anchorMin = objective.rectTransform.anchorMax = objective.rectTransform.pivot = new Vector2(1, 1);
+            objective.rectTransform.anchoredPosition = new Vector2(-20, -16);
+            objective.rectTransform.sizeDelta = new Vector2(420, 60);
+
+            BuildReadPanel(hud.transform, font, input);
+            var dialogueUi = BuildDialoguePanel(hud.transform, font);
+
+            // Dialogue manager + radio
+            var radio = hud.AddComponent<AudioSource>();
+            radio.playOnAwake = false;
+            radio.spatialBlend = 0f;
+            var dialogue = hud.AddComponent<DialogueManager>();
+            GreyboxKit.Set(dialogue, "input", input);
+            GreyboxKit.Set(dialogue, "ui", dialogueUi);
+            GreyboxKit.Set(dialogue, "radioSource", radio);
+            GreyboxKit.Set(dialogue, "radioSquelch", AudioAssetGenerator.Load(AudioAssetGenerator.RadioSquelch));
+
+            // Consequence feedback (sting + pulse + rumble + PS light bar)
+            var stingGo = new GameObject("ConsequenceFeedback");
+            stingGo.transform.SetParent(hud.transform, false);
+            var stingSource = stingGo.AddComponent<AudioSource>();
+            stingSource.playOnAwake = false;
+            stingSource.spatialBlend = 0f;
+            var feedback = stingGo.AddComponent<ConsequenceFeedback>();
+            GreyboxKit.Set(feedback, "dialogue", dialogue);
+            GreyboxKit.Set(feedback, "audioSource", stingSource);
+            GreyboxKit.Set(feedback, "sting", AudioAssetGenerator.Load(AudioAssetGenerator.ConsequenceSting));
+            GreyboxKit.Set(feedback, "screenPulse", pulse);
+
+            hud.AddComponent<DevStatsOverlay>();
+        }
+
+        static void BuildReadPanel(Transform hud, Font font, InputReader input)
+        {
+            var panel = NewUI<Image>(hud, "ReadPanel");
             panel.color = new Color(0.04f, 0.05f, 0.06f, 0.92f);
             panel.rectTransform.sizeDelta = new Vector2(640, 440);
             var title = NewText(panel.transform, "Title", font, 22, TextAnchor.UpperLeft, new Color(0.95f, 0.85f, 0.6f));
@@ -135,15 +177,64 @@ namespace Jupiter.EditorTools
             var hint = NewText(panel.transform, "Hint", font, 13, TextAnchor.LowerRight, new Color(1, 1, 1, 0.5f));
             hint.rectTransform.anchoredPosition = new Vector2(0, -200);
             hint.rectTransform.sizeDelta = new Vector2(580, 24);
-            hint.text = "E / Esc  close";
+            hint.text = "Interact / Esc  close";
 
-            var readUi = hud.AddComponent<ReadableUI>();
+            var readUi = hud.gameObject.AddComponent<ReadableUI>();
             GreyboxKit.Set(readUi, "panel", panel.gameObject);
             GreyboxKit.Set(readUi, "titleText", title);
             GreyboxKit.Set(readUi, "bodyText", body);
             GreyboxKit.Set(readUi, "input", input);
+        }
 
-            hud.AddComponent<DevStatsOverlay>();
+        static DialogueUI BuildDialoguePanel(Transform hud, Font font)
+        {
+            // Bottom-centre subtitle panel
+            var panel = NewUI<Image>(hud, "DialoguePanel");
+            panel.color = new Color(0.03f, 0.04f, 0.05f, 0.78f);
+            var rt = panel.rectTransform;
+            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0f);
+            rt.anchoredPosition = new Vector2(0, 44);
+            rt.sizeDelta = new Vector2(860, 190);
+
+            var speaker = NewText(panel.transform, "Speaker", font, 20, TextAnchor.UpperLeft, Color.white);
+            speaker.fontStyle = FontStyle.Bold;
+            speaker.rectTransform.anchoredPosition = new Vector2(0, 66);
+            speaker.rectTransform.sizeDelta = new Vector2(800, 30);
+
+            var line = NewText(panel.transform, "Line", font, 19, TextAnchor.UpperLeft, new Color(0.95f, 0.95f, 0.93f));
+            line.rectTransform.anchoredPosition = new Vector2(0, -6);
+            line.rectTransform.sizeDelta = new Vector2(800, 110);
+            line.horizontalOverflow = HorizontalWrapMode.Wrap;
+            line.lineSpacing = 1.1f;
+
+            var hint = NewText(panel.transform, "ContinueHint", font, 13, TextAnchor.LowerRight, new Color(1, 1, 1, 0.5f));
+            hint.rectTransform.anchoredPosition = new Vector2(0, -76);
+            hint.rectTransform.sizeDelta = new Vector2(800, 22);
+
+            var choices = new Text[4];
+            for (int i = 0; i < 4; i++)
+            {
+                var c = NewText(panel.transform, $"Choice{i + 1}", font, 18, TextAnchor.MiddleLeft, new Color(0.95f, 0.92f, 0.85f));
+                c.rectTransform.anchoredPosition = new Vector2(0, 63 - i * 42);
+                c.rectTransform.sizeDelta = new Vector2(800, 38);
+                c.horizontalOverflow = HorizontalWrapMode.Wrap;
+                choices[i] = c;
+            }
+
+            var ui = hud.gameObject.AddComponent<DialogueUI>();
+            GreyboxKit.Set(ui, "root", panel.gameObject);
+            GreyboxKit.Set(ui, "speakerText", speaker);
+            GreyboxKit.Set(ui, "lineText", line);
+            GreyboxKit.Set(ui, "continueHint", hint);
+            GreyboxKit.Set(ui, "choiceTexts", choices);
+            return ui;
+        }
+
+        static void Stretch(RectTransform rt)
+        {
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = rt.offsetMax = Vector2.zero;
         }
 
         static T NewUI<T>(Transform parent, string name) where T : Graphic
@@ -162,6 +253,7 @@ namespace Jupiter.EditorTools
             t.fontSize = size;
             t.alignment = anchor;
             t.color = color;
+            t.supportRichText = true;
             return t;
         }
     }

@@ -51,7 +51,7 @@ namespace Jupiter.Tests
         [Test]
         public void ProceduralAudio_StaysWithinRange()
         {
-            foreach (var clip in new[] { ProceduralAudio.RingDrone(), ProceduralAudio.Ventilation(), ProceduralAudio.FootstepMetal(0), ProceduralAudio.DoorClose() })
+            foreach (var clip in new[] { ProceduralAudio.RingDrone(), ProceduralAudio.Ventilation(), ProceduralAudio.FootstepSoft(0), ProceduralAudio.ConsequenceSting(), ProceduralAudio.RadioSquelch(), ProceduralAudio.DoorClose() })
                 foreach (float s in clip)
                     Assert.LessOrEqual(Math.Abs(s), 1f);
         }
