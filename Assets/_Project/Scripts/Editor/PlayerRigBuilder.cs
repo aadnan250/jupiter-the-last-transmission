@@ -145,6 +145,26 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(dialogue, "radioSource", radio);
             GreyboxKit.Set(dialogue, "radioSquelch", AudioAssetGenerator.Load(AudioAssetGenerator.RadioSquelch));
 
+            // Sam's own voice: centred, 2D.
+            var samVoice = new GameObject("PlayerVoice");
+            samVoice.transform.SetParent(hud.transform, false);
+            var samSource = samVoice.AddComponent<AudioSource>();
+            samSource.playOnAwake = false;
+            samSource.spatialBlend = 0f;
+            samSource.volume = 0.85f;
+            GreyboxKit.Set(dialogue, "playerVoice", samSource);
+
+            // Radio voice: band-limited to a radio's 300-3400 Hz with light distortion.
+            var radioVoiceGo = new GameObject("RadioVoice");
+            radioVoiceGo.transform.SetParent(hud.transform, false);
+            var radioVoice = radioVoiceGo.AddComponent<AudioSource>();
+            radioVoice.playOnAwake = false;
+            radioVoice.spatialBlend = 0f;
+            radioVoiceGo.AddComponent<AudioHighPassFilter>().cutoffFrequency = 320f;
+            radioVoiceGo.AddComponent<AudioLowPassFilter>().cutoffFrequency = 3300f;
+            radioVoiceGo.AddComponent<AudioDistortionFilter>().distortionLevel = 0.32f;
+            GreyboxKit.Set(dialogue, "radioVoice", radioVoice);
+
             // Consequence feedback (sting + pulse + rumble + PS light bar)
             var stingGo = new GameObject("ConsequenceFeedback");
             stingGo.transform.SetParent(hud.transform, false);

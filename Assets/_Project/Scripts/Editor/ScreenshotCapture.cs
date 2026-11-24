@@ -25,7 +25,27 @@ namespace Jupiter.EditorTools
             Shot(cam, "phase2-observation-deck.png", new Vector3(-1.5f, 1.62f, 41f), new Vector3(-6f, 12f, 0f));
             Shot(cam, "phase2-galley.png", new Vector3(-2.2f, 1.62f, 11.2f), new Vector3(12f, -60f, 0f));
             Shot(cam, "phase2-command.png", new Vector3(2.4f, 1.62f, 1.2f), new Vector3(12f, 45f, 0f));
+            // Crew close-ups: aim the camera at each character's head from about 1.3 m in front of them.
+            CloseUp(cam, "crew-mara.png", "Crew_MARA", 1.3f);
+            CloseUp(cam, "crew-ashford.png", "Crew_ASHFORD", 1.4f);
+            CloseUp(cam, "crew-luca.png", "Crew_LUCA", 1.4f);
+            CloseUp(cam, "crew-hana.png", "Crew_HANA", 1.3f);
+            Shot(cam, "crew-galley.png", new Vector3(-2.4f, 1.62f, 14.2f), new Vector3(6f, -70f, 0f));
             Debug.Log($"[ScreenshotCapture] Saved screenshots to {OutputFolder}");
+        }
+
+        static void CloseUp(Camera cam, string file, string crewName, float distance)
+        {
+            var crew = GameObject.Find(crewName);
+            if (crew == null) { Debug.LogWarning($"[ScreenshotCapture] {crewName} not found"); return; }
+            var head = System.Array.Find(crew.GetComponentsInChildren<Transform>(), t => t.name == "head");
+            Vector3 target = head != null ? head.position + Vector3.up * 0.05f : crew.transform.position + Vector3.up * 1.6f;
+            Vector3 pos = target + crew.transform.forward * distance + Vector3.up * 0.05f - Vector3.up * 0.15f * 0f;
+            var rot = Quaternion.LookRotation(target - pos - Vector3.up * 0.25f);
+            float fov = cam.fieldOfView;
+            cam.fieldOfView = 40f;
+            Shot(cam, file, pos, rot.eulerAngles);
+            cam.fieldOfView = fov;
         }
 
         static void Shot(Camera cam, string file, Vector3 position, Vector3 euler)

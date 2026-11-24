@@ -435,15 +435,12 @@ namespace Jupiter.EditorTools
             var dialogue = rig.GetComponentInChildren<DialogueManager>();
             var crew = new GameObject("Crew").transform;
 
-            // Placeholder crew: coloured capsules with a dark visor showing which way they face.
-            Crew(crew, "LUCA", new Vector3(-7.6f, 0f, 17.2f), 135f, new Color(0.85f, 0.6f, 0.25f), dialogue,
-                "Back to work, Okafor. Some of us fly spaceships.", Dialogue(ConvGalley));
-            Crew(crew, "HANA", new Vector3(-4.0f, 0f, 17.4f), -135f, new Color(0.45f, 0.7f, 0.45f), dialogue,
-                "Sleep, Sam. Doctor's orders.", Dialogue(ConvGalley));
-            Crew(crew, "MARA", new Vector3(-7.7f, 0f, 34.5f), -90f, new Color(0.3f, 0.55f, 0.7f), dialogue,
-                "I'm working, Okafor.", Dialogue(ConvMara));
-            Crew(crew, "ASHFORD", new Vector3(4.0f, 0f, 7.3f), 20f, new Color(0.75f, 0.72f, 0.6f), dialogue,
-                "Carry on, Sam.", Dialogue(ConvAshford));
+            // Crew: realistic character models when generated, otherwise coloured placeholder capsules.
+            // Each faces roughly toward their room's door, so the player sees faces on entering.
+            Crew(crew, "LUCA", new Vector3(-7.6f, 0f, 17.2f), 110f, new Color(0.85f, 0.6f, 0.25f), dialogue, Dialogue(ConvGalley));
+            Crew(crew, "HANA", new Vector3(-4.0f, 0f, 17.4f), 150f, new Color(0.45f, 0.7f, 0.45f), dialogue, Dialogue(ConvGalley));
+            Crew(crew, "MARA", new Vector3(-7.7f, 0f, 34.5f), 100f, new Color(0.3f, 0.55f, 0.7f), dialogue, Dialogue(ConvMara));
+            Crew(crew, "ASHFORD", new Vector3(4.0f, 0f, 7.3f), -120f, new Color(0.75f, 0.72f, 0.6f), dialogue, Dialogue(ConvAshford));
 
             // Radio call on the observation deck, once every crew conversation is done.
             var trig = new GameObject("Trigger_ObservationRadio");
@@ -478,7 +475,7 @@ namespace Jupiter.EditorTools
             mso.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static void Crew(Transform parent, string id, Vector3 position, float yaw, Color color, DialogueManager dialogue, string idle, TextAsset conversation)
+        static void Crew(Transform parent, string id, Vector3 position, float yaw, Color color, DialogueManager dialogue, TextAsset conversation)
         {
             var root = new GameObject($"Crew_{id}");
             root.transform.SetParent(parent, false);
@@ -488,10 +485,30 @@ namespace Jupiter.EditorTools
             col.radius = 0.3f;
             col.center = new Vector3(0f, 0.875f, 0f);
 
+            // The voice comes from head height so it is positioned where the character's mouth is.
+            var voiceGo = new GameObject("Voice");
+            voiceGo.transform.SetParent(root.transform, false);
+            voiceGo.transform.localPosition = new Vector3(0f, 1.6f, 0f);
+            var voice = Audio3D(voiceGo, null, 1.5f, 16f);
+            voice.spatialBlend = 0.85f; // mostly positional, never fully lost when facing away
+
+            if (!CharacterModelImporter.TrySpawnModel(id, root.transform, voice))
+                PlaceholderBody(root.transform, id, color);
+
+            var member = root.AddComponent<CrewMember>();
+            Set(member, "characterId", id);
+            Set(member, "idleConversation", Dialogue($"ch02_idle_{id.ToLowerInvariant()}"));
+            Set(member, "voice", voice);
+            Set(member, "dialogue", dialogue);
+            Set(member, "conversations", new[] { conversation });
+        }
+
+        static void PlaceholderBody(Transform root, string id, Color color)
+        {
             var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             body.name = "Body";
             Object.DestroyImmediate(body.GetComponent<Collider>());
-            body.transform.SetParent(root.transform, false);
+            body.transform.SetParent(root, false);
             body.transform.localPosition = new Vector3(0f, 0.875f, 0f);
             body.transform.localScale = new Vector3(0.55f, 0.875f, 0.45f);
             body.GetComponent<Renderer>().sharedMaterial = Mat($"MER_Crew_{id}", color);
@@ -499,16 +516,10 @@ namespace Jupiter.EditorTools
             var visor = GameObject.CreatePrimitive(PrimitiveType.Cube);
             visor.name = "Visor";
             Object.DestroyImmediate(visor.GetComponent<Collider>());
-            visor.transform.SetParent(root.transform, false);
+            visor.transform.SetParent(root, false);
             visor.transform.localPosition = new Vector3(0f, 1.52f, 0.2f);
             visor.transform.localScale = new Vector3(0.32f, 0.12f, 0.08f);
             visor.GetComponent<Renderer>().sharedMaterial = darkMat;
-
-            var member = root.AddComponent<CrewMember>();
-            Set(member, "characterId", id);
-            Set(member, "idleLine", idle);
-            Set(member, "dialogue", dialogue);
-            Set(member, "conversations", new[] { conversation });
         }
 
         static void SetStringArray(SerializedProperty prop, params string[] values)
