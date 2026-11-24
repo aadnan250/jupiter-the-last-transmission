@@ -33,18 +33,52 @@ namespace Jupiter.Tests
         [UnityTest]
         public IEnumerator RoomDoors_OpenAndLockedDoorsStayShut()
         {
-            var doors = Object.FindObjectsByType<SlidingDoor>();
-            Assert.AreEqual(10, doors.Length, "8 room doors + cargo hold + airlock hatch");
+            var doors = Object.FindObjectsByType<SplitDoor>();
+            Assert.AreEqual(12, doors.Length, "10 room doors + cargo hold + airlock hatch");
 
             int locked = 0;
             foreach (var door in doors)
             {
-                door.Interact(null);
-                if (door.IsLocked) { locked++; Assert.IsFalse(door.IsOpen, $"{door.name} is locked and must not open"); }
-                else Assert.IsTrue(door.IsOpen, $"{door.name} should open");
+                if (door.IsLocked)
+                {
+                    locked++;
+                    Assert.IsFalse(door.Open(), $"{door.name} is locked and must refuse to open");
+                    Assert.IsFalse(door.IsOpen);
+                    Assert.IsTrue(door.CanInteract(null), "locked doors tell the player they are locked");
+                }
+                else
+                {
+                    Assert.IsTrue(door.Open(), $"{door.name} should open");
+                    Assert.IsTrue(door.IsOpen);
+                    Assert.IsFalse(door.CanInteract(null), "unlocked doors open by themselves and show no prompt");
+                }
             }
             Assert.AreEqual(2, locked);
             yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Doors_SlideOpenWhenThePlayerApproachesAndCloseBehind()
+        {
+            var door = System.Array.Find(Object.FindObjectsByType<SplitDoor>(), d => d.name == "Door_Galley");
+            var player = Object.FindAnyObjectByType<PlayerController>();
+            var cc = player.GetComponent<CharacterController>();
+            yield return null;
+            Assert.IsFalse(door.IsOpen, "closed while the player is far away");
+
+            cc.enabled = false;
+            player.transform.position = new Vector3(-0.2f, 0.05f, 15f);
+            cc.enabled = true;
+            yield return null;
+            yield return null;
+            Assert.IsTrue(door.IsOpen, "opens when the player is near");
+
+            cc.enabled = false;
+            player.transform.position = new Vector3(0f, 0.05f, 3f);
+            cc.enabled = true;
+            yield return null;
+            yield return null;
+            Assert.IsFalse(door.IsOpen, "closes again once the player leaves");
         }
 
         [UnityTest]

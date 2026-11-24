@@ -31,6 +31,12 @@ namespace Jupiter.EditorTools
             CloseUp(cam, "crew-luca.png", "Crew_LUCA", 1.4f);
             CloseUp(cam, "crew-hana.png", "Crew_HANA", 1.3f);
             Shot(cam, "crew-galley.png", new Vector3(-2.4f, 1.62f, 14.2f), new Vector3(6f, -70f, 0f));
+            Shot(cam, "ship-hygiene.png", new Vector3(-2.3f, 1.62f, -1.0f), new Vector3(8f, -125f, 0f));
+            Shot(cam, "ship-science.png", new Vector3(2.3f, 1.62f, 11.0f), new Vector3(10f, 50f, 0f));
+            Shot(cam, "ship-medbay.png", new Vector3(-2.2f, 1.62f, 21.0f), new Vector3(10f, -55f, 0f));
+            Shot(cam, "ship-workshop.png", new Vector3(-2.0f, 1.62f, 37.2f), new Vector3(8f, -125f, 0f));
+            Shot(cam, "ship-storage.png", new Vector3(2.2f, 1.62f, -0.8f), new Vector3(8f, 125f, 0f));
+            Shot(cam, "ship-comms.png", new Vector3(2.2f, 1.62f, 20.8f), new Vector3(8f, 40f, 0f));
             Debug.Log($"[ScreenshotCapture] Saved screenshots to {OutputFolder}");
         }
 

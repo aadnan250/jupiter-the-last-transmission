@@ -16,6 +16,7 @@ namespace Jupiter.EditorTools
             AudioAssetGenerator.Generate();
             GreyboxTestRoomBuilder.BuildProfiles();
             JupiterTextureGenerator.Generate();
+            SciFiTextureGenerator.GenerateAll();
             CharacterMaterialBuilder.Build();
             PlayerRigBuilder.BuildPrefab();
             GreyboxTestRoomBuilder.Build();
