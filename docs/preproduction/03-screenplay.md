@@ -124,8 +124,8 @@ Delivery notes are written for actors, not readers. Pauses marked `(beat)` are ~
 | 2 | HANA | (beat) Turn it up. | Instinct, before she's thought about it | quiet | IN PERSON | none | +6 s |
 | 3 | LUCA | No. Don't— why would you say that? | Half-joking, genuinely uneasy | quiet | IN PERSON | none | +7 s |
 | 4 | MARA | That's the reaction wheels. Bearing noise bleeding into the line. | Certain, too quickly | normal | IN PERSON | none | |
-| 5 | SAM | It's not on our bus. It's coming from the surface sensors. (beat) This is a hundred kilometres of ice. | Quiet, already doing the maths | quiet | IN PERSON | none | |
-| 6 | HANA | Then what's moving under a hundred kilometres of ice? | Not rhetorical. She wants to know | quiet | IN PERSON | none | |
+| 5 | SAM | It's not on our bus. It's coming from the surface sensors. (beat) This is twenty kilometres of ice. | Quiet, already doing the maths | quiet | IN PERSON | none | |
+| 6 | HANA | Then what's moving under twenty kilometres of ice? | Not rhetorical. She wants to know | quiet | IN PERSON | none | |
 | — | — | *Ashford, at the back of the room, hasn't moved. If the player looks at him, he's staring at the speaker, not the data.* | | | | | |
 | 7 | ASHFORD | Calibration artefact. Twelve-year-old sensors. Log it, Sam. Let's get to work. | Even, a fraction too fast | normal | IN PERSON | none | +4 s after line 6 |
 
