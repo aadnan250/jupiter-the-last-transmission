@@ -37,6 +37,31 @@
                 { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0221", "path": "<Keyboard>/e", "interactions": "", "processors": "", "groups": "Keyboard&Mouse", "action": "Interact", "isComposite": false, "isPartOfComposite": false },
                 { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0222", "path": "<Gamepad>/buttonWest", "interactions": "", "processors": "", "groups": "Gamepad", "action": "Interact", "isComposite": false, "isPartOfComposite": false }
             ]
+        },
+        {
+            "name": "Dialogue",
+            "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0002",
+            "actions": [
+                { "name": "Advance", "type": "Button", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0301", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
+                { "name": "Choice1", "type": "Button", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0302", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
+                { "name": "Choice2", "type": "Button", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0303", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
+                { "name": "Choice3", "type": "Button", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0304", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
+                { "name": "Choice4", "type": "Button", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0305", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false }
+            ],
+            "bindings": [
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0401", "path": "<Keyboard>/e", "interactions": "", "processors": "", "groups": "Keyboard&Mouse", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0402", "path": "<Keyboard>/space", "interactions": "", "processors": "", "groups": "Keyboard&Mouse", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0403", "path": "<Mouse>/leftButton", "interactions": "", "processors": "", "groups": "Keyboard&Mouse", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0404", "path": "<Gamepad>/buttonSouth", "interactions": "", "processors": "", "groups": "Gamepad", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0405", "path": "<Keyboard>/1", "interactions": "", "processors": "", "groups": "Keyboard&Mouse", "action": "Choice1", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0406", "path": "<Gamepad>/buttonNorth", "interactions": "", "processors": "", "groups": "Gamepad", "action": "Choice1", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0407", "path": "<Keyboard>/2", "interactions": "", "processors": "", "groups": "Keyboard&Mouse", "action": "Choice2", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0408", "path": "<Gamepad>/buttonEast", "interactions": "", "processors": "", "groups": "Gamepad", "action": "Choice2", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0409", "path": "<Keyboard>/3", "interactions": "", "processors": "", "groups": "Keyboard&Mouse", "action": "Choice3", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0410", "path": "<Gamepad>/buttonSouth", "interactions": "", "processors": "", "groups": "Gamepad", "action": "Choice3", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0411", "path": "<Keyboard>/4", "interactions": "", "processors": "", "groups": "Keyboard&Mouse", "action": "Choice4", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f1c2a10-1b3e-4c55-9a01-3d2e7b8c0412", "path": "<Gamepad>/buttonWest", "interactions": "", "processors": "", "groups": "Gamepad", "action": "Choice4", "isComposite": false, "isPartOfComposite": false }
+            ]
         }
     ],
     "controlSchemes": [
