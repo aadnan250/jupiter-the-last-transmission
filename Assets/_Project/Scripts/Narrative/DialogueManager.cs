@@ -20,6 +20,17 @@ namespace Jupiter.Narrative
         [SerializeField] AudioSource radioSource;
         [SerializeField] AudioClip radioSquelch;
 
+        [Header("Voices")]
+        [Tooltip("2D source for Sam's own lines.")]
+        [SerializeField] AudioSource playerVoice;
+        [Tooltip("2D source with band-pass and distortion filters for radio lines.")]
+        [SerializeField] AudioSource radioVoice;
+
+        AudioSource speaking;
+
+        /// <summary>The clip playing for the current line, if any (tests and lip sync read this).</summary>
+        public AudioClip CurrentVoiceClip => speaking != null && speaking.isPlaying ? speaking.clip : null;
+
         DialogueRunner runner;
         Action onFinished;
         int startedFrame;
@@ -85,9 +96,11 @@ namespace Jupiter.Narrative
                 case DialogueRunner.StepKind.Line:
                     var line = runner.CurrentLine;
                     if (line.Radio && radioSource != null && radioSquelch != null) radioSource.PlayOneShot(radioSquelch, 0.6f);
+                    PlayVoice(line);
                     if (ui != null) ui.ShowLine(Characters.DisplayName(line.Speaker), Characters.SubtitleColor(line.Speaker), line.Text, line.Radio);
                     break;
                 case DialogueRunner.StepKind.Choices:
+                    StopVoice();
                     if (ui != null) ui.ShowChoices(runner.CurrentChoices);
                     break;
                 default:
@@ -96,8 +109,36 @@ namespace Jupiter.Narrative
             }
         }
 
+        /// <summary>
+        /// Plays the line's voice from the right place: radio lines through the radio filter, Sam's lines from
+        /// the player, and crew lines from the crew member's own 3D source (which also drives their lip sync).
+        /// </summary>
+        void PlayVoice(DialogueLine line)
+        {
+            StopVoice();
+            var clip = VoiceLibrary.Find(runner.Conversation.Id, line.SourceLine);
+            if (clip == null) return;
+
+            AudioSource source;
+            if (line.Radio) source = radioVoice;
+            else if (line.Speaker == DialogueRunner.PlayerSpeaker) source = playerVoice;
+            else if (!CrewMember.TryGetVoice(line.Speaker, out source)) source = radioVoice;
+
+            if (source == null) return;
+            source.clip = clip;
+            source.Play();
+            speaking = source;
+        }
+
+        void StopVoice()
+        {
+            if (speaking != null) speaking.Stop();
+            speaking = null;
+        }
+
         void Finish()
         {
+            StopVoice();
             string id = runner.Conversation.Id;
             runner = null;
             if (ui != null) ui.Hide();

@@ -63,7 +63,7 @@ namespace Jupiter.Tests
         }
 
         [Test]
-        public void EveryConversationOffersAtLeastOneSignificantChoiceOrIsARadioCall()
+        public void EveryConversationOffersAtLeastOneSignificantChoiceOrIsARadioOrIdleLine()
         {
             foreach (var asset in AllDialogue())
             {
@@ -72,9 +72,36 @@ namespace Jupiter.Tests
                 foreach (var node in conv.Nodes.Values)
                     foreach (var c in node.Choices)
                         significant |= c.Significant;
-                if (!asset.name.Contains("radio"))
+                if (!asset.name.Contains("radio") && !asset.name.Contains("_idle"))
                     Assert.IsTrue(significant, $"{asset.name} has no significant (*!) choice");
             }
+        }
+
+        /// <summary>Every line that has words to speak (including Sam's replies) has a voice clip.</summary>
+        [Test]
+        public void EverySpokenLineHasAVoiceClip()
+        {
+            int checkedLines = 0;
+            foreach (var asset in AllDialogue())
+            {
+                var conv = DialogueParser.Parse(asset.text, asset.name);
+                foreach (var node in conv.Nodes.Values)
+                {
+                    foreach (var item in node.Body)
+                        if (item.Kind == DialogueItem.ItemKind.Line && VoiceText.Clean(item.Line.Text).Length > 0)
+                        {
+                            Assert.IsNotNull(VoiceLibrary.Find(conv.Id, item.Line.SourceLine), $"{asset.name}:{item.Line.SourceLine} has no voice. Run Jupiter > Generate Voices");
+                            checkedLines++;
+                        }
+                    foreach (var choice in node.Choices)
+                        if (!choice.IsAction && VoiceText.Clean(choice.Text).Length > 0)
+                        {
+                            Assert.IsNotNull(VoiceLibrary.Find(conv.Id, choice.SourceLine), $"{asset.name}:{choice.SourceLine} reply has no voice");
+                            checkedLines++;
+                        }
+                }
+            }
+            Assert.Greater(checkedLines, 50);
         }
 
         [Test]

@@ -1,0 +1,3 @@
+# Idle line once all of Ashford's conversations are done.
+=== idle
+ASHFORD: Carry on, Sam.

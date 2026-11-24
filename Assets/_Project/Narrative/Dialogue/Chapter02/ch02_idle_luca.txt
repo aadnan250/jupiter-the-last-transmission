@@ -1,0 +1,3 @@
+# Idle line once all of Luca's conversations are done.
+=== idle
+LUCA: Back to work, Okafor. Some of us fly spaceships.

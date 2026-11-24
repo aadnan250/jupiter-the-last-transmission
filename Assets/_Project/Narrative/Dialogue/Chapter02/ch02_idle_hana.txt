@@ -1,0 +1,3 @@
+# Idle line once all of Hana's conversations are done.
+=== idle
+HANA: Sleep, Sam. Doctor's orders.
