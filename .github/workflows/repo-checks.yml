@@ -1,0 +1,17 @@
+name: Repository checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  hygiene:
+    name: Unity repository hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false   # pointers are enough for these checks
+      - name: Run checks
+        run: bash .github/scripts/check-repo.sh
