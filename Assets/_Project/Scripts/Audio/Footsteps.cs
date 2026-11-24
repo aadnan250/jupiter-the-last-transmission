@@ -15,15 +15,15 @@ namespace Jupiter.Audio
         [SerializeField] AudioClip[] clips;
 
         [Header("Stride length (m)")]
-        [SerializeField] float walkStride = 0.75f;
-        [SerializeField] float runStride = 1.05f;
+        [SerializeField] float walkStride = 0.8f;
+        [SerializeField] float runStride = 1.2f;
         [SerializeField] float crouchStride = 0.6f;
 
         [Header("Volume")]
-        [SerializeField] float walkVolume = 0.35f;
-        [SerializeField] float runVolume = 0.65f;
-        [SerializeField] float crouchVolume = 0.1f;
-        [SerializeField] float landVolume = 0.7f;
+        [SerializeField] float walkVolume = 0.22f;
+        [SerializeField] float runVolume = 0.38f;
+        [SerializeField] float crouchVolume = 0.06f;
+        [SerializeField] float landVolume = 0.4f;
 
         AudioSource source;
         Vector3 lastPosition;

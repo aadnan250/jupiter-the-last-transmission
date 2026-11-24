@@ -117,26 +117,122 @@ namespace Jupiter.Audio
             return Normalize(o, 0.8f);
         }
 
-        /// <summary>Footstep on a metal deck plate. Variants differ by seed.</summary>
-        public static float[] FootstepMetal(int variant)
+        /// <summary>
+        /// Soft rubber-soled boot step on a padded deck: a muffled heel strike followed ~80 ms later by a lighter
+        /// toe roll, both band-limited noise with a gentle low body thud. No tonal ringing, so it never sounds metallic.
+        /// Variants differ in timing, weight and brightness.
+        /// </summary>
+        public static float[] FootstepSoft(int variant)
         {
-            int n = Len(0.28f);
-            var rng = new Random(500 + variant);
-            double baseFreq = 95 + variant * 9;
-            double ring = 430 + variant * 37;
-            var o = new float[n];
-            double lp = 0, alpha = Alpha(1800f);
+            int n = Len(0.32f);
+            var rng = new Random(700 + variant * 13);
+            double toeDelay = 0.07 + 0.012 * (variant % 3);
+            double heelCenter = 520 + 70 * variant;     // Hz
+            double toeCenter = 900 + 110 * variant;
+            double bodyFreq = 52 + 6 * (variant % 4);
+
+            var heelBp = Biquad.BandPass(heelCenter, 0.9);
+            var toeBp = Biquad.BandPass(toeCenter, 1.1);
+            var soften = Biquad.LowPass(2600, 0.7);
+
+            var o = new double[n];
             for (int i = 0; i < n; i++)
             {
                 double t = (double)i / SampleRate;
                 double white = rng.NextDouble() * 2 - 1;
-                lp += alpha * (white - lp);
-                double thump = Math.Exp(-t * 32) * Math.Sin(TwoPi * baseFreq * t);
-                double scuff = Math.Exp(-t * 55) * lp;
-                double plate = Math.Exp(-t * 22) * Math.Sin(TwoPi * ring * t) * 0.15;
-                o[i] = (float)(thump + scuff * 0.8 + plate);
+
+                // Heel: 3 ms attack, ~35 ms decay
+                double heelEnv = Math.Min(1, t / 0.003) * Math.Exp(-t / 0.035);
+                double heel = heelBp.Process(white) * heelEnv;
+
+                // Toe roll: quieter, shorter
+                double tt = t - toeDelay;
+                double toeEnv = tt < 0 ? 0 : Math.Min(1, tt / 0.004) * Math.Exp(-tt / 0.025);
+                double toe = toeBp.Process(white) * toeEnv * 0.55;
+
+                // Body thud felt more than heard
+                double body = Math.Sin(TwoPi * bodyFreq * t) * Math.Exp(-t / 0.03) * 0.35;
+
+                o[i] = soften.Process(heel + toe) + body;
             }
-            return Normalize(o, 0.8f);
+            return Normalize(ToFloat(o), 0.7f);
+        }
+
+        /// <summary>
+        /// The consequence sting. A reversed breath swells in, a deep impact lands, and a dissonant cluster of close
+        /// tones (they beat against each other) sags slowly out of tune over a whispering, formant-filtered noise bed.
+        /// About 4 seconds.
+        /// </summary>
+        public static float[] ConsequenceSting()
+        {
+            const double hit = 0.9;
+            int n = Len(4.2f);
+            var rng = new Random(4117);
+            var whisperA = Biquad.BandPass(650, 4.0);
+            var whisperB = Biquad.BandPass(1750, 5.0);
+            var swellHp = Biquad.HighPass(1800, 0.7);
+            double[] cluster = { 466.16, 493.88, 523.25, 932.33 }; // A#4, B4, C5 and a high A#5 shimmer
+            double[] phases = new double[cluster.Length];
+            double subPhase = 0, wobble = rng.NextDouble() * 6.28;
+
+            var o = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / SampleRate;
+                double white = rng.NextDouble() * 2 - 1;
+                double s = 0;
+
+                // 1. Reversed breath: high-passed noise swelling exponentially into the hit.
+                if (t < hit) s += swellHp.Process(white) * Math.Pow(t / hit, 3.2) * 0.55;
+
+                if (t >= hit)
+                {
+                    double th = t - hit;
+
+                    // 2. Impact: a sub boom that sinks from 55 Hz to 32 Hz.
+                    double subF = 32 + 23 * Math.Exp(-th * 3);
+                    subPhase += TwoPi * subF / SampleRate;
+                    s += Math.Sin(subPhase) * Math.Exp(-th * 1.6) * 0.9;
+
+                    // 3. Dissonant cluster: fast attack, long decay, drifting 3% flat, slow uneasy tremolo.
+                    double drift = 1 - 0.03 * Math.Min(1, th / 3.0);
+                    double trem = 0.75 + 0.25 * Math.Sin(TwoPi * 4.7 * th + wobble);
+                    double env = Math.Min(1, th / 0.02) * Math.Exp(-th * 0.9);
+                    for (int k = 0; k < cluster.Length; k++)
+                    {
+                        phases[k] += TwoPi * cluster[k] * drift / SampleRate;
+                        s += Math.Sin(phases[k]) * env * trem * (k == 3 ? 0.08 : 0.16);
+                    }
+
+                    // 4. Whisper bed: noise through two vowel-like resonances, fluttering irregularly.
+                    double flutter = 0.5 + 0.5 * Math.Sin(TwoPi * 2.3 * th) * Math.Sin(TwoPi * 0.7 * th + 1.3);
+                    double wEnv = Math.Min(1, th / 0.4) * Math.Exp(-th * 0.7);
+                    s += (whisperA.Process(white) + whisperB.Process(white) * 0.7) * wEnv * flutter * 0.9;
+                }
+                o[i] = s;
+            }
+
+            // Fade the last 150 ms so the tail never clicks off.
+            int fade = Len(0.15f);
+            for (int i = 0; i < fade; i++) o[n - 1 - i] *= (double)i / fade;
+            return Normalize(ToFloat(o), 0.85f);
+        }
+
+        /// <summary>Radio squelch: a short burst of band-limited static with a key-click, played when a radio line starts.</summary>
+        public static float[] RadioSquelch()
+        {
+            int n = Len(0.16f);
+            var rng = new Random(77);
+            var bp = Biquad.BandPass(1700, 1.2);
+            var o = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / SampleRate;
+                double env = Math.Min(1, t / 0.005) * Math.Exp(-t / 0.06);
+                double click = t < 0.004 ? Math.Sin(TwoPi * 2500 * t) * (1 - t / 0.004) : 0;
+                o[i] = bp.Process(rng.NextDouble() * 2 - 1) * env + click * 0.6;
+            }
+            return Normalize(ToFloat(o), 0.5f);
         }
 
         /// <summary>Short switch click.</summary>
@@ -155,6 +251,51 @@ namespace Jupiter.Audio
         // ---------------- Helpers ----------------
 
         static int Len(float seconds) => (int)Math.Round(seconds * SampleRate);
+
+        static float[] ToFloat(double[] d)
+        {
+            var f = new float[d.Length];
+            for (int i = 0; i < d.Length; i++) f[i] = (float)d[i];
+            return f;
+        }
+
+        /// <summary>Second-order IIR filter (RBJ audio-EQ cookbook), used for band-limited noise.</summary>
+        sealed class Biquad
+        {
+            readonly double b0, b1, b2, a1, a2;
+            double x1, x2, y1, y2;
+
+            Biquad(double b0, double b1, double b2, double a0, double a1, double a2)
+            {
+                this.b0 = b0 / a0; this.b1 = b1 / a0; this.b2 = b2 / a0;
+                this.a1 = a1 / a0; this.a2 = a2 / a0;
+            }
+
+            public static Biquad BandPass(double freq, double q)
+            {
+                double w = TwoPi * freq / SampleRate, alpha = Math.Sin(w) / (2 * q), cos = Math.Cos(w);
+                return new Biquad(alpha, 0, -alpha, 1 + alpha, -2 * cos, 1 - alpha);
+            }
+
+            public static Biquad LowPass(double freq, double q)
+            {
+                double w = TwoPi * freq / SampleRate, alpha = Math.Sin(w) / (2 * q), cos = Math.Cos(w);
+                return new Biquad((1 - cos) / 2, 1 - cos, (1 - cos) / 2, 1 + alpha, -2 * cos, 1 - alpha);
+            }
+
+            public static Biquad HighPass(double freq, double q)
+            {
+                double w = TwoPi * freq / SampleRate, alpha = Math.Sin(w) / (2 * q), cos = Math.Cos(w);
+                return new Biquad((1 + cos) / 2, -(1 + cos), (1 + cos) / 2, 1 + alpha, -2 * cos, 1 - alpha);
+            }
+
+            public double Process(double x)
+            {
+                double y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+                x2 = x1; x1 = x; y2 = y1; y1 = y;
+                return y;
+            }
+        }
 
         static double Alpha(float cutoffHz) => 1.0 - Math.Exp(-TwoPi * cutoffHz / SampleRate);
 
