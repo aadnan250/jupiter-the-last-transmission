@@ -1,0 +1,64 @@
+# Chapter 2, Month 4. Command deck. Ashford reviews the radar calibration.
+# The Directive 7 option only appears if the player read the radar calibration summary in the science bay.
+
+=== start
+ASHFORD: Sam. Good. The calibration numbers look excellent. Two days ahead of schedule.
+[if flag sided_with_radar] ASHFORD: Mara tells me you backed the radar schedule. I appreciate that.
+[if flag hana_suspicious] ASHFORD: Hana came by. Asked some questions about the deep returns. Interesting questions.
+* "Why do we need returns from that deep?" -> why_deep
+  ~ flag asked_why_deep
+* "Mara needs those power hours for the lander." -> mara_case
+  ~ trust MARA +1
+  ~ trust ASHFORD -1
+  ~ flag argued_for_mara
+* "Happy to help, Commander." -> loyal
+  ~ trust ASHFORD +1
+  ~ flag loyal_to_ashford
+*! [if flag read_directive7] "What is Command Directive 7?" -> directive7
+  ~ flag asked_directive7
+  ~ trust ASHFORD -2
+
+=== why_deep
+ASHFORD: The thickness of the ice shell is the whole question. The deeper we see, the better our landing site.
+ASHFORD: (beat) That's all it is.
+-> END
+
+=== mara_case
+ASHFORD: She isn't wrong. I told her so. But the priority stands.
+-> END
+
+=== loyal
+ASHFORD: Good man. We're going to make history out there, Sam. All of us.
+-> END
+
+=== directive7
+ASHFORD: (long beat) Where did you see that?
+* "It's on the calibration summary. Anyone could read it." -> d7_honest
+  ~ trust ASHFORD +1
+* "Doesn't matter. What is it?" -> d7_press
+  ~ trust ASHFORD -1
+* "Forget I asked." -> d7_drop
+  ~ trust ASHFORD +1
+  ~ flag dropped_directive7
+*! "If there's something the crew should know, tell us now." -> d7_demand
+  ~ flag demanded_truth
+  ~ trust ASHFORD -1
+  ~ trust MARA +1
+
+=== d7_honest
+ASHFORD: Then that's my mistake. It's a gain profile, Sam. Paperwork from the agency. Leave it with me.
+-> END
+
+=== d7_press
+ASHFORD: It's an engineering directive. And it's above your clearance, and mine, frankly. Drop it.
+-> END
+
+=== d7_drop
+ASHFORD: (beat) Thank you.
+-> END
+
+=== d7_demand
+ASHFORD: (long beat) When there's something to tell, you'll hear it from me first. You have my word.
+ASHFORD: Is that good enough?
+SAM: It'll have to be.
+-> END

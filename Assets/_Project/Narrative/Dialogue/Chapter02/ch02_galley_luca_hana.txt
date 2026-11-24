@@ -1,0 +1,77 @@
+# Chapter 2, Month 4. The galley. Luca and Hana are arguing about music.
+# Every choice changes trust or sets a flag. Significant choices (*!) play the consequence sting.
+
+=== start
+LUCA: Okafor! Perfect timing. Settle something.
+HANA: Don't drag him into this.
+LUCA: Hana says bossa nova is "elevator music with a tan."
+HANA: I said it affectionately.
+* "I'm not fighting the person who does my blood tests." -> diplomat
+  ~ trust HANA +1
+* "It's better than whatever Mara plays in the workshop." -> jab
+  ~ trust LUCA +1
+  ~ trust MARA -1
+  ~ flag teased_mara_music
+* "Hana's right. It's elevator music." -> side_hana
+  ~ trust LUCA -1
+  ~ trust HANA +1
+* "Play me something. I'll decide." -> listen
+  ~ trust LUCA +2
+  ~ flag heard_luca_song
+
+=== diplomat
+LUCA: Coward.
+HANA: Smart coward. I would have doubled your next needle.
+-> sleep
+
+=== jab
+MARA (radio): The galley mic is open, Okafor. I can hear you.
+LUCA: (laughing) She's always listening. Like a ghost with a wrench.
+-> sleep
+
+=== side_hana
+LUCA: Traitor. I made you coffee on day twelve. Day twelve, Okafor.
+HANA: He's allowed to have taste.
+-> sleep
+
+=== listen
+LUCA: Finally. Someone with culture.
+LUCA: My grandfather played this on the beach in Florianopolis every Sunday. Thirty years. Same song.
+HANA: (long beat) ...Okay. That one is nice.
+LUCA: She admits it! Log it, Okafor. Mission day one-twenty.
+-> sleep
+
+=== sleep
+HANA: Since you're here. Your sleep log says five hours a night. Again.
+* "The radar schedule keeps me up." -> radar
+  ~ flag told_hana_radar
+  ~ trust HANA +1
+* "I'm fine. Really." -> fine
+  ~ trust HANA -1
+* "I keep dreaming about the ice. Same dream every night." -> dream
+  ~ trust HANA +1
+  ~ flag told_hana_dream
+*! "Ashford wants deep radar returns every orbit. He won't say why." -> suspicion
+  ~ flag hana_suspicious
+  ~ trust HANA +1
+  ~ trust ASHFORD -1
+
+=== radar
+HANA: Then I'll talk to the Commander about the schedule. Doctor's orders.
+-> END
+
+=== fine
+HANA: Mm. Everyone on this ship is "fine." I have a whole folder of "fine."
+-> END
+
+=== dream
+HANA: What happens in it?
+SAM: Nothing. I'm standing on the ice. And something underneath is very, very slowly turning to listen.
+LUCA: (beat) Okay. I'm putting the music back on.
+-> END
+
+=== suspicion
+HANA: (beat) Deep returns. From the ocean, not the ice?
+LUCA: Hey. Hey. It's a science mission. Scientists want data. That's all it is.
+HANA: (quietly) Maybe. I'll keep an eye on it.
+-> END

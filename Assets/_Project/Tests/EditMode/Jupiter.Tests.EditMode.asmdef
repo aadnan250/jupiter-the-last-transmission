@@ -3,6 +3,7 @@
     "rootNamespace": "Jupiter.Tests",
     "references": [
         "Jupiter.Runtime",
+        "Unity.InputSystem",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

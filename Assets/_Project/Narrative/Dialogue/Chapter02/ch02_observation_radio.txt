@@ -1,0 +1,51 @@
+# Chapter 2, Month 4. Plays over the radio the first time Sam enters the observation deck.
+# Who calls depends on earlier choices, so the player hears the consequences of what they said.
+
+=== start
+[if flag told_mara_truth_early] -> mara_truth
+[if flag offered_fix_player] -> mara_player
+[if flag hana_suspicious] -> hana
+-> luca
+
+=== mara_truth
+MARA (radio): Okafor. You there?
+MARA (radio): I sent Tomas a message. Twenty minutes each way, so... I'm waiting.
+MARA (radio): (beat) Thank you. For telling me. Don't make it a thing.
+* "Not making it a thing." -> END
+  ~ trust MARA +1
+* "He'd want you up here. Flying." -> END
+  ~ trust MARA +1
+  ~ flag mara_forgiving
+* "I should have told you two years ago." -> END
+  ~ trust MARA +2
+* "(Say nothing. Just look at the window.)" -> mara_quiet
+  ~ flag shared_silence_with_mara
+
+=== mara_quiet
+MARA (radio): (long beat) ...Yeah. It's something, isn't it.
+-> END
+
+=== mara_player
+MARA (radio): Okafor. The contact cleaner's back in C-4. Battery's holding a charge.
+MARA (radio): (beat) It works. That's all. Lindqvist out.
+-> END
+
+=== hana
+HANA (radio): Sam, it's Hana. Ashford shut me down about the deep returns. Politely.
+HANA (radio): Probably nothing. But I've started a notebook. Old habits.
+* "Keep writing. I'll tell you if I see anything." -> END
+  ~ trust HANA +1
+  ~ flag hana_ally
+* "Let it go. It's not worth it." -> END
+  ~ trust HANA -1
+  ~ unflag hana_suspicious
+* "I'll talk to him myself." -> END
+  ~ flag promised_hana_to_ask
+* "Don't put my name in that notebook." -> END
+  ~ trust HANA -2
+  ~ flag distanced_from_hana
+
+=== luca
+LUCA (radio): Okafor, you at the window? Mori says you're dodging your medical.
+LUCA (radio): Kidding. She says it with love. Mostly.
+-> END

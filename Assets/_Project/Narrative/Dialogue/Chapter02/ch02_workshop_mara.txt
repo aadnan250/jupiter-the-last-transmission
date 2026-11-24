@@ -1,0 +1,91 @@
+# Chapter 2, Month 4. The workshop. Mara is working on the lander's ramp actuator.
+# Her opening depends on what Sam said in the galley. The Tomas choice changes Chapter 6.
+
+=== start
+[if flag teased_mara_music] MARA: "Better than whatever Mara plays." The galley mic is always open, Okafor.
+[if !flag teased_mara_music] MARA: Okafor.
+MARA: If you're here about radar time, the answer is still no. I need those hours for the lander.
+* "I'm not here about radar. Need a hand?" -> help
+  ~ trust MARA +1
+* "Take it up with Ashford. They're his orders." -> orders
+  ~ flag blamed_ashford
+* "The radar matters more than the lander right now." -> radar_first
+  ~ trust MARA -2
+  ~ trust ASHFORD +1
+  ~ flag sided_with_radar
+* "(Look at the broken music player on her bench.)" -> player
+  ~ flag noticed_music_player
+
+=== help
+MARA: (beat) Pass me the ten millimetre. No. The other one.
+MARA: ...Thanks.
+-> tomas
+
+=== orders
+MARA: Everyone on this ship is following orders. That's what worries me.
+-> tomas
+
+=== radar_first
+MARA: Of course you'd say that. You've got friends on the selection board.
+-> tomas
+
+=== player
+MARA: Don't touch that. It was Tomas's. The battery contact's corroded and I haven't had time.
+* "My parents ran a repair shop. I could fix it." -> fix_offer
+  ~ trust MARA +1
+  ~ flag offered_fix_player
+* "Sorry. I'll leave it." -> leave_it
+  ~ trust MARA +1
+* "You kept his music player?" -> kept_it
+  ~ flag asked_about_player
+* "Corrosion like that is easy. You just don't want to fix it." -> push
+  ~ trust MARA -1
+  ~ flag pushed_mara
+
+=== fix_offer
+MARA: (long beat) ...Bin C-4 has contact cleaner. Don't break it.
+-> tomas
+
+=== leave_it
+MARA: Good.
+-> tomas
+
+=== kept_it
+MARA: He gave it to me the day they cut him. Said I'd need something to listen to out here.
+-> tomas
+
+=== push
+MARA: (sharp) You don't get to tell me what I want.
+-> tomas
+
+=== tomas
+MARA: He should be here, you know. Tomas trained six years for this seat.
+*! "He asked me not to tell you why they dropped him." -> truth
+  ~ flag told_mara_truth_early
+  ~ trust MARA +2
+* "I know. I'm sorry." -> sorry
+  ~ trust MARA +1
+* "I didn't ask for his seat." -> defensive
+  ~ trust MARA -1
+*! "(Say nothing. Keep the promise.)" -> silent
+  ~ flag kept_tomas_promise
+  ~ trust MARA -1
+
+=== truth
+MARA: (beat) What? Asked you? What does that mean?
+SAM: It was medical. His heart. He didn't want you flying angry at the agency.
+MARA: (long beat) Get out of my workshop, Okafor.
+MARA: (quieter) I need to think.
+-> END
+
+=== sorry
+MARA: (beat) Yeah. Me too.
+-> END
+
+=== defensive
+MARA: No. You just took it.
+-> END
+
+=== silent
+MARA: (beat) That's what I thought.
+-> END
