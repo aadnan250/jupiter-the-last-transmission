@@ -17,18 +17,43 @@ namespace Jupiter.EditorTools
             GreyboxTestRoomBuilder.BuildProfiles();
             JupiterTextureGenerator.Generate();
             CharacterMaterialBuilder.Build();
+            CombatAudioGenerator.Generate();
             PlayerRigBuilder.BuildPrefab();
+            ListenerBuilder.BuildPrefab();
             GreyboxTestRoomBuilder.Build();
             MeridianGreyboxBuilder.Build();
+            ConamaraBaseBuilder.Build();
             RenderPipelineTuner.Apply();
 
+            SetBuildScenes();
+            AssetDatabase.SaveAssets();
+            Debug.Log("[GeneratedContent] All generated content rebuilt.");
+        }
+
+        /// <summary>
+        /// Rebuilds only the Phase 4 content (combat audio, player prefab, Listener, Conamara Base) without
+        /// regenerating the other levels. Batch: -executeMethod Jupiter.EditorTools.GeneratedContent.RebuildPhase4
+        /// </summary>
+        [MenuItem("Jupiter/Rebuild Phase 4 Content")]
+        public static void RebuildPhase4()
+        {
+            CombatAudioGenerator.Generate();
+            PlayerRigBuilder.BuildPrefab();
+            ListenerBuilder.BuildPrefab();
+            ConamaraBaseBuilder.Build();
+            SetBuildScenes();
+            AssetDatabase.SaveAssets();
+            Debug.Log("[GeneratedContent] Phase 4 content rebuilt.");
+        }
+
+        static void SetBuildScenes()
+        {
             EditorBuildSettings.scenes = new[]
             {
                 new EditorBuildSettingsScene(MeridianGreyboxBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(GreyboxTestRoomBuilder.ScenePath, true),
+                new EditorBuildSettingsScene(ConamaraBaseBuilder.ScenePath, true),
             };
-            AssetDatabase.SaveAssets();
-            Debug.Log("[GeneratedContent] All generated content rebuilt.");
         }
     }
 }

@@ -4,7 +4,8 @@
     "references": [
         "Jupiter.Runtime",
         "Unity.InputSystem",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "Unity.AI.Navigation"
     ],
     "includePlatforms": [
         "Editor"

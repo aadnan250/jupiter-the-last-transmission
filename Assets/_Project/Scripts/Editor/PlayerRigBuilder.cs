@@ -74,6 +74,7 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(steps, "clips", AudioAssetGenerator.LoadFootsteps());
 
             BuildHud(root.transform, interaction, input);
+            CombatRigBuilder.AddCombat(root, input, pivot.transform);
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             Object.DestroyImmediate(root);
