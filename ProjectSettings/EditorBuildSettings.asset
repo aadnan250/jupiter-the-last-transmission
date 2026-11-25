@@ -11,5 +11,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/Sandbox/GreyboxTestRoom.unity
     guid: 841057f0241f9194c9f38896f5dee46d
+  - enabled: 1
+    path: Assets/_Project/Scenes/L04_ConamaraBase.unity
+    guid: 8c16789f0a45a2a4a84705f2662949b5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

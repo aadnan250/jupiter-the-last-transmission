@@ -6,7 +6,9 @@ A first-person science-fiction survival-horror game set in 2183, built in **Unit
 
 [![Repository checks](https://github.com/aadnan250/jupiter-the-last-transmission/actions/workflows/repo-checks.yml/badge.svg)](https://github.com/aadnan250/jupiter-the-last-transmission/actions/workflows/repo-checks.yml)
 
-> **Status: Phase 3 complete, plus voiced, realistic crew.** The crew of the *Meridian* are rigged, textured human characters who speak every line, with lip sync, blinking and head tracking. Every reply changes trust or the story, and big decisions are *felt*. 73 automated tests.
+> **Status: Phase 4a merged.** The Meridian is a furnished spaceship; the crew speak and react to your choices; and on Europa, the Conamara Base holds the Listener, a creature that hunts by vibration. 111 automated tests.
+>
+> **Earlier: Phase 3 complete, plus voiced, realistic crew.** The crew of the *Meridian* are rigged, textured human characters who speak every line, with lip sync, blinking and head tracking. Every reply changes trust or the story, and big decisions are *felt*. 73 automated tests.
 
 | | | | |
 |---|---|---|---|
@@ -76,6 +78,9 @@ git clone https://github.com/aadnan250/jupiter-the-last-transmission.git
 | Run | Left Shift | L3 | LS |
 | Crouch (toggle) | Left Ctrl / C | ● Circle | B |
 | Jump | Space | X Cross | A |
+| Fire bolt driver | Left mouse | R2 | RT |
+| Reload | R | ▲ Triangle | Y |
+| Use med-patch | H | D-pad up | D-pad up |
 | Interact / Talk | E | ■ Square | X |
 | Continue dialogue | E / Space / Click | X Cross | A |
 | Replies 1–4 | 1 / 2 / 3 / 4 | ▲ / ● / X / ■ | Y / B / A / X |
@@ -114,6 +119,7 @@ docs/                  Design and technical documentation
 
 - [Pre-production design document](docs/preproduction/README.md)
 - [Dialogue script format](docs/DIALOGUE_FORMAT.md)
+- [Creature AI: hearing, suspicion and torpor](docs/AI.md)
 - [Consequence ledger](docs/CONSEQUENCES.md)
 - [Characters pipeline](docs/CHARACTERS.md)
 - [Voices and credits](docs/VOICES.md)
@@ -127,7 +133,7 @@ docs/                  Design and technical documentation
 | 1. Project foundation | Done |
 | 2. Visual prototype (*Meridian* grey-box, lighting, interactions, ambience) | Done |
 | 3. Story foundation (dialogue, consequences, radio, objectives, save, controller support) | **Done** |
-| 4. Vertical slice (Chapters 6–7 on Europa) | Next |
+| 4. Vertical slice (Chapters 6–7 on Europa) | **In progress**: creature AI, survival, combat and Conamara Base done; story scripting next |
 | 5–12. Full production and release | Planned |
 
 ## Known limitations
