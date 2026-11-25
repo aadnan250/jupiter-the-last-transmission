@@ -23,8 +23,7 @@ namespace Jupiter.Tests
         [UnitySetUp]
         public IEnumerator LoadScene()
         {
-            yield return SceneManager.LoadSceneAsync("L04_ConamaraBase", LoadSceneMode.Single);
-            yield return null;
+            yield return ConamaraTestScene.LoadAtContact();
             player = Object.FindAnyObjectByType<PlayerController>();
             creature = Object.FindAnyObjectByType<CreatureAI>();
         }

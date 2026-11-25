@@ -1,0 +1,12 @@
+# Chapter 6, scene 6.1. Luca checks in from the lander pad as Sam starts the base sweep.
+# His joke is the clue to Ashford's terminal: the code is the commander's birthday, backwards.
+# The birthday itself is in the crew medical summary in the med bay.
+
+=== start
+LUCA (radio): Okafor, Lindqvist. Wren's tucked in. I'm staying with her tonight. Somebody has to keep the heaters honest.
+LUCA (radio): The Commander took Hana straight down to the drill chamber. He has that look. The one where he answers questions with checklists.
+[if flag asked_directive7] LUCA (radio): And before you ask, no. He still won't say what Directive Seven is.
+LUCA (radio): If you need anything from his office, his terminal code is his birthday. Backwards. Like everything else he does.
+MARA (radio): Luca. Channel discipline.
+LUCA (radio): Copy. Disciplining the channel. Wren out.
+-> END

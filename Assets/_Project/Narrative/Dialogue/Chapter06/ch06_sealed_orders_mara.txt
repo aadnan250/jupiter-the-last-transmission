@@ -1,0 +1,59 @@
+# Chapter 6, scene 6.4. After Sam opens Ashford's terminal: Command Directive 7, sample retrieval.
+# If Sam kept Tomas's message from her, Mara has found it herself in the mail cache and opens with that.
+# What Sam wants to do next sets up the Chapter 7 confrontation in the drill chamber.
+
+=== start
+[if flag kept_tomas_message] -> found_message
+-> orders
+
+=== found_message
+MARA: (hurt) I went through the rest of the mail cache while you were in there. All of it, Okafor.
+[if flag lied_to_mara] MARA: An old friend wishing you luck. That's what you called him.
+MARA: You let me treat you like that for two years. For a promise.
+* "It wasn't mine to break." -> found_reply
+  ~ trust MARA +1
+  ~ flag mara_found_message
+* "I'm sorry. I should have shown you." -> found_reply
+  ~ flag mara_found_message
+  ~ flag apologised_to_mara
+
+=== found_reply
+MARA: (long beat) ...No. I suppose it wasn't.
+-> orders
+
+=== orders
+MARA: So. What's in there that needs a code?
+SAM: Command Directive Seven. Secondary objective. Locate the source of Feature Seven. Return a viable biological sample.
+MARA: Biological. (beat) Tiamat heard something in seventy-one, and he knew.
+[if flag read_tiamat_log] MARA: That borehole in Tiamat's log. Sealed from below. Something closed it.
+[if flag demanded_truth] MARA: You asked him to his face, on the ship. And he looked you in the eye.
+MARA: And Hana is down there right now, drilling for him.
+*! "We go down there and confront him. Now." -> confront
+  ~ flag confront_ashford
+  ~ trust MARA +1
+*! "We get Hana out first. Quietly." -> warn
+  ~ flag warn_hana_first
+  ~ trust HANA +1
+* "Maybe there's a reason he couldn't tell us." -> defend
+  ~ trust MARA -1
+  ~ trust ASHFORD +1
+  ~ flag defended_ashford
+* "Luca should know. Call the pad." -> luca
+  ~ flag wanted_to_tell_luca
+  ~ trust LUCA +1
+
+=== confront
+MARA: Good. I was going to anyway.
+-> END
+
+=== warn
+MARA: Fine. But if he has her drilling into that thing, quiet is over.
+-> END
+
+=== defend
+MARA: (cold) There's always a reason, Okafor. That's what reasons are for.
+-> END
+
+=== luca
+MARA: Not on an open channel. Ashford hears everything on this base. Drill chamber first.
+-> END

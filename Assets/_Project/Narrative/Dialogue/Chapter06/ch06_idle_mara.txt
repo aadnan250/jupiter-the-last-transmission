@@ -1,0 +1,7 @@
+# Chapter 6. What Mara says when she has nothing new for Sam: a nudge toward the next beat.
+
+=== start
+[if !flag heard_tomas_message] MARA: The mail cache is on the comms console. Start there.
+[if flag heard_tomas_message] [if !flag read_sealed_orders] MARA: His office is next door. I'm not touching his terminal. You are.
+[if flag read_sealed_orders] MARA: Drill chamber. Before Hana gets any deeper.
+-> END

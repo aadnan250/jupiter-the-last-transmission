@@ -134,6 +134,7 @@ namespace Jupiter.EditorTools
             objective.rectTransform.sizeDelta = new Vector2(420, 60);
 
             BuildReadPanel(hud.transform, font, input);
+            BuildKeypadPanel(hud.transform, font, input);
             var dialogueUi = BuildDialoguePanel(hud.transform, font);
 
             // Dialogue manager + radio
@@ -205,6 +206,34 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(readUi, "titleText", title);
             GreyboxKit.Set(readUi, "bodyText", body);
             GreyboxKit.Set(readUi, "input", input);
+        }
+
+        /// <summary>Small centred code-entry panel for keypad terminals (hidden until one is used).</summary>
+        static void BuildKeypadPanel(Transform hud, Font font, InputReader input)
+        {
+            var panel = NewUI<Image>(hud, "KeypadPanel");
+            panel.color = new Color(0.03f, 0.05f, 0.06f, 0.94f);
+            panel.rectTransform.sizeDelta = new Vector2(360, 200);
+            var title = NewText(panel.transform, "Title", font, 15, TextAnchor.UpperCenter, new Color(0.62f, 0.85f, 0.9f));
+            title.rectTransform.anchoredPosition = new Vector2(0, 70);
+            title.rectTransform.sizeDelta = new Vector2(320, 26);
+            title.text = "ENTER ACCESS CODE";
+            var entry = NewText(panel.transform, "Entry", font, 40, TextAnchor.MiddleCenter, new Color(0.95f, 0.95f, 0.9f));
+            entry.rectTransform.anchoredPosition = new Vector2(0, 12);
+            entry.rectTransform.sizeDelta = new Vector2(320, 56);
+            var status = NewText(panel.transform, "Status", font, 15, TextAnchor.MiddleCenter, Color.white);
+            status.rectTransform.anchoredPosition = new Vector2(0, -36);
+            status.rectTransform.sizeDelta = new Vector2(320, 24);
+            var hint = NewText(panel.transform, "Hint", font, 12, TextAnchor.LowerCenter, new Color(1, 1, 1, 0.5f));
+            hint.rectTransform.anchoredPosition = new Vector2(0, -80);
+            hint.rectTransform.sizeDelta = new Vector2(340, 22);
+
+            var ui = hud.gameObject.AddComponent<KeypadUI>();
+            GreyboxKit.Set(ui, "panel", panel.gameObject);
+            GreyboxKit.Set(ui, "entryText", entry);
+            GreyboxKit.Set(ui, "statusText", status);
+            GreyboxKit.Set(ui, "hintText", hint);
+            GreyboxKit.Set(ui, "input", input);
         }
 
         static DialogueUI BuildDialoguePanel(Transform hud, Font font)

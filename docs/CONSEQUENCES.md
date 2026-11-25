@@ -33,10 +33,10 @@ This ledger tracks what each decision sets and where it pays off. "Planned" payo
 | "Sorry. I'll leave it." | Mara +1 | Trust |
 | "You kept his music player?" | `asked_about_player` | Mara explains Tomas gave it to her |
 | "…You just don't want to fix it." | Mara −1, `pushed_mara` | Trust |
-| ★ "He asked me not to tell you why they dropped him." | Mara +2, `told_mara_truth_early` | Mara thanks Sam over the radio; planned: changes the Chapter 6 Tomas scene |
+| ★ "He asked me not to tell you why they dropped him." | Mara +2, `told_mara_truth_early` | Mara thanks Sam over the radio; Chapter 6: she already knows, and asks to hear Tomas's message anyway |
 | "I know. I'm sorry." | Mara +1 | Trust |
 | "I didn't ask for his seat." | Mara −1 | Trust |
-| ★ "(Say nothing. Keep the promise.)" | Mara −1, `kept_tomas_promise` | Planned: Chapter 6, Mara finds Tomas's message herself |
+| ★ "(Say nothing. Keep the promise.)" | Mara −1, `kept_tomas_promise` | Chapter 6: the same choice comes back at the mail cache, with Tomas's own words |
 
 ### Command: Ashford (`ch02_command_ashford`)
 
@@ -55,3 +55,36 @@ This ledger tracks what each decision sets and where it pays off. "Planned" payo
 
 Plays once all three crew conversations are done. **Who calls depends on earlier choices:** Mara if you told her the truth
 (or offered to fix the music player), Hana if you shared your suspicion, otherwise Luca.
+
+## Chapter 6: The Discovery, Conamara Base
+
+### Mail cache: Tomas's message (`ch06_mail_cache`)
+
+| Reply | Effect | Payoff |
+|---|---|---|
+| "(Put on the headset and play it.)" | `played_tomas_privately` | Trust |
+| "Do you want to hear it first?" | Mara +1 | Trust |
+| ★ "(Turn the screen toward her.)" | Mara +2, `showed_mara_message` | Mara softens: "Idiot. Both of you."; planned: her Chapter 8 trust line |
+| ★ "(Close it. It wasn't yours to hear.)" | `kept_tomas_message` | Mara finds it herself and opens the sealed-orders conversation with it |
+| "Just an old friend wishing me luck." | Mara −2, `kept_tomas_message`, `lied_to_mara` | As above, and she quotes the lie back |
+| *If told on the ship:* "He'd have wanted you to hear it." | Mara +1 | Trust |
+| *If told on the ship:* ★ "I should have told you the day I got his seat." | Mara +1, `apologised_to_mara` | Planned: Chapter 8 |
+
+### Luca's radio check-in (`ch06_luca_radio`)
+
+No replies. Luca's joke ("his birthday, backwards") plus the crew medical summary in the med bay (DOB 17 04) give Ashford's
+terminal code, **4071**. If Sam asked Ashford about Directive 7 on the ship (`asked_directive7`), Luca mentions it.
+
+### Sealed orders: Mara (`ch06_sealed_orders_mara`)
+
+Offered once Sam has read Directive 7 on Ashford's terminal (`read_sealed_orders`). Opens differently if Sam kept the message.
+Mentions Tiamat's sealed borehole if Sam read the lab log (`read_tiamat_log`), and Sam's question on the ship if he asked (`demanded_truth`).
+
+| Reply | Effect | Payoff |
+|---|---|---|
+| *If kept:* "It wasn't mine to break." | Mara +1, `mara_found_message` | Trust |
+| *If kept:* "I'm sorry. I should have shown you." | `mara_found_message`, `apologised_to_mara` | Planned: Chapter 8 |
+| ★ "We go down there and confront him. Now." | Mara +1, `confront_ashford` | Planned: Chapter 7 confrontation opens on the attack |
+| ★ "We get Hana out first. Quietly." | Hana +1, `warn_hana_first` | Planned: Chapter 7, Sam reaches Hana before the argument |
+| "Maybe there's a reason he couldn't tell us." | Mara −1, Ashford +1, `defended_ashford` | Planned: Ashford's confession is warmer |
+| "Luca should know. Call the pad." | Luca +1, `wanted_to_tell_luca` | Planned: Luca's last transmission |

@@ -5,14 +5,16 @@ using UnityEngine;
 namespace Jupiter.Narrative
 {
     /// <summary>
-    /// A crew member the player can talk to. Plays the first conversation in <see cref="conversations"/>
-    /// that hasn't been completed yet; once all are done, plays their short idle conversation.
+    /// A crew member the player can talk to. Plays the first available conversation in <see cref="conversations"/>
+    /// (not completed yet, and its required flag set); otherwise plays their short idle conversation.
     /// Turns to face the player while talking, and owns the 3D AudioSource their voice comes from.
     /// </summary>
     public class CrewMember : MonoBehaviour, IInteractable
     {
         [SerializeField] string characterId = "MARA";
         [SerializeField] TextAsset[] conversations;
+        [Tooltip("Optional, one per conversation: a story flag that must be set before it is offered (empty = none).")]
+        [SerializeField] string[] conversationRequiresFlag = new string[0];
         [Tooltip("Played once every conversation is done. A one-line script, so it is voiced like everything else.")]
         [SerializeField] TextAsset idleConversation;
         [SerializeField] AudioSource voice;
@@ -75,8 +77,14 @@ namespace Jupiter.Narrative
         public TextAsset NextConversation()
         {
             if (conversations == null) return null;
-            foreach (var c in conversations)
-                if (c != null && !dialogue.Story.IsCompleted(c.name)) return c;
+            for (int i = 0; i < conversations.Length; i++)
+            {
+                var c = conversations[i];
+                if (c == null || dialogue.Story.IsCompleted(c.name)) continue;
+                string needs = conversationRequiresFlag != null && i < conversationRequiresFlag.Length ? conversationRequiresFlag[i] : null;
+                if (!string.IsNullOrEmpty(needs) && !dialogue.Story.HasFlag(needs)) continue;
+                return c;
+            }
             return null;
         }
 
