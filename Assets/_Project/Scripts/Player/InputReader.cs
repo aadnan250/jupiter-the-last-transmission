@@ -15,6 +15,7 @@ namespace Jupiter.Player
 
         InputActionMap playerMap, dialogueMap;
         InputAction move, look, lookStick, run, crouch, jump, interact;
+        InputAction fire, reload, heal;
         InputAction advance;
         readonly InputAction[] choices = new InputAction[4];
 
@@ -39,6 +40,10 @@ namespace Jupiter.Player
         public bool CrouchPressedThisFrame => Active && crouch != null && crouch.WasPressedThisFrame();
         public bool JumpPressedThisFrame => Active && jump != null && jump.WasPressedThisFrame();
         public bool InteractPressedThisFrame => !DialogueMode && interact != null && interact.WasPressedThisFrame();
+
+        public bool FirePressedThisFrame => Active && fire != null && fire.WasPressedThisFrame();
+        public bool ReloadPressedThisFrame => Active && reload != null && reload.WasPressedThisFrame();
+        public bool HealPressedThisFrame => Active && heal != null && heal.WasPressedThisFrame();
 
         public bool AdvancePressedThisFrame => DialogueMode && advance != null && advance.WasPressedThisFrame();
 
@@ -65,6 +70,9 @@ namespace Jupiter.Player
             crouch = playerMap.FindAction("Crouch", true);
             jump = playerMap.FindAction("Jump", true);
             interact = playerMap.FindAction("Interact", true);
+            fire = playerMap.FindAction("Fire", true);
+            reload = playerMap.FindAction("Reload", true);
+            heal = playerMap.FindAction("Heal", true);
 
             dialogueMap = actions.FindActionMap("Dialogue", throwIfNotFound: true);
             advance = dialogueMap.FindAction("Advance", true);
