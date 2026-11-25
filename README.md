@@ -68,6 +68,7 @@ git clone https://github.com/aadnan250/jupiter-the-last-transmission.git
 1. In Unity Hub: **Add → Add project from disk** and select the cloned folder.
 2. Open `Assets/_Project/Scenes/L02_Meridian.unity` (it opens automatically on a fresh clone) and press **Play**.
 3. Talk to the crew: Luca and Hana in the galley, Mara in the workshop, Commander Ashford in command. Then go to the observation deck.
+   For Chapter 6 on Europa, open `Assets/_Project/Scenes/L04_ConamaraBase.unity`: check the mail cache with Mara in comms, then find out what Ashford is hiding (the lab, the med bay and his office terminal).
 4. To regenerate all generated levels, audio and prefabs: **Jupiter → Rebuild All Generated Content**.
 
 ### Controls
@@ -135,7 +136,7 @@ docs/                  Design and technical documentation
 | 1. Project foundation | Done |
 | 2. Visual prototype (*Meridian* grey-box, lighting, interactions, ambience) | Done |
 | 3. Story foundation (dialogue, consequences, radio, objectives, save, controller support) | **Done** |
-| 4. Vertical slice (Chapters 6–7 on Europa) | **In progress**: creature AI, survival, combat and Conamara Base done; story scripting next |
+| 4. Vertical slice (Chapters 6–7 on Europa) | **In progress**: creature AI, survival, combat, stealth tools and Chapter 6 done; Chapter 7 next |
 | 5–12. Full production and release | Planned |
 
 ## Known limitations

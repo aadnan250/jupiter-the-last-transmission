@@ -1,0 +1,67 @@
+# Chapter 6, scene 6.2. The comms console in Conamara Base: eleven months of delayed mail from Earth.
+# Tomas Brandt recorded one message for Sam. Whether Sam shows it to Mara is the chapter's choice:
+# it decides how she opens the sealed-orders conversation (ch06_sealed_orders_mara) and her trust in Chapter 8.
+# If Sam told her the truth on the ship (Chapter 2), she already knows, and asks to hear it anyway.
+
+=== start
+MARA: Mail cache is synced. Eleven months of it. Most of it is yours. Your daughter draws a lot.
+MARA: (beat) There's one from Tomas. Addressed to you. Not me.
+[if flag told_mara_truth_early] -> knows
+* "(Put on the headset and play it.)" -> play
+  ~ flag played_tomas_privately
+* "Do you want to hear it first?" -> offer
+  ~ trust MARA +1
+
+=== offer
+MARA: It's addressed to you, Okafor. Play it. I'll pretend I'm not watching.
+-> play
+
+=== play
+~ flag heard_tomas_message
+TOMAS (radio): Sam. (beat) If she still hates you by Jupiter, that's my fault.
+TOMAS (radio): I asked you not to tell her about my heart, because I didn't want her flying angry at the agency.
+TOMAS (radio): Turns out she's flying angry at you. (laughs) Sorry.
+TOMAS (radio): Tell her it wasn't him. Tell her I said it.
+MARA: Well?
+*! "(Turn the screen toward her.)" -> show
+  ~ flag showed_mara_message
+  ~ trust MARA +2
+*! "(Close it. It wasn't yours to hear.)" -> keep
+  ~ flag kept_tomas_message
+* "Just an old friend wishing me luck." -> lie
+  ~ flag kept_tomas_message
+  ~ flag lied_to_mara
+  ~ trust MARA -2
+
+=== show
+MARA: (long beat) Why didn't you just say?
+SAM: He asked me not to.
+MARA: (beat) Idiot. (beat) Both of you.
+MARA: Come on. Ashford's office is next door, and he isn't in it.
+-> END
+
+=== keep
+MARA: (beat) Fine. Keep your secrets. Everyone else here does.
+-> END
+
+=== lie
+MARA: (beat) Sure he was.
+-> END
+
+=== knows
+~ flag heard_tomas_message
+MARA: You told me what it says, back on the ship. Play it anyway. I want to hear him say it.
+TOMAS (radio): Sam. (beat) If she still hates you by Jupiter, that's my fault.
+TOMAS (radio): I asked you not to tell her about my heart, because I didn't want her flying angry at the agency.
+TOMAS (radio): Turns out she's flying angry at you. (laughs) Sorry.
+TOMAS (radio): Tell her it wasn't him. Tell her I said it.
+MARA: (long beat) Idiot.
+* "He'd have wanted you to hear it." -> knows_end
+  ~ trust MARA +1
+*! "I should have told you the day I got his seat." -> knows_end
+  ~ trust MARA +1
+  ~ flag apologised_to_mara
+
+=== knows_end
+MARA: (quiet) Yeah. (beat) Ashford's office is next door, and he isn't in it.
+-> END

@@ -22,7 +22,7 @@ namespace Jupiter.EditorTools
     /// The base is pressurised (sound carries) but in Europa's 0.134 g. The safe room's door blocks the
     /// creature's NavMesh, so it is genuinely safe. One Listener waits, dormant, by the drill bore.
     /// Hiding lockers line every route; cans, wrenches and decoy thumpers can be thrown; Mara's flare pistol
-    /// waits on the ready-room bench.
+    /// waits on the ready-room bench. The Chapter 6 story layer is added by <see cref="ConamaraChapterSixBuilder"/>.
     /// </summary>
     public static class ConamaraBaseBuilder
     {
@@ -74,16 +74,20 @@ namespace Jupiter.EditorTools
             // Throwables are loose physics props: placed after the bake so they never carve the NavMesh.
             BuildThrowables(items);
 
-            // Player, armed, starting in the airlock facing into the base.
+            // Player, unarmed (Chapter 6 is an investigation), starting in the airlock facing into the base.
             var rig = PlayerRigBuilder.Spawn(new Vector3(0f, 0.05f, 3f), 0f, profile);
             var inv = rig.GetComponent<PlayerInventory>();
-            Set(inv, "startWithBoltDriver", true);
+            Set(inv, "startWithBoltDriver", false);
             Set(inv, "startingMedPatches", 1);
 
             // The Listener: dormant beside the bore, facing it.
             var listenerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ListenerBuilder.PrefabPath);
             var listener = (GameObject)PrefabUtility.InstantiatePrefab(listenerPrefab);
             listener.transform.SetPositionAndRotation(new Vector3(-11f, 0f, 55f), Quaternion.Euler(0f, 120f, 0f));
+
+            // Chapter 6 story: Mara, the mail cache, the documents, Ashford's terminal, the palm prints, objectives.
+            // The Listener stays hidden behind a story gate until contact (Chapter 7).
+            ConamaraChapterSixBuilder.Build(rig, listener, level, lights, items);
 
             RenderSettings.skybox = null;
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
@@ -141,7 +145,11 @@ namespace Jupiter.EditorTools
             WallZ(p, "Ready_E", 6f, 6f, 14f, H, T, wall);
             WallX(p, "Ready_N", 14f, -11f, 11f, H, T, wall, new Gap(0f, 3f));
             // Corridor A x[-1.5,1.5] z[14,40] with rooms either side
-            WallZ(p, "CorrA_W", -1.5f, 14f, 40f, H, T, wall, new Gap(20f), new Gap(33f));
+            // The lab window (z 37) sits in this wall: the Chapter 6 palm prints are on its inside.
+            WallZ(p, "CorrA_W", -1.5f, 14f, 40f, H, T, wall, new Gap(20f), new Gap(33f), new Gap(37f, 1.4f, 2.05f));
+            Span(p, "LabWindow_Sill", new Vector3(-1.625f, 0f, 36.3f), new Vector3(-1.375f, 0.95f, 37.7f), wall);
+            var glass = Box(p, "LabWindow_Glass", new Vector3(-1.5f, 1.5f, 37f), new Vector3(0.04f, 1.1f, 1.4f), dark);
+            Object.DestroyImmediate(glass.GetComponent<MeshRenderer>()); // grey-box glass: a collider you can see through
             WallZ(p, "CorrA_E", 1.5f, 14f, 40f, H, T, wall, new Gap(19f), new Gap(27f), new Gap(35f));
             WallX(p, "West_Div", 26f, -11f, -1.5f, H, T, wall);
             WallZ(p, "West_Outer", -11f, 14f, 40f, H, T, wall);
