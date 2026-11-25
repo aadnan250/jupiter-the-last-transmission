@@ -111,6 +111,7 @@ namespace Jupiter.Tests
             Assert.IsNotNull(actions);
 
             string[] needBoth = { "Player/Move", "Player/Interact", "Player/Jump", "Player/Crouch", "Player/Run",
+                                  "Player/Fire", "Player/Reload", "Player/Heal",
                                   "Dialogue/Advance", "Dialogue/Choice1", "Dialogue/Choice2", "Dialogue/Choice3", "Dialogue/Choice4" };
             foreach (string path in needBoth)
             {
