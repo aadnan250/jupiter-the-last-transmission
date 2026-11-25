@@ -1,0 +1,6 @@
+# Chapter 7. What Mara says when there is nothing more to talk about: in the drill chamber, then in the safe room.
+
+=== start
+[if !flag eruption_blackout] MARA: Stay next to me, Okafor.
+[if flag eruption_blackout] MARA: Breathe. Then we move.
+-> END

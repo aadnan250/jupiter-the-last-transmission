@@ -46,14 +46,28 @@ namespace Jupiter.Narrative
         /// <summary>The shared story state, or a local one in scenes without a <see cref="GameSession"/>.</summary>
         public StoryState Story => GameSession.Current != null ? GameSession.Current.Story : (fallbackState ??= new StoryState());
 
-        public bool Play(DialogueConversation conversation, Action finished = null)
+        /// <summary>
+        /// True while a conversation plays "on the move": radio chatter during a chase. The player keeps full
+        /// control, lines advance on their own, and the conversation must not offer replies.
+        /// </summary>
+        public bool OnTheMove { get; private set; }
+
+        float lineEndsAt;
+
+        public bool Play(DialogueConversation conversation, Action finished = null) => Begin(conversation, finished, false);
+
+        /// <summary>Plays a reply-free conversation without taking control away (see <see cref="OnTheMove"/>).</summary>
+        public bool PlayOnTheMove(DialogueConversation conversation, Action finished = null) => Begin(conversation, finished, true);
+
+        bool Begin(DialogueConversation conversation, Action finished, bool onTheMove)
         {
             if (IsActive || conversation == null) return false;
 
             runner = new DialogueRunner(conversation, Story);
             onFinished = finished;
             startedFrame = Time.frameCount;
-            if (input != null) input.SetDialogueMode(true);
+            OnTheMove = onTheMove;
+            if (input != null && !onTheMove) input.SetDialogueMode(true);
 
             runner.Start();
             Render();
@@ -80,6 +94,16 @@ namespace Jupiter.Narrative
 
         void Update()
         {
+            if (IsActive && OnTheMove)
+            {
+                if (runner.Kind == DialogueRunner.StepKind.Line && Time.time >= lineEndsAt)
+                {
+                    if (ui != null && ui.IsTyping) ui.CompleteTyping();
+                    runner.Advance();
+                    Render();
+                }
+                return;
+            }
             if (!IsActive || input == null) return;
             if (Time.frameCount == startedFrame) return; // the press that opened the conversation must not skip its first line
 
@@ -98,6 +122,12 @@ namespace Jupiter.Narrative
                     if (line.Radio && radioSource != null && radioSquelch != null) radioSource.PlayOneShot(radioSquelch, 0.6f);
                     PlayVoice(line);
                     if (ui != null) ui.ShowLine(Characters.DisplayName(line.Speaker), Characters.SubtitleColor(line.Speaker), line.Text, line.Radio);
+                    lineEndsAt = Time.time + DialogueTiming.LineSeconds(speaking != null ? speaking.clip.length : 0f, line.Text.Length);
+                    break;
+                case DialogueRunner.StepKind.Choices when OnTheMove:
+                    // Nobody can pick a reply while running: on-the-move scripts must not have any.
+                    Debug.LogWarning($"[DialogueManager] '{runner.Conversation.Id}' reached replies while on the move; ending it.");
+                    Finish();
                     break;
                 case DialogueRunner.StepKind.Choices:
                     StopVoice();
@@ -142,7 +172,8 @@ namespace Jupiter.Narrative
             string id = runner.Conversation.Id;
             runner = null;
             if (ui != null) ui.Hide();
-            if (input != null) input.SetDialogueMode(false);
+            if (input != null && !OnTheMove) input.SetDialogueMode(false);
+            OnTheMove = false;
 
             var callback = onFinished;
             onFinished = null;

@@ -11,8 +11,8 @@ namespace Jupiter.EditorTools
     /// The Chapter 6 "The Discovery" layer of Conamara Base (docs/preproduction/02-chapters-and-scenes.md §6):
     /// 6.1 Luca's radio check-in (with the terminal-code joke), 6.2 the mail cache and Tomas's message with Mara,
     /// 6.3 Tiamat's recovered log in the lab, 6.4 Ashford's code-locked terminal and the sealed orders, then Mara's
-    /// reaction, and 6.5 the frosted palm prints on the lab window. Reaching the drill chamber afterwards sets
-    /// <see cref="ContactFlag"/>, which is what lets the Listener exist (until the Chapter 7 eruption replaces it).
+    /// reaction, and 6.5 the frosted palm prints on the lab window. The Listener stays out of the base behind a
+    /// story gate until <see cref="ContactFlag"/>; Chapter 7 (<see cref="ConamaraChapterSevenBuilder"/>) takes it from the drill chamber.
     /// </summary>
     public static class ConamaraChapterSixBuilder
     {
@@ -22,8 +22,10 @@ namespace Jupiter.EditorTools
         public const string ConvOrders = "ch06_sealed_orders_mara";
         public const string ConvMaraIdle = "ch06_idle_mara";
 
-        /// <summary>Set on reaching the drill chamber after the sealed orders: the start of contact.</summary>
+        /// <summary>Set by the eruption (Chapter 7) when the Listener climbs out: before it, the Listener does not exist.</summary>
         public const string ContactFlag = "ch7_contact";
+        /// <summary>Set on walking into the drill chamber once the orders are known; starts the Chapter 7 confrontation.</summary>
+        public const string ReachedDrillFlag = "reached_drill_chamber";
         /// <summary>Ashford's terminal code: his birthday, 17 04, backwards.</summary>
         public const string AshfordCode = "4071";
 
@@ -71,10 +73,21 @@ namespace Jupiter.EditorTools
 
         static void Mara(Transform parent, DialogueManager dialogue)
         {
-            // In the comms room, by the console, facing the door.
-            var root = new GameObject("Crew_MARA");
+            // In the comms room, by the console, facing the door. Only until she follows Sam down (Chapter 7).
+            Crew(parent, "Crew_MARA", "MARA", new Vector3(8.2f, 0f, 21.6f), -110f, new Color(0.3f, 0.55f, 0.7f), dialogue,
+                new[] { Dialogue(ConvOrders) }, new[] { "read_sealed_orders" }, Dialogue(ConvMaraIdle));
+        }
+
+        /// <summary>
+        /// A crew member standing in the base: collider, a head-height voice, their model (or a placeholder capsule),
+        /// and their conversations, each optionally gated by a flag.
+        /// </summary>
+        internal static GameObject Crew(Transform parent, string objectName, string id, Vector3 position, float yaw, Color placeholder,
+            DialogueManager dialogue, TextAsset[] conversations, string[] requiresFlags, TextAsset idle)
+        {
+            var root = new GameObject(objectName);
             root.transform.SetParent(parent, false);
-            root.transform.SetPositionAndRotation(new Vector3(8.2f, 0f, 21.6f), Quaternion.Euler(0f, -110f, 0f));
+            root.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, yaw, 0f));
             var col = root.AddComponent<CapsuleCollider>();
             col.height = 1.75f;
             col.radius = 0.3f;
@@ -86,7 +99,7 @@ namespace Jupiter.EditorTools
             var voice = Audio3D(voiceGo, null, 1.5f, 16f);
             voice.spatialBlend = 0.85f;
 
-            if (!CharacterModelImporter.TrySpawnModel("MARA", root.transform, voice))
+            if (!CharacterModelImporter.TrySpawnModel(id, root.transform, voice))
             {
                 var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 body.name = "Body";
@@ -94,18 +107,19 @@ namespace Jupiter.EditorTools
                 body.transform.SetParent(root.transform, false);
                 body.transform.localPosition = new Vector3(0f, 0.875f, 0f);
                 body.transform.localScale = new Vector3(0.55f, 0.875f, 0.45f);
-                body.GetComponent<Renderer>().sharedMaterial = Mat("CB_Crew_MARA", new Color(0.3f, 0.55f, 0.7f));
+                body.GetComponent<Renderer>().sharedMaterial = Mat($"CB_Crew_{id}", placeholder);
             }
 
             var member = root.AddComponent<CrewMember>();
-            Set(member, "characterId", "MARA");
-            Set(member, "conversations", new Object[] { Dialogue(ConvOrders) });
+            Set(member, "characterId", id);
+            Set(member, "conversations", conversations ?? new TextAsset[0]);
             var so = new SerializedObject(member);
-            SetStrings(so.FindProperty("conversationRequiresFlag"), "read_sealed_orders");
+            SetStrings(so.FindProperty("conversationRequiresFlag"), requiresFlags ?? new string[0]);
             so.ApplyModifiedPropertiesWithoutUndo();
-            Set(member, "idleConversation", Dialogue(ConvMaraIdle));
+            Set(member, "idleConversation", idle);
             Set(member, "voice", voice);
             Set(member, "dialogue", dialogue);
+            return root;
         }
 
         static void BuildComms(Transform parent, DialogueManager dialogue)
@@ -264,16 +278,9 @@ namespace Jupiter.EditorTools
             // 6.1 Luca checks in as Sam leaves the ready room.
             var luca = Trigger(parent, "Trigger_LucaRadio", new Vector3(0f, 1.4f, 16f), new Vector3(3f, 2.8f, 2f), dialogue);
             Set(luca, "conversation", Dialogue(ConvLuca));
-
-            // Reaching the drill chamber once the orders are known is the start of contact.
-            var drill = Trigger(parent, "Trigger_DrillChamber", new Vector3(-7f, 1.4f, 44.6f), new Vector3(2.4f, 2.8f, 1.6f), dialogue);
-            Set(drill, "setsFlagOnEnter", ContactFlag);
-            var so = new SerializedObject(drill);
-            SetStrings(so.FindProperty("requiresCompleted"), ConvOrders);
-            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static DialogueTrigger Trigger(Transform parent, string name, Vector3 pos, Vector3 size, DialogueManager dialogue)
+        internal static DialogueTrigger Trigger(Transform parent, string name, Vector3 pos, Vector3 size, DialogueManager dialogue)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -299,11 +306,11 @@ namespace Jupiter.EditorTools
             Objective(list.GetArrayElementAtIndex(0), "Check the mail cache in comms", new[] { ConvMail }, new string[0]);
             Objective(list.GetArrayElementAtIndex(1), "Find out what Ashford is hiding", new string[0], new[] { "read_tiamat_log", "read_sealed_orders" });
             Objective(list.GetArrayElementAtIndex(2), "Talk to Mara", new[] { ConvOrders }, new string[0]);
-            Objective(list.GetArrayElementAtIndex(3), "Go down to the drill chamber", new string[0], new[] { ContactFlag });
+            Objective(list.GetArrayElementAtIndex(3), "Go down to the drill chamber", new string[0], new[] { ReachedDrillFlag });
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static void Objective(SerializedProperty o, string text, string[] conversations, string[] flags)
+        internal static void Objective(SerializedProperty o, string text, string[] conversations, string[] flags)
         {
             o.FindPropertyRelative("text").stringValue = text;
             SetStrings(o.FindPropertyRelative("requiredConversations"), conversations);
@@ -329,7 +336,7 @@ namespace Jupiter.EditorTools
             EditorUtility.SetDirty(go);
         }
 
-        static void SetStrings(SerializedProperty prop, params string[] values)
+        internal static void SetStrings(SerializedProperty prop, params string[] values)
         {
             prop.arraySize = values.Length;
             for (int i = 0; i < values.Length; i++) prop.GetArrayElementAtIndex(i).stringValue = values[i];

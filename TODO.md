@@ -36,7 +36,7 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 ## Slice 7: Chapters 6–7 story in the base (in progress)
 - [x] Ch. 6 "The Discovery": base exploration, Tomas's message choice, Tiamat log, Ashford's sealed orders, palm prints
 - [ ] Ch. 6.3 EVA to the *Tiamat* site itself (needs the Slice 8 surface level; the log is read in the lab for now)
-- [ ] Ch. 7 "Contact": drill chamber eruption, first Listener encounter, retreat, safe room
+- [x] Ch. 7 "Contact": confrontation, drill chamber eruption, first Listener encounter, Ashford's door, retreat, safe room
 - [ ] Luca's radio death and Ashford's confession over a failing channel
 - [x] Hiding spots (lockers), thrown distractions, flare pistol
 - [ ] Needles (vent crawlers)

@@ -1,0 +1,8 @@
+# Chapter 7, scene 7.3. The drill-chamber pressure door slams behind Sam. Ashford is on the other side of it.
+# Plays on the move, so it has no replies.
+
+=== start
+ASHFORD (radio): Sam. Go. I have the door.
+MARA (radio): Daniel, it's right there with you!
+ASHFORD (radio): Safe room. East side of corridor A. That is an order, Lindqvist.
+-> END

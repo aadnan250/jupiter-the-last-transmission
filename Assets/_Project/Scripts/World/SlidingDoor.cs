@@ -52,6 +52,14 @@ namespace Jupiter.World
 
         public void SetLocked(bool value) => locked = value;
 
+        /// <summary>Opens or closes from a script (ignores the lock), with the matching sound.</summary>
+        public void SetOpen(bool value)
+        {
+            if (open == value) return;
+            open = value;
+            PlayClip(open ? openClip : closeClip);
+        }
+
         void PlayClip(AudioClip clip)
         {
             if (audioSource != null && clip != null) audioSource.PlayOneShot(clip);
