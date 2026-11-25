@@ -1,0 +1,5 @@
+# Ashford in the drill chamber before the confrontation (Sam can walk in early, during Chapter 6).
+
+=== start
+ASHFORD: Finish the base sweep, Sam. We'll talk after.
+-> END

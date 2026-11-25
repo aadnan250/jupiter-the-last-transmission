@@ -1,0 +1,40 @@
+# Chapter 7. The safe room: the first time the player can breathe since the bore opened.
+# Mara made it here first. What Sam wants to do next carries into Luca's call and Ashford's confession.
+
+=== start
+MARA: (breathing hard) It can't get in here. I don't think it can get in here.
+MARA: Hana. It took Hana, Sam. It just... took her. Into the bore.
+[if flag noticed_bore_frost] MARA: You saw the frost before it happened. You saw it coming.
+[if flag drill_door_broken] MARA: That pounding stopped. Then the door gave. (beat) Daniel was on that door.
+*! "We go back for Ashford." -> back
+  ~ flag go_back_for_ashford
+  ~ trust ASHFORD +1
+*! "Ashford chose that door. We get to the pad." -> pad
+  ~ flag leave_ashford
+  ~ trust MARA +1
+* "(Sit down next to her. Say nothing.)" -> sit
+  ~ trust MARA +1
+  ~ flag comforted_mara
+* "I hit it. It didn't matter." -> gun
+  ~ flag knows_bolts_fail
+
+=== back
+MARA: (beat) He stayed on that door so we could run. Going back could waste that.
+MARA: But if he's alive... yeah. We try.
+-> luca
+
+=== pad
+MARA: Luca has Wren warm. We get to the pad, and we get off this moon.
+-> luca
+
+=== sit
+MARA: (long beat) ...Thanks.
+-> luca
+
+=== gun
+MARA: It goes down, and then it gets up. (beat) Hana was studying the frost. If anyone knew how to kill it, she did.
+-> luca
+
+=== luca
+MARA: (beat) Radio. Luca's channel. He's prepping Wren.
+-> END

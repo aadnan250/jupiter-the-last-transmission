@@ -1,0 +1,7 @@
+# Chapter 7, scene 7.2. Seconds after the lights fail. Mara is already out of the chamber.
+# Plays on the move (the player keeps control), so it has no replies.
+
+=== start
+MARA (radio): Okafor! I can't see you! Get out of the chamber. Corridor B!
+MARA (radio): The bolt driver is on Hana's console. Take it and move!
+-> END

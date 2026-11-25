@@ -158,6 +158,16 @@ namespace Jupiter.Creatures
         bool PlayerHidden => concealment != null && concealment.IsHidden;
 
         /// <summary>
+        /// A scripted stimulus (the eruption, a door giving way): it senses something at <paramref name="position"/>
+        /// as strongly as a perceived vibration of <paramref name="intensity"/> (0..1).
+        /// </summary>
+        public void Alert(Vector3 position, float intensity)
+        {
+            if (State == CreatureState.Dead || State == CreatureState.Torpor || State == CreatureState.Blinded) return;
+            Suspicion.Hear(intensity, position);
+        }
+
+        /// <summary>
         /// Flares beat everything except being next to the player: the nearest burning flare it has not already
         /// been dazzled by either lures it (walk straight to it) or, up close, blinds it. Returns true when blinded.
         /// </summary>

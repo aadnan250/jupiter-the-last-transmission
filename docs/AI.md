@@ -71,6 +71,13 @@ All the numbers live in `Creatures/StealthRules.cs` (pure C#, EditMode tested).
 any (not torpor) ──flare within 14 m──▶ Investigating (exact point) ──within 2.5 m──▶ Blinded ──5 s──▶ Listening
 ```
 
+## 6. Scripted stimuli (Chapter 7)
+
+Story beats talk to the creature through the same senses as everything else. `CreatureAI.Alert(position, intensity)`
+adds a perceived stimulus (used by the bore eruption and by Ashford's pressure door giving way), so the creature still
+investigates or hunts through its normal states. The drill-chamber pressure door carries a carving `NavMeshObstacle`: while
+it is shut, the creature genuinely cannot path out.
+
 ## Known limitations
 
 - The Listener is a primitive-shape placeholder; its final model and animations come later.

@@ -88,3 +88,33 @@ Mentions Tiamat's sealed borehole if Sam read the lab log (`read_tiamat_log`), a
 | ★ "We get Hana out first. Quietly." | Hana +1, `warn_hana_first` | Planned: Chapter 7, Sam reaches Hana before the argument |
 | "Maybe there's a reason he couldn't tell us." | Mara −1, Ashford +1, `defended_ashford` | Planned: Ashford's confession is warmer |
 | "Luca should know. Call the pad." | Luca +1, `wanted_to_tell_luca` | Planned: Luca's last transmission |
+
+## Chapter 7: Contact, Conamara Base
+
+### The confrontation (`ch07_confrontation`)
+
+Plays on walking into the drill chamber after the sealed orders. Opens on the attack if Sam chose to confront Ashford
+(`confront_ashford`), with Sam calling Hana away if he chose to warn her (`warn_hana_first`), and otherwise with Ashford's
+greeting. Ashford keeps his promise line if Sam demanded the truth on the ship (`demanded_truth`); Mara needles him if Sam
+defended him (`defended_ashford`). Every branch ends with the drill seizing (`drill_seized`), which starts the eruption.
+
+| Reply | Effect | Payoff |
+|---|---|---|
+| ★ "Then why is Hana collecting a sample to take home?" | Ashford −1, Hana +1, `accused_ashford` | Planned: Ashford's confession |
+| ★ "Hana, stop the drill. Now." | Hana +1, `ordered_drill_stop` | Planned: Hana's notebook (Ch. 9) |
+| "Commander, we deserved to know." | Ashford +1 | Ashford apologises |
+| "(Look at the bore.)" | `noticed_bore_frost` | Mara remembers it in the safe room |
+
+### The safe room (`ch07_safe_room`)
+
+Plays on reaching the safe room after the blackout. Mara mentions the frost if Sam saw it, and the door if it has given way.
+
+| Reply | Effect | Payoff |
+|---|---|---|
+| ★ "We go back for Ashford." | Ashford +1, `go_back_for_ashford` | Planned: Ashford's confession |
+| ★ "Ashford chose that door. We get to the pad." | Mara +1, `leave_ashford` | Planned: Ashford's confession |
+| "(Sit down next to her. Say nothing.)" | Mara +1, `comforted_mara` | Planned: Chapter 8 tunnels conversation |
+| "I hit it. It didn't matter." | `knows_bolts_fail` | Mara points to Hana's research (the node weakness, Ch. 9) |
+
+Radio on the move (no replies): `ch07_blackout_radio` (Mara, as the lights fail) and `ch07_door_radio` (Ashford, as the
+pressure door shuts).

@@ -88,6 +88,8 @@ namespace Jupiter.EditorTools
             // Chapter 6 story: Mara, the mail cache, the documents, Ashford's terminal, the palm prints, objectives.
             // The Listener stays hidden behind a story gate until contact (Chapter 7).
             ConamaraChapterSixBuilder.Build(rig, listener, level, lights, items);
+            // Chapter 7 story: the confrontation, the eruption, Ashford's door and the safe room.
+            ConamaraChapterSevenBuilder.Build(rig, listener, level, lights);
 
             RenderSettings.skybox = null;
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
@@ -402,7 +404,7 @@ namespace Jupiter.EditorTools
 
         // ------------------------------------------------------------------ helpers
 
-        static void Door(Transform parent, string name, Vector3 pos, float yaw, float width, bool locked, Material mat)
+        internal static SlidingDoor Door(Transform parent, string name, Vector3 pos, float yaw, float width, bool locked, Material mat)
         {
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
@@ -421,6 +423,7 @@ namespace Jupiter.EditorTools
             Set(d, "openClip", AudioAssetGenerator.Load(AudioAssetGenerator.DoorOpen));
             Set(d, "closeClip", AudioAssetGenerator.Load(AudioAssetGenerator.DoorClose));
             Set(d, "lockedClip", AudioAssetGenerator.Load(AudioAssetGenerator.SwitchClick));
+            return d;
         }
 
         static void PlaceSupply(Transform parent, Combat.Pickup.Kind kind, int amount, Vector3 pos)

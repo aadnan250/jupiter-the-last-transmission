@@ -185,8 +185,8 @@ namespace Jupiter.Tests
             Assert.AreEqual("Talk to Mara", Mission.CurrentText);
             story.MarkCompleted("ch06_sealed_orders_mara");
             Assert.AreEqual("Go down to the drill chamber", Mission.CurrentText);
-            story.SetFlag(ConamaraTestScene.ContactFlag);
-            Assert.AreEqual("Chapter 6 complete", Mission.CurrentText);
+            story.SetFlag("reached_drill_chamber");
+            Assert.AreEqual("Get out of the drill chamber", Mission.CurrentText, "Chapter 7 picks up from here");
             yield return null;
         }
 

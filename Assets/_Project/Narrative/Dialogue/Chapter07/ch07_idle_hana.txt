@@ -1,0 +1,5 @@
+# Hana at the drill console before the confrontation (Sam can walk in early, during Chapter 6).
+
+=== start
+HANA: Torque is steady at two hundred metres. Please don't touch anything, Sam.
+-> END

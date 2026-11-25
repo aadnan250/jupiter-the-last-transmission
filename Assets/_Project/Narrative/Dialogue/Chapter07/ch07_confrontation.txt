@@ -1,0 +1,66 @@
+# Chapter 7, scene 7.1. The drill chamber. Sam and Mara confront Ashford while Hana runs the drill under his orders.
+# How it opens depends on what Sam chose after reading the sealed orders (ch06_sealed_orders_mara).
+# It ends when the drill seizes: drill_seized starts the eruption (EruptionSequence).
+
+=== start
+[if flag confront_ashford] -> attack
+[if flag warn_hana_first] -> hana_first
+-> arrive
+
+=== attack
+MARA: Directive Seven, Daniel. A biological sample. Say it to our faces.
+-> ashford
+
+=== hana_first
+SAM: Hana. Step away from the console. Please.
+HANA: Sam? What's wrong?
+MARA: Ask him what you're drilling for.
+-> ashford
+
+=== arrive
+ASHFORD: Sam. Mara. The sweep is done already?
+MARA: We read your orders.
+-> ashford
+
+=== ashford
+ASHFORD: (long beat) Those orders were sealed for a reason.
+HANA: Daniel? What is she talking about?
+[if flag demanded_truth] ASHFORD: I promised you'd hear it from me, Sam. I meant it. I just meant later.
+[if flag defended_ashford] MARA: Okafor thinks you had a reason. Go on. Give him one.
+ASHFORD: Tiamat heard something under this ice. Our job is to find out what. That's all this is.
+*! "Then why is Hana collecting a sample to take home?" -> sample
+  ~ flag accused_ashford
+  ~ trust ASHFORD -1
+  ~ trust HANA +1
+*! "Hana, stop the drill. Now." -> stop
+  ~ flag ordered_drill_stop
+  ~ trust HANA +1
+* "Commander, we deserved to know." -> deserved
+  ~ trust ASHFORD +1
+* "(Look at the bore.)" -> look
+  ~ flag noticed_bore_frost
+
+=== sample
+HANA: (beat) Daniel. Is that true?
+ASHFORD: It was never going to hurt anyone.
+-> seize
+
+=== stop
+HANA: I... Commander?
+ASHFORD: Keep drilling, Doctor. That's an order.
+-> seize
+
+=== deserved
+ASHFORD: (beat) Yes. You did. (beat) I'm sorry, Sam.
+-> seize
+
+=== look
+SAM: The frost on the railing. It's growing. Toward us.
+-> seize
+
+=== seize
+HANA: Wait. The torque is spiking. Something is holding the bit.
+HANA: It's not ice. It's pulling back.
+MARA: Kill the drill, Hana! Kill it!
+~ flag drill_seized
+-> END

@@ -122,6 +122,48 @@ namespace Jupiter.Audio
             return ProceduralAudio.Normalize(o, 0.6f);
         }
 
+        /// <summary>The bore erupting: a drill motor straining and stalling, ice cracking, a long low rumble.</summary>
+        public static float[] Eruption()
+        {
+            int n = (int)(3.2 * Rate);
+            var rng = new Random(7070);
+            var o = new float[n];
+            double lp = 0, lp2 = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double white = rng.NextDouble() * 2 - 1;
+                lp += 0.02 * (white - lp);
+                lp2 += 0.25 * (white - lp2);
+                // Motor whine sliding down as the bit is held, then cutting out at 1.1 s.
+                double motor = t < 1.1 ? Math.Sin(TwoPi * (180 - 110 * t) * t) * 0.3 * (0.6 + 0.4 * Math.Sin(TwoPi * 13 * t)) : 0;
+                double rumble = lp * 6.0 * Math.Min(1, t / 0.4) * Math.Exp(-Math.Max(0, t - 1.8) * 1.4);
+                double crack = 0;
+                foreach (double at in new[] { 1.15, 1.32, 1.6, 2.05 })
+                {
+                    double u = t - at;
+                    if (u >= 0) crack += lp2 * Math.Exp(-u * 35) * 1.2 + Math.Sin(TwoPi * 90 * u) * Math.Exp(-u * 12) * 0.5;
+                }
+                o[i] = (float)(motor + rumble + crack);
+            }
+            return ProceduralAudio.Normalize(o, 0.95f);
+        }
+
+        /// <summary>Something heavy hitting the far side of a pressure door: a dull boom and a metal shudder.</summary>
+        public static float[] DoorPound()
+        {
+            int n = (int)(0.9 * Rate);
+            var o = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double boom = Math.Sin(TwoPi * (60 - 20 * t) * t) * Math.Exp(-t * 7);
+                double shudder = Math.Sin(TwoPi * 410 * t) * Math.Sin(TwoPi * 23 * t) * Math.Exp(-t * 9) * 0.25;
+                o[i] = (float)(boom + shudder);
+            }
+            return ProceduralAudio.Normalize(o, 0.9f);
+        }
+
         static double Clack(double t) => t < 0 ? 0 : Math.Exp(-t * 70) * (Math.Sin(TwoPi * 900 * t) * 0.5 + Math.Sin(TwoPi * 210 * t));
     }
 }

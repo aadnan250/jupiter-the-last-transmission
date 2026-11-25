@@ -13,6 +13,8 @@ namespace Jupiter.World
         [SerializeField] string flag;
         [Tooltip("True: targets are active only while the flag is set. False: only while it is not.")]
         [SerializeField] bool activeWhenSet = true;
+        [Tooltip("Optional: the targets are also hidden once this flag is set (e.g. present from A until B).")]
+        [SerializeField] string unlessFlag;
         [SerializeField] GameObject[] targets;
         [SerializeField] DialogueManager dialogue;
 
@@ -37,6 +39,7 @@ namespace Jupiter.World
         {
             bool set = story != null && !string.IsNullOrEmpty(flag) && story.HasFlag(flag);
             bool active = set == activeWhenSet;
+            if (active && story != null && !string.IsNullOrEmpty(unlessFlag) && story.HasFlag(unlessFlag)) active = false;
             if (targets == null) return;
             foreach (var t in targets)
                 if (t != null && t.activeSelf != active) t.SetActive(active);

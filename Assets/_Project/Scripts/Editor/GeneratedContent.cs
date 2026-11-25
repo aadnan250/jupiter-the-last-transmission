@@ -51,9 +51,10 @@ namespace Jupiter.EditorTools
         {
             EditorBuildSettings.scenes = new[]
             {
+                // The newest chapter first: a build starts in Conamara Base.
+                new EditorBuildSettingsScene(ConamaraBaseBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(MeridianGreyboxBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(GreyboxTestRoomBuilder.ScenePath, true),
-                new EditorBuildSettingsScene(ConamaraBaseBuilder.ScenePath, true),
             };
         }
     }
