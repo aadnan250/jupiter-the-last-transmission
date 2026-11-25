@@ -4,19 +4,19 @@ using UnityEditor.SceneManagement;
 namespace Jupiter.EditorTools
 {
     /// <summary>
-    /// Opens the newest playable level when the editor starts, so Play goes straight into the latest content:
+    /// Opens the first level of the game when the editor starts, so Play runs the story from the beginning:
     /// always on an empty "Untitled" scene (right after cloning), and once per <see cref="ContentVersion"/> even if
     /// the editor remembered an older scene. Unity reopens the last scene you had open, so without the version
-    /// check a project that was last on the Meridian would keep opening the Meridian after new chapters land.
+    /// check a project that was last on another level would keep opening it after the start of the game changes.
     /// It never replaces a scene with unsaved changes.
     /// </summary>
     [InitializeOnLoad]
     static class OpenStartSceneOnLaunch
     {
-        /// <summary>The newest level: Conamara Base holds Chapters 6 and 7.</summary>
-        public const string StartScene = ConamaraBaseBuilder.ScenePath;
+        /// <summary>The start of the game: the Meridian (Chapter 2), which leads on to Conamara Base (Chapters 6-7).</summary>
+        public const string StartScene = MeridianGreyboxBuilder.ScenePath;
         /// <summary>Bump when a new level or chapter becomes the one to show on opening the project.</summary>
-        const string ContentVersion = "slice7-chapter7";
+        const string ContentVersion = "slice7-story-from-start";
 
         const string SessionKey = "Jupiter.OpenStartSceneOnLaunch.Done";
         const string VersionKey = "Jupiter.OpenStartSceneOnLaunch.Version";

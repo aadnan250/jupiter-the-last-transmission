@@ -66,11 +66,11 @@ git clone https://github.com/aadnan250/jupiter-the-last-transmission.git
 ```
 
 1. In Unity Hub: **Add → Add project from disk** and select the cloned folder.
-2. The newest level, `Assets/_Project/Scenes/L04_ConamaraBase.unity` (Chapters 6 and 7 on Europa), opens automatically; press **Play**.
+2. The first level, `Assets/_Project/Scenes/L02_Meridian.unity` (Chapter 2 on the ship), opens automatically; press **Play**.
    The Game view plays maximized over the whole editor (Shift+Space toggles it); a built game starts in borderless full screen.
-   The earlier ship chapters are in `Assets/_Project/Scenes/L02_Meridian.unity`.
+   After the observation deck radio call, a time card leads on to `L04_ConamaraBase` (Chapters 6 and 7 on Europa), with your choices carried over. To jump straight to Europa, open that scene and press Play.
 3. Talk to the crew: Luca and Hana in the galley, Mara in the workshop, Commander Ashford in command. Then go to the observation deck.
-   For Chapter 6 on Europa, open `Assets/_Project/Scenes/L04_ConamaraBase.unity`: check the mail cache with Mara in comms, then find out what Ashford is hiding (the lab, the med bay and his office terminal).
+   On Europa: check the mail cache with Mara in comms, then find out what Ashford is hiding (the lab, the med bay and his office terminal).
 4. To regenerate all generated levels, audio and prefabs: **Jupiter → Rebuild All Generated Content**.
 
 ### Controls
