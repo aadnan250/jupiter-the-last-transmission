@@ -81,7 +81,9 @@ git clone https://github.com/aadnan250/jupiter-the-last-transmission.git
 | Fire bolt driver | Left mouse | R2 | RT |
 | Reload | R | ▲ Triangle | Y |
 | Use med-patch | H | D-pad up | D-pad up |
-| Interact / Talk | E | ■ Square | X |
+| Throw held object | G | R1 | RB |
+| Fire flare pistol | T | D-pad down | D-pad down |
+| Interact / Talk / Hide in locker | E | ■ Square | X |
 | Continue dialogue | E / Space / Click | X Cross | A |
 | Replies 1–4 | 1 / 2 / 3 / 4 | ▲ / ● / X / ■ | Y / B / A / X |
 | Quick save / load | F5 / F9 | (autosave after conversations) | |

@@ -39,10 +39,28 @@ namespace Jupiter.Creatures
         /// <summary>The creature is nearly blind: it only "sees" within <see cref="SightRange"/>.</summary>
         public bool See(Vector3 position, float distance)
         {
-            if (distance > SightRange) return false;
+            if (!StealthRules.CanSee(false, distance, SightRange)) return false;
             Value = Mathf.Max(Value, HuntThreshold + 0.1f);
             LastKnownPosition = position;
             return true;
+        }
+
+        /// <summary>
+        /// A lure (a burning flare) drags attention to a point: at least investigating, and the point becomes
+        /// where it thinks the noise is. Heat and light are easy to place, so there is no position error.
+        /// </summary>
+        public void Lure(Vector3 position)
+        {
+            Value = Mathf.Max(Value, InvestigateThreshold + 0.05f);
+            LastKnownPosition = position;
+        }
+
+        /// <summary>Dazzled: it loses everything it had, including where it thought the player was.</summary>
+        public void Forget()
+        {
+            Value = 0f;
+            LastKnownPosition = null;
+            LastIntensity = 0f;
         }
 
         public void Tick(float deltaTime)

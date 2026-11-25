@@ -33,11 +33,11 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [x] Health, inventory, bolt driver, combat HUD
 - [x] Conamara Base grey-box with the Listener and a NavMesh
 
-## Slice 7: Chapters 6–7 story in the base (next)
+## Slice 7: Chapters 6–7 story in the base (in progress)
 - [ ] Ch. 6 "The Discovery": base exploration, Tomas's message choice, Tiamat site, Ashford's sealed orders
 - [ ] Ch. 7 "Contact": drill chamber eruption, first Listener encounter, retreat, safe room
 - [ ] Luca's radio death and Ashford's confession over a failing channel
-- [ ] Hiding spots (lockers), thrown distractions, flare pistol
+- [x] Hiding spots (lockers), thrown distractions, flare pistol
 - [ ] Needles (vent crawlers)
 - [ ] Playtest pass: is it frightening?
 

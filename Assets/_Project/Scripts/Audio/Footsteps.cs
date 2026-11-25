@@ -28,6 +28,7 @@ namespace Jupiter.Audio
         AudioSource source;
         Vector3 lastPosition;
         float travelled;
+        const float TeleportDistance = 0.5f;
         bool wasGrounded = true;
         int lastClip = -1;
 
@@ -48,6 +49,8 @@ namespace Jupiter.Audio
             Vector3 pos = transform.position;
             Vector3 delta = pos - lastPosition;
             lastPosition = pos;
+            // A jump this large in one frame is a teleport (climbing into a locker, a scripted move), not a step.
+            if (delta.sqrMagnitude > TeleportDistance * TeleportDistance) { travelled = 0f; return; }
 
             bool grounded = player.IsGrounded;
             if (grounded && !wasGrounded) { Play(landVolume); travelled = 0f; }

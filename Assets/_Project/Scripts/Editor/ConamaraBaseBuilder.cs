@@ -21,6 +21,8 @@ namespace Jupiter.EditorTools
     ///
     /// The base is pressurised (sound carries) but in Europa's 0.134 g. The safe room's door blocks the
     /// creature's NavMesh, so it is genuinely safe. One Listener waits, dormant, by the drill bore.
+    /// Hiding lockers line every route; cans, wrenches and decoy thumpers can be thrown; Mara's flare pistol
+    /// waits on the ready-room bench.
     /// </summary>
     public static class ConamaraBaseBuilder
     {
@@ -29,7 +31,7 @@ namespace Jupiter.EditorTools
         const string ProfilePath = "Assets/_Project/Data/Environments/EuropaPressurised.asset";
 
         const float H = 3f, T = 0.25f, TunnelH = 2.4f;
-        static Material floor, wall, ceiling, prop, dark, rimeMat, door, hatch, boreMat, supply;
+        static Material floor, wall, ceiling, prop, dark, rimeMat, door, hatch, boreMat, supply, locker, lockerDoor, can, decoyMat;
 
         public static void Build()
         {
@@ -42,6 +44,10 @@ namespace Jupiter.EditorTools
             hatch = Mat("CB_Hatch", new Color(0.9f, 0.72f, 0.1f));
             boreMat = Mat("CB_Bore", new Color(0.01f, 0.01f, 0.015f));
             supply = Mat("CB_Supply", new Color(0.85f, 0.35f, 0.1f));
+            locker = Mat("CB_Locker", new Color(0.42f, 0.47f, 0.5f), smoothness: 0.3f);
+            lockerDoor = Mat("CB_LockerDoor", new Color(0.34f, 0.39f, 0.43f), smoothness: 0.3f);
+            can = Mat("CB_Can", new Color(0.7f, 0.72f, 0.66f), smoothness: 0.6f);
+            decoyMat = Mat("CB_Decoy", new Color(0.2f, 0.22f, 0.2f), new Color(0.9f, 0.6f, 0.1f) * 0.6f);
             rimeMat = Mat("CB_Rime", new Color(0.9f, 0.95f, 1f), new Color(0.02f, 0.06f, 0.07f), 0.9f);
 
             var profile = EuropaPressurisedProfile();
@@ -54,6 +60,7 @@ namespace Jupiter.EditorTools
             BuildShell(level);
             BuildRooms(level, lights, items);
             BuildRime(level);
+            BuildLockers(level);
 
             // Bake the creature's NavMesh from colliders (closed doors block it: the safe room stays safe).
             var navGo = new GameObject("NavMesh");
@@ -63,6 +70,9 @@ namespace Jupiter.EditorTools
             surface.BuildNavMesh();
             if (AssetDatabase.LoadAssetAtPath<Object>(NavMeshPath) != null) AssetDatabase.DeleteAsset(NavMeshPath);
             AssetDatabase.CreateAsset(surface.navMeshData, NavMeshPath);
+
+            // Throwables are loose physics props: placed after the bake so they never carve the NavMesh.
+            BuildThrowables(items);
 
             // Player, armed, starting in the airlock facing into the base.
             var rig = PlayerRigBuilder.Spawn(new Vector3(0f, 0.05f, 3f), 0f, profile);
@@ -174,8 +184,9 @@ namespace Jupiter.EditorTools
             // Airlock + ready room
             for (int i = 0; i < 3; i++) Box(level, $"SuitRack_{i}", new Vector3(-3.4f, 1f, 1.5f + i * 1.4f), new Vector3(0.5f, 2f, 1f), prop);
             Box(level, "Ready_Bench", new Vector3(3.5f, 0.25f, 10f), new Vector3(0.6f, 0.5f, 4f), dark);
-            Box(level, "Ready_Lockers", new Vector3(5.6f, 1f, 8f), new Vector3(0.6f, 2f, 3f), prop);
             PlaceSupply(items, Combat.Pickup.Kind.Bolts, 6, new Vector3(3.5f, 0.6f, 9f));
+            // Mara's flare pistol on the bench, three flares loaded.
+            PlaceSupply(items, Combat.Pickup.Kind.FlarePistol, 3, new Vector3(3.5f, 0.56f, 11f));
             Lamp(lights, "Light_Airlock", new Vector3(0f, 2.7f, 3f), amber, 1.2f, 7f);
             Lamp(lights, "Light_Ready", new Vector3(0f, 2.7f, 10f), cold, 1.6f, 9f);
 
@@ -200,6 +211,7 @@ namespace Jupiter.EditorTools
             // Comms x[1.5,11] z[14,24]
             Box(level, "Comms_Console", new Vector3(10.4f, 0.5f, 19f), new Vector3(0.8f, 1f, 4f), dark);
             Box(level, "Comms_Rack", new Vector3(6f, 1.1f, 23.4f), new Vector3(3f, 2.2f, 0.6f), dark);
+            PlaceSupply(items, Combat.Pickup.Kind.Flares, 2, new Vector3(10.4f, 1.05f, 17.5f));
             Lamp(lights, "Light_Comms", new Vector3(6f, 2.7f, 19f), cold, 1.3f, 8f);
 
             // Ashford's office x[1.5,11] z[24,30]
@@ -274,6 +286,110 @@ namespace Jupiter.EditorTools
                 Set(patch, "glow", go.GetComponent<Renderer>());
                 Set(patch, "radius", 2.5f);
             }
+        }
+
+        // ------------------------------------------------------------------ stealth
+
+        /// <summary>
+        /// Hiding lockers on every route the Listener can take, so a chase can always end in one: three in the
+        /// ready room, then the service tunnel, corridor B, the galley and the drill chamber.
+        /// </summary>
+        static void BuildLockers(Transform level)
+        {
+            var root = new GameObject("Lockers").transform;
+            root.SetParent(level, false);
+            // Floor position of each locker's centre and the direction its door faces.
+            for (int i = 0; i < 3; i++) Locker(root, $"Locker_Ready_{i}", new Vector3(5.47f, 0f, 7f + i * 0.95f), -90f);
+            Locker(root, "Locker_Tunnel", new Vector3(-14.47f, 0f, 33f), 90f);
+            Locker(root, "Locker_CorrB", new Vector3(2.5f, 0f, 42.47f), 180f);
+            Locker(root, "Locker_Galley", new Vector3(3.53f, 0f, 51f), 90f);
+            Locker(root, "Locker_Drill", new Vector3(0.47f, 0f, 47f), -90f);
+        }
+
+        /// <summary>Cans and a wrench to throw, and two decoy thumpers in the lab and comms.</summary>
+        static void BuildThrowables(Transform items)
+        {
+            PlaceThrowable(items, "can", new Vector3(8.1f, 0.85f, 48.2f), false);
+            PlaceThrowable(items, "can", new Vector3(8.9f, 0.85f, 47.8f), false);
+            PlaceThrowable(items, "can", new Vector3(3.5f, 0.6f, 12f), false);
+            PlaceThrowable(items, "wrench", new Vector3(-4.5f, 1.05f, 30f), false);
+            PlaceThrowable(items, "wrench", new Vector3(-1.2f, 1.3f, 58f), false);
+            PlaceThrowable(items, "decoy thumper", new Vector3(-7.5f, 1.05f, 35f), true);
+            PlaceThrowable(items, "decoy thumper", new Vector3(10.4f, 1.1f, 20.5f), true);
+        }
+
+        static void Locker(Transform parent, string name, Vector3 floorPos, float yaw)
+        {
+            const float w = 0.9f, d = 0.8f, h = 2.1f, t = 0.04f;
+            const float slitBottom = 1.56f, slitTop = 1.7f; // vent slit at eye height (1.62 m)
+
+            var root = new GameObject(name);
+            root.transform.SetParent(parent, false);
+            root.transform.SetPositionAndRotation(floorPos, Quaternion.Euler(0f, yaw, 0f));
+
+            LocalBox(root.transform, "Back", new Vector3(0f, h / 2f, -d / 2f + t / 2f), new Vector3(w, h, t), locker);
+            LocalBox(root.transform, "Side_L", new Vector3(-w / 2f + t / 2f, h / 2f, 0f), new Vector3(t, h, d), locker);
+            LocalBox(root.transform, "Side_R", new Vector3(w / 2f - t / 2f, h / 2f, 0f), new Vector3(t, h, d), locker);
+            LocalBox(root.transform, "Top", new Vector3(0f, h - t / 2f, 0f), new Vector3(w, t, d), locker);
+            LocalBox(root.transform, "Door_Lower", new Vector3(0f, slitBottom / 2f, d / 2f - t / 2f), new Vector3(w, slitBottom, t), lockerDoor);
+            LocalBox(root.transform, "Door_Upper", new Vector3(0f, (slitTop + h) / 2f, d / 2f - t / 2f), new Vector3(w, h - slitTop, t), lockerDoor);
+
+            // Targetable from both sides without closing the slit: interaction rays hit triggers, creature sight ignores them.
+            var trigger = root.AddComponent<BoxCollider>();
+            trigger.isTrigger = true;
+            trigger.center = new Vector3(0f, h / 2f, d / 2f + 0.03f);
+            trigger.size = new Vector3(w, h, 0.1f);
+
+            var inside = new GameObject("Inside").transform;
+            inside.SetParent(root.transform, false);
+            inside.localPosition = new Vector3(0f, 0.02f, 0f);
+            var exit = new GameObject("Exit").transform;
+            exit.SetParent(root.transform, false);
+            exit.localPosition = new Vector3(0f, 0.02f, d / 2f + 0.6f);
+
+            var spot = root.AddComponent<HidingSpot>();
+            Set(spot, "inside", inside);
+            Set(spot, "exit", exit);
+            Set(spot, "audioSource", Audio3D(root, null, 1f, 10f));
+            Set(spot, "doorClip", CombatAudioGenerator.Load(CombatAudioGenerator.LockerDoor));
+        }
+
+        static void LocalBox(Transform parent, string name, Vector3 localPos, Vector3 size, Material mat)
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            go.name = name;
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = localPos;
+            go.transform.localScale = size;
+            go.GetComponent<Renderer>().sharedMaterial = mat;
+            go.isStatic = true;
+        }
+
+        static void PlaceThrowable(Transform parent, string displayName, Vector3 pos, bool decoy)
+        {
+            Vector3 size = decoy ? new Vector3(0.14f, 0.14f, 0.14f)
+                : displayName == "wrench" ? new Vector3(0.3f, 0.04f, 0.06f) : new Vector3(0.07f, 0.12f, 0.07f);
+            var go = GameObject.CreatePrimitive(decoy || displayName == "wrench" ? PrimitiveType.Cube : PrimitiveType.Cylinder);
+            go.name = $"Throwable_{displayName.Replace(' ', '_')}";
+            go.transform.SetParent(parent, false);
+            go.transform.position = pos;
+            // Primitive cylinders are 2 units tall: halve Y so the can is the size given.
+            go.transform.localScale = displayName == "can" ? new Vector3(size.x, size.y / 2f, size.z) : size;
+            go.GetComponent<Renderer>().sharedMaterial = decoy ? decoyMat : can;
+            if (go.TryGetComponent<CapsuleCollider>(out var capsule))
+            {
+                // A capsule rolls forever; a box settles like a can on its side.
+                Object.DestroyImmediate(capsule);
+                go.AddComponent<BoxCollider>();
+            }
+
+            var body = go.AddComponent<Rigidbody>();
+            body.mass = decoy ? 1.2f : 0.4f;
+            body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            var throwable = go.AddComponent<Combat.Throwable>();
+            throwable.Configure(displayName, decoy, Audio3D(go, null, 1f, 18f),
+                CombatAudioGenerator.Load(CombatAudioGenerator.Clatter), CombatAudioGenerator.Load(CombatAudioGenerator.DecoyThump));
+            EditorUtility.SetDirty(throwable);
         }
 
         // ------------------------------------------------------------------ helpers

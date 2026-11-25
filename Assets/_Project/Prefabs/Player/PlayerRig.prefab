@@ -413,6 +413,85 @@ AudioDistortionFilter:
   m_GameObject: {fileID: 3211294752920962963}
   m_Enabled: 1
   m_DistortionLevel: 0.32
+--- !u!1 &3212592337174665743
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2537777332387732045}
+  - component: {fileID: 5137843269509874623}
+  - component: {fileID: 8221311059342203620}
+  m_Layer: 0
+  m_Name: ToolText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2537777332387732045
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3212592337174665743}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6285938696502820502}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -20, y: 72}
+  m_SizeDelta: {x: 420, y: 24}
+  m_Pivot: {x: 1, y: 0}
+--- !u!222 &5137843269509874623
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3212592337174665743}
+  m_CullTransparentMesh: 1
+--- !u!114 &8221311059342203620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3212592337174665743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.9, g: 0.93, b: 0.95, a: 0.9}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 16
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 8
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 
 --- !u!1 &3400911412910418071
 GameObject:
   m_ObjectHideFlags: 0
@@ -1575,6 +1654,9 @@ GameObject:
   - component: {fileID: 1149596392758478437}
   - component: {fileID: 4073294751708486100}
   - component: {fileID: 8874349864381506688}
+  - component: {fileID: 6930213721110213688}
+  - component: {fileID: 1824552416620704828}
+  - component: {fileID: 207470788153495493}
   m_Layer: 0
   m_Name: PlayerRig
   m_TagString: Player
@@ -1829,6 +1911,57 @@ MonoBehaviour:
   fireClip: {fileID: 8300000, guid: 2c61b6718615e8446bdb74094cacb25f, type: 3}
   reloadClip: {fileID: 8300000, guid: a3750384e63b4984c8acb1c39eccc2f8, type: 3}
   flash: {fileID: 3256309210695903516}
+--- !u!114 &6930213721110213688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424895819323714012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b88833ddadee2541a68df72a5b6e7fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Jupiter.Runtime::Jupiter.Player.PlayerConcealment
+  input: {fileID: 5370833896655044351}
+  noiseRadius: 1.5
+--- !u!114 &1824552416620704828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424895819323714012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e2723b494638a24ba7a19b071c79c17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Jupiter.Runtime::Jupiter.Combat.PlayerThrower
+  input: {fileID: 5370833896655044351}
+  aim: {fileID: 2331584201082188093}
+  throwSpeed: 9
+  upwardSpeed: 1.5
+  spawnDistance: 0.6
+--- !u!114 &207470788153495493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424895819323714012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdd63c328f796de42bc6d74c98d3f27b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Jupiter.Runtime::Jupiter.Combat.FlarePistol
+  input: {fileID: 5370833896655044351}
+  inventory: {fileID: 1149596392758478437}
+  muzzle: {fileID: 2331584201082188093}
+  launchSpeed: 16
+  burnSeconds: 25
+  flareMaterial: {fileID: 2100000, guid: 83ffdca303f760e4d8366984a944c0ff, type: 2}
+  audioSource: {fileID: 4073294751708486100}
+  fireClip: {fileID: 8300000, guid: 0f8ca0c91b6c6fe47b2deae3d342ddcf, type: 3}
 --- !u!1 &6646185519634135323
 GameObject:
   m_ObjectHideFlags: 0
@@ -2531,6 +2664,7 @@ RectTransform:
   - {fileID: 6109239272742354512}
   - {fileID: 6981358554195700594}
   - {fileID: 5943140164813391075}
+  - {fileID: 2537777332387732045}
   m_Father: {fileID: 6603873627749319142}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2788,6 +2922,9 @@ MonoBehaviour:
   healthText: {fileID: 8046186943145003352}
   ammoText: {fileID: 250483249117118880}
   damageFlash: {fileID: 3040003615947725242}
+  thrower: {fileID: 1824552416620704828}
+  concealment: {fileID: 6930213721110213688}
+  toolText: {fileID: 8221311059342203620}
 --- !u!1 &8481822854470653755
 GameObject:
   m_ObjectHideFlags: 0
