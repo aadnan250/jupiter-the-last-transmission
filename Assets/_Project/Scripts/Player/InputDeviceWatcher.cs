@@ -78,10 +78,10 @@ namespace Jupiter.Player
             get
             {
                 if (!InputDeviceWatcher.UsingGamepad)
-                    return "WASD move   Shift run   Ctrl/C crouch   Space jump   E interact   F5 save   F9 load   F3 performance   Esc free cursor";
+                    return "WASD move   Shift run   Ctrl/C crouch   Space jump   E interact   G throw   T flare   F5 save   F9 load   F3 performance   Esc free cursor";
                 if (InputDeviceWatcher.UsingPlayStation)
-                    return $"L-stick move   R-stick look   L3 run   {Circle} crouch   {Cross} jump   {Square} interact";
-                return "L-stick move   R-stick look   L3 run   B crouch   A jump   X interact";
+                    return $"L-stick move   R-stick look   L3 run   {Circle} crouch   {Cross} jump   {Square} interact   R1 throw   D-pad down flare";
+                return "L-stick move   R-stick look   L3 run   B crouch   A jump   X interact   RB throw   D-pad down flare";
             }
         }
     }

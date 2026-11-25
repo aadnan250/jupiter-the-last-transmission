@@ -1,10 +1,15 @@
+using System.Text;
 using Jupiter.Combat;
+using Jupiter.Player;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Jupiter.UI
 {
-    /// <summary>Health and bolt count (bottom right), plus a red flash when hurt. Hidden until the player is armed or hurt.</summary>
+    /// <summary>
+    /// Health and bolt count (bottom right), plus a red flash when hurt. Hidden until the player is armed or hurt.
+    /// A third line shows the stealth state: flares left, the object in hand, and whether Sam is hidden.
+    /// </summary>
     public class CombatHUD : MonoBehaviour
     {
         [SerializeField] PlayerHealth health;
@@ -13,6 +18,11 @@ namespace Jupiter.UI
         [SerializeField] Text healthText;
         [SerializeField] Text ammoText;
         [SerializeField] Image damageFlash;
+        [SerializeField] PlayerThrower thrower;
+        [SerializeField] PlayerConcealment concealment;
+        [SerializeField] Text toolText;
+
+        readonly StringBuilder toolLine = new StringBuilder();
 
         float flash;
 
@@ -43,6 +53,7 @@ namespace Jupiter.UI
                     ammoText.text = $"BOLTS {w.Loaded} / {w.Reserve}{state}";
                 }
             }
+            UpdateToolLine();
             if (damageFlash != null)
             {
                 flash = Mathf.Max(0f, flash - Time.deltaTime * 2f);
@@ -52,5 +63,22 @@ namespace Jupiter.UI
                 damageFlash.color = c;
             }
         }
+
+        void UpdateToolLine()
+        {
+            if (toolText == null) return;
+            toolLine.Clear();
+            if (concealment != null && concealment.IsHidden) toolLine.Append("<color=#9FD8E8>HIDDEN</color>   ");
+            if (inventory != null && inventory.HasFlarePistol)
+                toolLine.Append("FLARES ").Append(inventory.Model.Count(PlayerInventory.Flare)).Append("   ");
+            if (thrower != null && thrower.Held != null)
+                toolLine.Append("HOLDING ").Append(thrower.Held.DisplayName.ToUpperInvariant()).Append(" [").Append(ThrowGlyph).Append("]");
+
+            toolText.enabled = toolLine.Length > 0;
+            if (toolText.enabled) toolText.text = toolLine.ToString().TrimEnd();
+        }
+
+        static string ThrowGlyph =>
+            !InputDeviceWatcher.UsingGamepad ? "G" : InputDeviceWatcher.UsingPlayStation ? "R1" : "RB";
     }
 }

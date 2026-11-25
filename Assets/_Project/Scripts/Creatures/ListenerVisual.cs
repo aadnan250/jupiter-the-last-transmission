@@ -4,7 +4,8 @@ namespace Jupiter.Creatures
 {
     /// <summary>
     /// Poses the Listener placeholder from its AI state: kneeling with palms on the floor and crest flared when
-    /// listening, upright and crest raised when hunting, collapsed in torpor (nodes dimming), still when dead.
+    /// listening, upright and crest raised when hunting, reared back from a flare when blinded, collapsed in torpor
+    /// (nodes dimming), still when dead.
     /// Ruptured nodes go dark. Placeholder for real animation.
     /// </summary>
     public class ListenerVisual : MonoBehaviour
@@ -52,6 +53,9 @@ namespace Jupiter.Creatures
                     targetOffset = new Vector3(0f, -1.6f, 0.6f); targetPitch = 78f; targetCrest = new Vector3(0.6f, 0.5f, 1f); targetGlow = 0.25f; break;
                 case CreatureState.Dead:
                     targetOffset = new Vector3(0f, -1.7f, 0.7f); targetPitch = 85f; targetCrest = new Vector3(0.4f, 0.3f, 1f); targetGlow = 0f; break;
+                case CreatureState.Blinded:
+                    // Recoils from the light: reared back, crest folded flat, nodes dim.
+                    targetOffset = new Vector3(0f, -0.25f, -0.35f); targetPitch = -22f; targetCrest = new Vector3(0.55f, 0.5f, 1f); targetGlow = 0.5f; break;
                 case CreatureState.Recovering:
                     targetOffset = new Vector3(0f, -0.5f, 0.1f); targetPitch = 20f; targetCrest = Vector3.one; targetGlow = 0.8f; break;
                 default:

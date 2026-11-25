@@ -16,6 +16,10 @@ Every noisy action emits a `VibrationEvent { position, radius, medium (Air / Gro
 | Run step | 9 m | Ground |
 | Landing | 5 m | Ground |
 | Bolt driver shot | 25 m | Air + Ground |
+| Flare pistol shot | 10 m | Air |
+| Thrown object landing | 2.4–6 m (scaled by impact speed) | Ground |
+| Decoy thumper (every 1.5 s for 8 s) | 15 m | Ground |
+| Climbing into / out of a locker | 1.5 m | Ground |
 
 **Vacuum rule:** if the source or the listener is in a vacuum environment, airborne events are dropped; ground events still travel.
 **Rime patches** (`RimePatch`) double the radius of events near them and flash cyan. They are the colony's "ears", and the player learns to route around them.
@@ -48,8 +52,28 @@ Conamara Base. Because the decision logic lives in plain C# classes, it is cover
 vacuum attenuation, torpor and recovery, node and explosive kills), with PlayMode tests for the integrated behaviour
 (a gunshot draws the Listener out of Dormant; body damage → torpor → recovery; three node hits → dead).
 
-## Known limitations (Phase 4a)
+## 5. Hiding, distractions and flares (Slice 7)
+
+All the numbers live in `Creatures/StealthRules.cs` (pure C#, EditMode tested).
+
+- **Lockers** (`World/HidingSpot`, `Player/PlayerConcealment`): inside, Sam cannot move, look or fire, and the creature
+  **cannot see him at all**, so it cannot attack either. It can still *hear* him: climbing in or out is a 1.5 m noise.
+  If it was hunting him, it goes to where it last sensed him and waits there until its suspicion decays.
+  A vent slit at eye height lets the player watch it.
+- **Throwables** (`Combat/Throwable`, `Combat/PlayerThrower`): one object in hand at a time. A landing is a floor
+  vibration whose radius grows with impact speed, so the creature investigates the landing spot, not the thrower.
+  A **decoy thumper** pulses 15 m through the floor after it lands, then is spent.
+- **Flares** (`Combat/FlarePistol`, `Combat/BurningFlare`): a burning flare within 14 m **lures** the creature straight
+  to it (heat and light are easy to place, so there is no position error). Within 2.5 m it is **Blinded** for 5 s: it
+  rears back and forgets everything, including where the player was. Each flare can dazzle it only once.
+
+```
+any (not torpor) ──flare within 14 m──▶ Investigating (exact point) ──within 2.5 m──▶ Blinded ──5 s──▶ Listening
+```
+
+## Known limitations
 
 - The Listener is a primitive-shape placeholder; its final model and animations come later.
 - Needles (the small vent creatures) and the Keel are not implemented yet.
-- Chapter 6–7 story scripting (dialogue, Luca's radio death, the Directive 7 reveal) in the base is the next step of the vertical slice.
+- It never checks lockers: a hidden player is safe from sight until they make noise. Opening lockers is a candidate for the playtest pass.
+- Chapter 6–7 story scripting (dialogue, Luca's radio death, the Directive 7 reveal) in the base is still to come.

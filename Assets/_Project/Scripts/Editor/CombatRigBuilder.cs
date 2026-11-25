@@ -8,7 +8,8 @@ namespace Jupiter.EditorTools
 {
     /// <summary>
     /// Adds survival and combat to the PlayerRig prefab: health, inventory, the bolt driver (unequipped by default;
-    /// levels where Sam is armed enable it), and the health/ammo HUD with a damage flash.
+    /// levels where Sam is armed enable it), the stealth tools (hiding, throwing, the flare pistol), and the
+    /// health/ammo/tool HUD with a damage flash.
     /// </summary>
     public static class CombatRigBuilder
     {
@@ -44,6 +45,21 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(driver, "reloadClip", CombatAudioGenerator.Load(CombatAudioGenerator.Reload));
             GreyboxKit.Set(driver, "flash", flash);
 
+            // Stealth tools: hiding, one throwable in hand, Mara's flare pistol (unequipped until picked up).
+            var concealment = root.AddComponent<PlayerConcealment>();
+            GreyboxKit.Set(concealment, "input", input);
+            var thrower = root.AddComponent<PlayerThrower>();
+            GreyboxKit.Set(thrower, "input", input);
+            GreyboxKit.Set(thrower, "aim", camera);
+            var flarePistol = root.AddComponent<FlarePistol>();
+            GreyboxKit.Set(flarePistol, "input", input);
+            GreyboxKit.Set(flarePistol, "inventory", inventory);
+            GreyboxKit.Set(flarePistol, "muzzle", camera);
+            GreyboxKit.Set(flarePistol, "audioSource", weaponAudio);
+            GreyboxKit.Set(flarePistol, "fireClip", CombatAudioGenerator.Load(CombatAudioGenerator.FlareShot));
+            GreyboxKit.Set(flarePistol, "flareMaterial",
+                GreyboxKit.Mat("FX_Flare", new Color(1f, 0.3f, 0.2f), new Color(1f, 0.25f, 0.12f) * 6f));
+
             // HUD: bottom-right health and ammo, full-screen damage flash.
             var hud = root.transform.Find("HUD");
             var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -58,6 +74,7 @@ namespace Jupiter.EditorTools
 
             var healthText = Corner(hud, "HealthText", font, new Vector2(-20, 44));
             var ammoText = Corner(hud, "AmmoText", font, new Vector2(-20, 16));
+            var toolText = Corner(hud, "ToolText", font, new Vector2(-20, 72));
 
             var combatHud = hud.gameObject.AddComponent<CombatHUD>();
             GreyboxKit.Set(combatHud, "health", health);
@@ -66,6 +83,9 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(combatHud, "healthText", healthText);
             GreyboxKit.Set(combatHud, "ammoText", ammoText);
             GreyboxKit.Set(combatHud, "damageFlash", flashImg);
+            GreyboxKit.Set(combatHud, "thrower", thrower);
+            GreyboxKit.Set(combatHud, "concealment", concealment);
+            GreyboxKit.Set(combatHud, "toolText", toolText);
         }
 
         static Text Corner(Transform parent, string name, Font font, Vector2 pos)

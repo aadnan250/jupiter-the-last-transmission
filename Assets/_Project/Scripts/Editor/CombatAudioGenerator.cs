@@ -12,12 +12,20 @@ namespace Jupiter.EditorTools
         public const string Folder = "Assets/_Project/Audio/Generated/Combat";
         public const string BoltShot = Folder + "/sfx_bolt_shot.wav";
         public const string Reload = Folder + "/sfx_bolt_reload.wav";
+        public const string Clatter = Folder + "/sfx_throw_clatter.wav";
+        public const string FlareShot = Folder + "/sfx_flare_shot.wav";
+        public const string DecoyThump = Folder + "/sfx_decoy_thump.wav";
+        public const string LockerDoor = Folder + "/sfx_locker_door.wav";
 
         public static void Generate()
         {
             GreyboxKit.EnsureFolder(Folder);
             Write(BoltShot, CombatSynth.BoltShot());
             Write(Reload, CombatSynth.Reload());
+            Write(Clatter, CombatSynth.Clatter());
+            Write(FlareShot, CombatSynth.FlareShot());
+            Write(DecoyThump, CombatSynth.DecoyThump());
+            Write(LockerDoor, CombatSynth.LockerDoor());
         }
 
         static void Write(string path, float[] samples)

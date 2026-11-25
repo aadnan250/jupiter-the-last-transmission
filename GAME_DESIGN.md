@@ -41,6 +41,7 @@ A summary of every mechanic, control and feature requested for the game. Full de
 - **The Listener:** a tall, thin creature with a crest instead of a face. It hunts by **vibration**, not sight.
 - Noise radius: crouch 0.8 m, walk 3 m, run 9 m, gunshot 25 m. In vacuum only ground vibrations carry.
 - **Hard to kill:** body hits drop it into a fake-dead torpor and it **gets back up** after 20–40 s. Destroying 3 of its 6 glowing nodes kills it.
+- **Hiding and distractions:** hide in lockers (it cannot see you, only hear you); throw cans, tools or a decoy thumper to pull it away; Mara's flare pistol lures it with heat and light and dazzles it up close.
 - **Rime:** living frost that amplifies noise and flashes cyan. Planned: Needles (vent crawlers) and the Keel (huge, under the ice).
 
 ## 8. Controls
@@ -53,6 +54,7 @@ A summary of every mechanic, control and feature requested for the game. Full de
 | Continue dialogue | E / Space / Click | X | A |
 | Replies 1–4 | 1–4 | ▲ ● X ■ | Y B A X |
 | Fire / Reload / Med-patch | Left click / R / H | R2 / ▲ / D-pad up | RT / Y / D-pad up |
+| Throw / Flare pistol | G / T | R1 / D-pad down | RB / D-pad down |
 | Save / Load / Performance | F5 / F9 / F3 | autosave | autosave |
 
 ## 9. Presentation

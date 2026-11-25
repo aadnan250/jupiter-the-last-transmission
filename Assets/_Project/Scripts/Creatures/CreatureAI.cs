@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Jupiter.Combat;
 using Jupiter.Player;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine.AI;
 
 namespace Jupiter.Creatures
 {
-    public enum CreatureState { Dormant, Listening, Investigating, Hunting, Attacking, Torpor, Recovering, Dead }
+    public enum CreatureState { Dormant, Listening, Investigating, Hunting, Attacking, Torpor, Recovering, Dead, Blinded }
 
     /// <summary>
     /// The Listener's behaviour. It hunts by vibration, not sight: vibrations raise a
@@ -13,6 +14,8 @@ namespace Jupiter.Creatures
     /// Dormant → Listening (kneels, palms on the floor) → Investigating (walks to where it *thinks* the noise was,
     /// with error growing with distance) → Hunting (direct pursuit) → Attacking.
     /// Damage can drop it into Torpor; it then Recovers angry, unless its nodes were destroyed (Dead).
+    /// A burning flare lures it (heat and light) and dazzles it up close (Blinded: it forgets everything).
+    /// It cannot see a player hidden in a locker, so it cannot attack one either: it can only listen.
     /// See docs/AI.md.
     /// </summary>
     [RequireComponent(typeof(NavMeshAgent))]
@@ -41,6 +44,8 @@ namespace Jupiter.Creatures
         NavMeshAgent agent;
         Transform player;
         IDamageable playerDamage;
+        PlayerConcealment concealment;
+        readonly HashSet<BurningFlare> spentFlares = new HashSet<BurningFlare>();
         float stateTime, attackTimer;
         Vector3 investigateTarget;
         bool arrived;
@@ -68,12 +73,13 @@ namespace Jupiter.Creatures
             {
                 player = p.transform;
                 playerDamage = p.GetComponent<IDamageable>();
+                concealment = p.GetComponent<PlayerConcealment>();
             }
         }
 
         public void OnVibration(VibrationEvent e, float radiusMultiplier)
         {
-            if (State == CreatureState.Dead || State == CreatureState.Torpor) return;
+            if (State == CreatureState.Dead || State == CreatureState.Torpor || State == CreatureState.Blinded) return;
             if (e.Source == gameObject) return;
             float intensity = VibrationMath.Perceived(e, transform.position, inVacuum, radiusMultiplier);
             Suspicion.Hear(intensity, e.Position);
@@ -92,6 +98,12 @@ namespace Jupiter.Creatures
             if (State == CreatureState.Torpor) { Enter(CreatureState.Recovering); return; }
 
             Suspicion.Tick(dt);
+            if (State == CreatureState.Blinded)
+            {
+                if (stateTime >= StealthRules.FlareBlindSeconds) Enter(CreatureState.Listening);
+                return;
+            }
+            if (State != CreatureState.Recovering && ReactToFlares()) return;
             LookForPlayer();
 
             switch (State)
@@ -117,12 +129,13 @@ namespace Jupiter.Creatures
                     if (Suspicion.Level < Alertness.Investigating) { Enter(CreatureState.Listening); break; }
                     Vector3 target = Suspicion.LastKnownPosition ?? transform.position;
                     MoveTo(target, huntSpeed);
-                    if (player != null && Vector3.Distance(Flat(transform.position), Flat(player.position)) <= attackRange)
+                    if (player != null && !PlayerHidden && Vector3.Distance(Flat(transform.position), Flat(player.position)) <= attackRange)
                         Enter(CreatureState.Attacking);
                     break;
 
                 case CreatureState.Attacking:
-                    if (player == null || Vector3.Distance(Flat(transform.position), Flat(player.position)) > attackRange * 1.25f)
+                    // A hidden player is not there as far as it knows: it goes back to hunting the last place it sensed them.
+                    if (player == null || PlayerHidden || Vector3.Distance(Flat(transform.position), Flat(player.position)) > attackRange * 1.25f)
                     { Enter(CreatureState.Hunting); break; }
                     FaceTowards(player.position);
                     if (attackTimer <= 0f)
@@ -142,12 +155,61 @@ namespace Jupiter.Creatures
             }
         }
 
+        bool PlayerHidden => concealment != null && concealment.IsHidden;
+
+        /// <summary>
+        /// Flares beat everything except being next to the player: the nearest burning flare it has not already
+        /// been dazzled by either lures it (walk straight to it) or, up close, blinds it. Returns true when blinded.
+        /// </summary>
+        bool ReactToFlares()
+        {
+            BurningFlare nearest = null;
+            float best = float.MaxValue;
+            foreach (var f in BurningFlare.Active)
+            {
+                if (f == null || spentFlares.Contains(f)) continue;
+                float d = Vector3.Distance(Flat(f.Position), Flat(transform.position));
+                if (d < best) { best = d; nearest = f; }
+            }
+            if (nearest == null || best > StealthRules.FlareLureRange || !CanSense(nearest)) return false;
+
+            switch (StealthRules.FlareEffectAt(best))
+            {
+                case FlareEffect.Blind:
+                    spentFlares.Add(nearest); // dazzled once per flare; afterwards it knows the light is not prey
+                    Suspicion.Forget();
+                    Enter(CreatureState.Blinded);
+                    return true;
+
+                case FlareEffect.Lure:
+                    Suspicion.Lure(nearest.Position);
+                    if (State == CreatureState.Hunting || State == CreatureState.Attacking) break; // hunting already chases LastKnownPosition
+                    if (State != CreatureState.Investigating) Enter(CreatureState.Investigating);
+                    if (Vector3.Distance(investigateTarget, nearest.Position) > 0.75f)
+                    {
+                        investigateTarget = nearest.Position; // light is easy to place: no position error
+                        arrived = false;
+                        MoveTo(investigateTarget, investigateSpeed);
+                    }
+                    break;
+            }
+            return false;
+        }
+
+        /// <summary>Heat and light do not pass through walls: a flare in the next room is not a lure.</summary>
+        bool CanSense(BurningFlare flare)
+        {
+            Vector3 head = transform.position + Vector3.up * 2.4f;
+            if (!Physics.Linecast(head, flare.Position, out var hit, ~0, QueryTriggerInteraction.Ignore)) return true;
+            return hit.transform == flare.transform || hit.transform.IsChildOf(transform);
+        }
+
         void LookForPlayer()
         {
             if (player == null) return;
             Vector3 eye = player.position + Vector3.up * 1.5f;
             float d = Vector3.Distance(transform.position + Vector3.up * 1.5f, eye);
-            if (d > Suspicion.SightRange) return;
+            if (!StealthRules.CanSee(PlayerHidden, d, Suspicion.SightRange)) return;
             // Line of sight check, ignoring our own colliders.
             if (Physics.Linecast(transform.position + Vector3.up * 2.4f, eye, out var hit, ~0, QueryTriggerInteraction.Ignore)
                 && !hit.transform.IsChildOf(player) && !hit.transform.IsChildOf(transform)) return;

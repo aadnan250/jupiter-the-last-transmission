@@ -10,6 +10,9 @@ namespace Jupiter.Combat
     {
         public const string MedPatch = "med_patch";
         public const string BoltDriverId = "bolt_driver";
+        /// <summary>Mara's flare pistol lives in the tool slot; its flares are consumables (3 per slot).</summary>
+        public const string FlarePistolId = "flare_pistol";
+        public const string Flare = "flare";
 
         [SerializeField] InputReader input;
         [SerializeField] PlayerHealth health;
@@ -20,6 +23,7 @@ namespace Jupiter.Combat
 
         public InventoryModel Model { get; } = new InventoryModel();
         public bool HasBoltDriver => Model.Weapon == BoltDriverId;
+        public bool HasFlarePistol => Model.Tool == FlarePistolId;
 
         void Awake()
         {

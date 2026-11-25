@@ -16,6 +16,8 @@ namespace Jupiter.Player
         InputActionMap playerMap, dialogueMap;
         InputAction move, look, lookStick, run, crouch, jump, interact;
         InputAction fire, reload, heal;
+        // Defined in code, not in the .inputactions asset, so the stealth tools need no asset edit. See CreateStealthActions.
+        InputAction throwItem, fireFlare;
         InputAction advance;
         readonly InputAction[] choices = new InputAction[4];
 
@@ -45,6 +47,12 @@ namespace Jupiter.Player
         public bool ReloadPressedThisFrame => Active && reload != null && reload.WasPressedThisFrame();
         public bool HealPressedThisFrame => Active && heal != null && heal.WasPressedThisFrame();
 
+        /// <summary>Throw the held object (G, R1 on PlayStation, RB on Xbox).</summary>
+        public bool ThrowPressedThisFrame => Active && throwItem != null && throwItem.WasPressedThisFrame();
+
+        /// <summary>Fire the flare pistol (T, or D-pad down).</summary>
+        public bool FlarePressedThisFrame => Active && fireFlare != null && fireFlare.WasPressedThisFrame();
+
         public bool AdvancePressedThisFrame => DialogueMode && advance != null && advance.WasPressedThisFrame();
 
         /// <summary>Choice buttons: keys 1-4, or Triangle / Circle / Cross / Square on a PlayStation controller.</summary>
@@ -73,6 +81,7 @@ namespace Jupiter.Player
             fire = playerMap.FindAction("Fire", true);
             reload = playerMap.FindAction("Reload", true);
             heal = playerMap.FindAction("Heal", true);
+            CreateStealthActions();
 
             dialogueMap = actions.FindActionMap("Dialogue", throwIfNotFound: true);
             advance = dialogueMap.FindAction("Advance", true);
@@ -84,20 +93,49 @@ namespace Jupiter.Player
         {
             DialogueMode = on;
             if (playerMap == null) return;
-            if (on) { playerMap.Disable(); dialogueMap.Enable(); }
-            else { dialogueMap.Disable(); if (isActiveAndEnabled) playerMap.Enable(); }
+            if (on) { playerMap.Disable(); SetStealthActions(false); dialogueMap.Enable(); }
+            else { dialogueMap.Disable(); if (isActiveAndEnabled) { playerMap.Enable(); SetStealthActions(true); } }
         }
 
         void OnEnable()
         {
             if (playerMap == null) return;
-            if (DialogueMode) dialogueMap.Enable(); else playerMap.Enable();
+            if (DialogueMode) dialogueMap.Enable(); else { playerMap.Enable(); SetStealthActions(true); }
         }
 
         void OnDisable()
         {
             playerMap?.Disable();
             dialogueMap?.Disable();
+            SetStealthActions(false);
+        }
+
+        void OnDestroy()
+        {
+            throwItem?.Dispose();
+            fireFlare?.Dispose();
+        }
+
+        /// <summary>
+        /// Throw and Flare are built here rather than in JupiterControls.inputactions so they can ship without
+        /// regenerating the asset. They follow the Player map's enabled state exactly. They can move into the
+        /// asset later without changing any caller.
+        /// </summary>
+        void CreateStealthActions()
+        {
+            throwItem = new InputAction("Throw", InputActionType.Button);
+            throwItem.AddBinding("<Keyboard>/g");
+            throwItem.AddBinding("<Gamepad>/rightShoulder");
+
+            fireFlare = new InputAction("Flare", InputActionType.Button);
+            fireFlare.AddBinding("<Keyboard>/t");
+            fireFlare.AddBinding("<Gamepad>/dpad/down");
+        }
+
+        void SetStealthActions(bool on)
+        {
+            if (on) { throwItem?.Enable(); fireFlare?.Enable(); }
+            else { throwItem?.Disable(); fireFlare?.Disable(); }
         }
     }
 }
