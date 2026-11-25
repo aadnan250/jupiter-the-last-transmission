@@ -47,13 +47,27 @@ namespace Jupiter.EditorTools
             Debug.Log("[GeneratedContent] Phase 4 content rebuilt.");
         }
 
+        /// <summary>
+        /// Rebuilds only the Meridian (Chapter 2) and the build scene list. Batch:
+        /// -executeMethod Jupiter.EditorTools.GeneratedContent.RebuildMeridian
+        /// </summary>
+        [MenuItem("Jupiter/Rebuild Meridian")]
+        public static void RebuildMeridian()
+        {
+            GreyboxTestRoomBuilder.BuildProfiles(); // the Meridian's spin-gravity profile must exist (and be loaded) first
+            MeridianGreyboxBuilder.Build();
+            SetBuildScenes();
+            AssetDatabase.SaveAssets();
+            Debug.Log("[GeneratedContent] Meridian rebuilt.");
+        }
+
         static void SetBuildScenes()
         {
             EditorBuildSettings.scenes = new[]
             {
-                // The newest chapter first: a build starts in Conamara Base.
-                new EditorBuildSettingsScene(ConamaraBaseBuilder.ScenePath, true),
+                // A build plays the story in order: the Meridian, then Conamara Base.
                 new EditorBuildSettingsScene(MeridianGreyboxBuilder.ScenePath, true),
+                new EditorBuildSettingsScene(ConamaraBaseBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(GreyboxTestRoomBuilder.ScenePath, true),
             };
         }

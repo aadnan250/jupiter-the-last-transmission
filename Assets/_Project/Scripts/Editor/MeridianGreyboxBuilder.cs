@@ -776,7 +776,6 @@ namespace Jupiter.EditorTools
             var mission = new GameObject("Mission").AddComponent<MissionManager>();
             Kit.Set(mission, "dialogue", dialogue);
             Kit.Set(mission, "objectiveText", rig.transform.Find("HUD/Objective").GetComponent<UnityEngine.UI.Text>());
-            Kit.Set(mission, "completeText", "Chapter 2 prototype complete");
             var mso = new SerializedObject(mission);
             var list = mso.FindProperty("objectives");
             list.arraySize = 2;
@@ -789,6 +788,16 @@ namespace Jupiter.EditorTools
             SetStringArray(o2.FindPropertyRelative("requiredConversations"));
             SetStringArray(o2.FindPropertyRelative("requiredFlags"), "reached_observation");
             mso.ApplyModifiedPropertiesWithoutUndo();
+            Kit.Set(mission, "completeText", "Chapter 2 complete");
+
+            // The end of the chapter: after the observation deck radio call, on to Europa. Chapters 3-5 are not built
+            // yet, so a time card bridges the gap. The GameSession carries every Chapter 2 choice into the base.
+            var transition = new GameObject("LevelTransition").AddComponent<Core.LevelTransition>();
+            Kit.Set(transition, "requiresCompleted", ConvObservation);
+            Kit.Set(transition, "nextScene", System.IO.Path.GetFileNameWithoutExtension(ConamaraBaseBuilder.ScenePath));
+            Kit.Set(transition, "cardTitle", "SEVEN MONTHS LATER");
+            Kit.Set(transition, "cardSubtitle", "Europa. Conamara Base.");
+            Kit.Set(transition, "dialogue", dialogue);
         }
 
         static void Crew(Transform parent, string id, Vector3 position, float yaw, Color color, DialogueManager dialogue, TextAsset conversation)

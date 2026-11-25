@@ -139,7 +139,7 @@ namespace Jupiter.Tests
             story.MarkCompleted("ch02_command_ashford");
             Assert.AreEqual("Go to the observation deck", mission.CurrentText);
             story.SetFlag("reached_observation");
-            Assert.AreEqual("Chapter 2 prototype complete", mission.CurrentText);
+            Assert.AreEqual("Chapter 2 complete", mission.CurrentText);
         }
 
         [UnityTest]
