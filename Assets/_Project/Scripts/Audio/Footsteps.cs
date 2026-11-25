@@ -6,7 +6,7 @@ namespace Jupiter.Audio
     /// <summary>
     /// Plays footsteps based on distance actually travelled on the ground, so step rate always
     /// matches movement speed. Running is louder, crouching is near-silent, and landing plays a heavier step.
-    /// (Phase 5 will also emit these as vibration events for creature detection.)
+    /// Each step is also a ground vibration event that creatures can hear (walk 3 m, run 9 m, crouch 0.8 m).
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
     public class Footsteps : MonoBehaviour
@@ -68,11 +68,27 @@ namespace Jupiter.Audio
             {
                 travelled -= stride;
                 Play(volume);
+                EmitStep(player.State == MoveState.Run ? runNoise : player.State == MoveState.Crouch ? crouchNoise : walkNoise);
             }
+        }
+
+        [Header("Noise radius heard by creatures (m)")]
+        [SerializeField] float walkNoise = 3f;
+        [SerializeField] float runNoise = 9f;
+        [SerializeField] float crouchNoise = 0.8f;
+        [SerializeField] float landNoise = 5f;
+
+        /// <summary>Footsteps are contact vibrations: they travel through the floor, so they carry even in vacuum.</summary>
+        void EmitStep(float radius)
+        {
+            bool vacuum = player.Environment != null && player.Environment.isVacuum;
+            Creatures.VibrationSystem.Emit(new Creatures.VibrationEvent(player.transform.position, radius,
+                Creatures.VibrationMedium.Ground, vacuum, player.gameObject));
         }
 
         void Play(float volume)
         {
+            if (volume >= landVolume) EmitStep(landNoise);
             // Never repeat the same clip twice in a row.
             int i = Random.Range(0, clips.Length);
             if (clips.Length > 1 && i == lastClip) i = (i + 1) % clips.Length;
