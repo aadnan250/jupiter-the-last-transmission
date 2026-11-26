@@ -15,6 +15,7 @@ namespace Jupiter.UI
         [SerializeField] PlayerHealth health;
         [SerializeField] BoltDriver weapon;
         [SerializeField] BeamRifle beam;
+        [SerializeField] Sidearm pistol;
         [SerializeField] PlayerInventory inventory;
         [SerializeField] Text healthText;
         [SerializeField] Text ammoText;
@@ -37,7 +38,7 @@ namespace Jupiter.UI
             if (health != null && healthText != null)
             {
                 var m = health.Model;
-                bool show = m.Current < m.Max || (inventory != null && (inventory.HasBoltDriver || inventory.HasBeamRifle));
+                bool show = m.Current < m.Max || (inventory != null && (inventory.HasBoltDriver || inventory.HasBeamRifle || inventory.HasSidearm));
                 healthText.enabled = show;
                 int patches = inventory != null ? inventory.Model.Count(PlayerInventory.MedPatch) : 0;
                 string colour = m.IsLow ? "#FF5A5A" : "#E6EEF2";
@@ -55,6 +56,13 @@ namespace Jupiter.UI
                 string state = b.State == BeamState.Reloading ? "  SWAPPING CELL" : b.State == BeamState.Empty ? "  EMPTY" : "";
                 ammoText.enabled = true;
                 ammoText.text = $"<color={colour}>ARC CHARGE {pct}%</color>   CELLS {b.SpareCells}{state}";
+            }
+            else if (pistol != null && ammoText != null && inventory != null && inventory.HasSidearm)
+            {
+                var w = pistol.Model;
+                string state = w.State == WeaponState.Reloading ? "  RELOADING" : w.State == WeaponState.Empty ? "  EMPTY [R]" : "";
+                ammoText.enabled = true;
+                ammoText.text = $"PISTOL {w.Loaded} / {w.Reserve}{state}";
             }
             else if (weapon != null && ammoText != null)
             {

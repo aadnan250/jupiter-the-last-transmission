@@ -78,6 +78,7 @@ namespace Jupiter.EditorTools
             var rig = PlayerRigBuilder.Spawn(new Vector3(0f, 0.05f, 3f), 0f, profile);
             var inv = rig.GetComponent<PlayerInventory>();
             Set(inv, "startWithBoltDriver", false);
+            Set(inv, "startWithSidearm", true);   // the landing kit pistol; the bolt driver is still on the drill console
             Set(inv, "startingMedPatches", 1);
 
             // The Listener: dormant beside the bore, facing it.

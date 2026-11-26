@@ -1,0 +1,16 @@
+# Chapter 7, scene 7.6. Ashford, wounded, has sealed himself in the galley. He talks to Sam through the pressure
+# door on the radio: the truth, then the ascent vehicle's codes. His channel cuts mid-sentence. Plays on the move.
+
+=== start
+ASHFORD (radio): Sam. Listen. I don't have long, and I want to say this properly.
+[if flag demanded_truth] ASHFORD (radio): I promised you'd hear it from me. Here it is.
+ASHFORD (radio): Tiamat heard it in seventy-one. They sent us to find where it came from. And to bring some of it home.
+SAM (radio): You ran the radar. Every orbit. You made me run it.
+ASHFORD (radio): (beat) I thought it was saying hello.
+[if flag go_back_for_ashford] ASHFORD (radio): Don't open this door, Sam. Whatever you hear behind it.
+[if flag loyal_to_ashford] ASHFORD (radio): You were a good officer. Better than I deserved.
+ASHFORD (radio): The ascent vehicle. The codes are four, one, one, seven. Halcyon. Take Mara. Go home.
+ASHFORD (radio): (beat) Tell them I...
+~ flag knows_ascent_code
+~ flag ashford_lost
+-> END

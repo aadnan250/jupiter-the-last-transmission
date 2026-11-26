@@ -23,6 +23,7 @@ namespace Jupiter.EditorTools
         public const string Quake = Folder + "/sfx_quake.wav";
         public const string IceBurst = Folder + "/sfx_ice_burst.wav";
         public const string SuitBreath = Folder + "/sfx_suit_breath.wav";
+        public const string PistolShot = Folder + "/sfx_pistol_shot.wav";
 
         public static void Generate()
         {
@@ -40,6 +41,7 @@ namespace Jupiter.EditorTools
             Write(Quake, CombatSynth.Quake());
             Write(IceBurst, CombatSynth.IceBurst());
             Write(SuitBreath, CombatSynth.SuitBreath());
+            Write(PistolShot, CombatSynth.PistolShot());
         }
 
         static void Write(string path, float[] samples)

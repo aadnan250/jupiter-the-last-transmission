@@ -47,6 +47,7 @@ namespace Jupiter.EditorTools
 
             // The arc beam rifle (unequipped by default; the landing party carries it) and Sam's arms holding it.
             var beam = AddBeamRifle(root, input, inventory, camera, weaponAudio);
+            var pistol = AddSidearm(root, input, inventory, camera, weaponAudio);
             camera.gameObject.AddComponent<CameraShake>();
 
             // Stealth tools: hiding, one throwable in hand, Mara's flare pistol (unequipped until picked up).
@@ -84,6 +85,7 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(combatHud, "health", health);
             GreyboxKit.Set(combatHud, "weapon", driver);
             GreyboxKit.Set(combatHud, "beam", beam);
+            GreyboxKit.Set(combatHud, "pistol", pistol);
             GreyboxKit.Set(combatHud, "inventory", inventory);
             GreyboxKit.Set(combatHud, "healthText", healthText);
             GreyboxKit.Set(combatHud, "ammoText", ammoText);
@@ -181,6 +183,82 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(view, "glowParts", glow.ToArray());
             visual.gameObject.SetActive(false);
             return rifle;
+        }
+
+        /// <summary>
+        /// The pistol and its first-person view model: a compact dark pistol with glowing sight dots in Sam's right
+        /// glove, his left hand cupped under it; a brief tracer and muzzle flash on each shot.
+        /// </summary>
+        static Sidearm AddSidearm(GameObject root, InputReader input, PlayerInventory inventory, Transform camera, AudioSource audio)
+        {
+            var glove = GreyboxKit.Mat("VM_Glove", new Color(0.22f, 0.23f, 0.25f), smoothness: 0.3f);
+            var sleeve = GreyboxKit.Mat("VM_Sleeve", new Color(0.3f, 0.33f, 0.36f), smoothness: 0.25f);
+            var metal = GreyboxKit.Mat("VM_PistolMetal", new Color(0.07f, 0.075f, 0.08f), smoothness: 0.7f);
+            var grip = GreyboxKit.Mat("VM_PistolGrip", new Color(0.13f, 0.12f, 0.11f), smoothness: 0.2f);
+            var dots = GreyboxKit.Mat("VM_SightDots", new Color(0.2f, 0.5f, 0.2f), new Color(0.4f, 1f, 0.4f) * 2.5f);
+
+            var vm = new GameObject("PistolViewModel").transform;
+            vm.SetParent(camera, false);
+            vm.localPosition = new Vector3(0.13f, -0.15f, 0.33f);
+            var visual = new GameObject("Visual").transform;
+            visual.SetParent(vm, false);
+
+            Part(visual, PrimitiveType.Cube, "Slide", new Vector3(0f, 0.02f, 0.03f), new Vector3(0.032f, 0.036f, 0.19f), Vector3.zero, metal);
+            Part(visual, PrimitiveType.Cube, "Frame", new Vector3(0f, -0.005f, 0.02f), new Vector3(0.03f, 0.02f, 0.16f), Vector3.zero, metal);
+            Part(visual, PrimitiveType.Cylinder, "Barrel", new Vector3(0f, 0.02f, 0.13f), new Vector3(0.014f, 0.006f, 0.014f), new Vector3(90f, 0f, 0f), grip);
+            Part(visual, PrimitiveType.Cube, "Grip", new Vector3(0f, -0.055f, -0.045f), new Vector3(0.03f, 0.1f, 0.045f), new Vector3(-15f, 0f, 0f), grip);
+            Part(visual, PrimitiveType.Cube, "TriggerGuard", new Vector3(0f, -0.025f, 0.015f), new Vector3(0.008f, 0.025f, 0.04f), Vector3.zero, metal);
+            Part(visual, PrimitiveType.Cube, "SightFront", new Vector3(0f, 0.041f, 0.11f), new Vector3(0.006f, 0.008f, 0.006f), Vector3.zero, dots);
+            Part(visual, PrimitiveType.Cube, "SightRearL", new Vector3(-0.009f, 0.041f, -0.055f), new Vector3(0.005f, 0.008f, 0.006f), Vector3.zero, dots);
+            Part(visual, PrimitiveType.Cube, "SightRearR", new Vector3(0.009f, 0.041f, -0.055f), new Vector3(0.005f, 0.008f, 0.006f), Vector3.zero, dots);
+            // Right hand wrapped round the grip, left hand cupping it; sleeves running back out of view.
+            Part(visual, PrimitiveType.Sphere, "GloveR", new Vector3(0.006f, -0.06f, -0.05f), new Vector3(0.055f, 0.075f, 0.065f), Vector3.zero, glove);
+            Part(visual, PrimitiveType.Sphere, "GloveL", new Vector3(-0.022f, -0.075f, -0.03f), new Vector3(0.05f, 0.06f, 0.07f), new Vector3(0f, 0f, 20f), glove);
+            Part(visual, PrimitiveType.Capsule, "SleeveR", new Vector3(0.05f, -0.13f, -0.2f), new Vector3(0.07f, 0.13f, 0.07f), new Vector3(65f, -15f, 0f), sleeve);
+            Part(visual, PrimitiveType.Capsule, "SleeveL", new Vector3(-0.07f, -0.14f, -0.18f), new Vector3(0.07f, 0.13f, 0.07f), new Vector3(65f, 25f, 0f), sleeve);
+
+            var muzzle = new GameObject("Muzzle").transform;
+            muzzle.SetParent(visual, false);
+            muzzle.localPosition = new Vector3(0f, 0.02f, 0.14f);
+
+            var flashGo = new GameObject("PistolFlash");
+            flashGo.transform.SetParent(muzzle, false);
+            var flash = flashGo.AddComponent<Light>();
+            flash.type = LightType.Point;
+            flash.range = 7f;
+            flash.intensity = 3.5f;
+            flash.color = new Color(1f, 0.8f, 0.5f);
+            flash.shadows = LightShadows.None;
+            flash.enabled = false;
+
+            var tracerGo = new GameObject("PistolTracer");
+            tracerGo.transform.SetParent(root.transform, false);
+            var tracer = tracerGo.AddComponent<LineRenderer>();
+            tracer.useWorldSpace = true;
+            tracer.positionCount = 2;
+            tracer.startWidth = 0.012f;
+            tracer.endWidth = 0.004f;
+            tracer.sharedMaterial = BeamMaterial("FX_Tracer", new Color(2.4f, 1.9f, 1.2f));
+            tracer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            tracer.enabled = false;
+
+            var sidearm = root.AddComponent<Sidearm>();
+            GreyboxKit.Set(sidearm, "input", input);
+            GreyboxKit.Set(sidearm, "inventory", inventory);
+            GreyboxKit.Set(sidearm, "aim", camera);
+            GreyboxKit.Set(sidearm, "muzzle", muzzle);
+            GreyboxKit.Set(sidearm, "tracer", tracer);
+            GreyboxKit.Set(sidearm, "flash", flash);
+            GreyboxKit.Set(sidearm, "audioSource", audio);
+            GreyboxKit.Set(sidearm, "shotClip", CombatAudioGenerator.Load(CombatAudioGenerator.PistolShot));
+            GreyboxKit.Set(sidearm, "reloadClip", CombatAudioGenerator.Load(CombatAudioGenerator.Reload));
+
+            var view = vm.gameObject.AddComponent<PistolViewModel>();
+            GreyboxKit.Set(view, "sidearm", sidearm);
+            GreyboxKit.Set(view, "input", input);
+            GreyboxKit.Set(view, "visual", visual.gameObject);
+            visual.gameObject.SetActive(false);
+            return sidearm;
         }
 
         static Renderer Part(Transform parent, PrimitiveType type, string name, Vector3 pos, Vector3 scale, Vector3 euler, Material mat)

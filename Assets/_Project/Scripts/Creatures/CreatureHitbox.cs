@@ -25,7 +25,12 @@ namespace Jupiter.Creatures
         public void TakeDamage(DamageInfo info)
         {
             if (owner == null) return;
-            if (isNode) owner.ApplyNodeHit(nodeIndex, info);
+            if (isNode)
+            {
+                owner.ApplyNodeHit(nodeIndex, info);
+                // A burst node is just a wound: it must not keep catching shots meant for the body behind it.
+                if (owner.Model.IsNodeRuptured(nodeIndex) && TryGetComponent<Collider>(out var col)) col.enabled = false;
+            }
             else owner.ApplyBodyHit(info);
         }
     }

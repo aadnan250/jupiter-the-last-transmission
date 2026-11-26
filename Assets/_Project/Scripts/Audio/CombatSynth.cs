@@ -268,6 +268,28 @@ namespace Jupiter.Audio
             return ProceduralAudio.Normalize(o, 0.5f);
         }
 
+        /// <summary>The pistol: a hard, short crack with a metallic snap of the slide and a quick echo.</summary>
+        public static float[] PistolShot()
+        {
+            int n = (int)(0.7 * Rate);
+            var rng = new Random(4545);
+            var o = new float[n];
+            double hp = 0, prev = 0, lp = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double white = rng.NextDouble() * 2 - 1;
+                hp = 0.88 * (hp + white - prev); prev = white;
+                lp += 0.2 * (white - lp);
+                double crack = hp * Math.Exp(-t * 70) * 1.2;
+                double body = Math.Sin(TwoPi * (190 - 90 * t) * t) * Math.Exp(-t * 30) * 0.8;
+                double slide = Clack(t - 0.03) * 0.35;
+                double echo = t > 0.12 ? lp * Math.Exp(-(t - 0.12) * 9) * 0.3 : 0;
+                o[i] = (float)(crack + body + slide + echo);
+            }
+            return ProceduralAudio.Normalize(o, 0.9f);
+        }
+
         static double Clack(double t) => t < 0 ? 0 : Math.Exp(-t * 70) * (Math.Sin(TwoPi * 900 * t) * 0.5 + Math.Sin(TwoPi * 210 * t));
     }
 }

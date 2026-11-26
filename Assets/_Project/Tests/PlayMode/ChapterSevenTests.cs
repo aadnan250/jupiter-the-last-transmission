@@ -154,6 +154,66 @@ namespace Jupiter.Tests
         }
 
         [UnityTest]
+        public IEnumerator LeavingTheSafeRoom_LucaThenAshfordOnTheRadio_WhileSamKeepsMoving()
+        {
+            var luca = Named<DialogueTrigger>("Trigger_LucaLastRadio");
+            var ashford = Named<DialogueTrigger>("Trigger_AshfordDoor");
+            Assert.IsFalse(luca.TryFire(), "not before the safe room");
+            Assert.IsFalse(ashford.TryFire(), "not before Luca");
+
+            story.MarkCompleted("ch07_safe_room");
+            Assert.IsTrue(luca.TryFire());
+            Assert.IsTrue(dialogue.OnTheMove && !input.DialogueMode, "Sam keeps moving while it plays");
+            yield return WaitFor(() => !dialogue.IsActive, 40f);
+            Assert.IsTrue(story.HasFlag("luca_lost"));
+
+            Assert.IsTrue(ashford.TryFire());
+            Assert.IsTrue(dialogue.OnTheMove);
+            yield return WaitFor(() => !dialogue.IsActive, 50f);
+            Assert.IsTrue(story.HasFlag("knows_ascent_code"), "Ashford gave the codes");
+            Assert.IsTrue(story.HasFlag("ashford_lost"));
+            Assert.IsTrue(Find("Door_GalleyPressure").GetComponent<SlidingDoor>().IsLocked, "he is sealed in");
+        }
+
+        [UnityTest]
+        public IEnumerator Pistol_DropsTheListener_AndFinishesItWhileItIsDown()
+        {
+            yield return ConamaraTestScene.LoadFresh();
+            story = Object.FindAnyObjectByType<DialogueManager>().Story;
+            story.SetFlag("eruption_blackout");
+            story.SetFlag(ConamaraTestScene.ContactFlag);
+            yield return null;
+            var player = Object.FindAnyObjectByType<PlayerController>();
+            var inv = player.GetComponent<Jupiter.Combat.PlayerInventory>();
+            Assert.IsTrue(inv.HasSidearm, "Sam carries the pistol in the base");
+            var pistol = player.GetComponent<Jupiter.Combat.Sidearm>();
+            var creature = Object.FindAnyObjectByType<CreatureAI>();
+            var health = creature.Health;
+            health.Model.TorporMinSeconds = health.Model.TorporMaxSeconds = 30f;
+
+            // Stand in front of it and empty magazines into its chest until it drops, then keep firing.
+            var cc = player.GetComponent<CharacterController>();
+            cc.enabled = false;
+            player.transform.position = creature.transform.position + creature.transform.forward * 4f;
+            cc.enabled = true;
+            yield return null;
+            var cam = player.GetComponentInChildren<Camera>().transform;
+            for (float t = 0f; t < 20f && health.Model.Condition != CreatureCondition.Dead; t += Time.deltaTime)
+            {
+                // Aim at whatever part of it is highest off the floor: what a player would see and shoot.
+                var chest = creature.GetComponentsInChildren<CreatureHitbox>().Where(h => !h.IsNode).OrderByDescending(h => h.transform.position.y).First();
+                cam.rotation = Quaternion.LookRotation(chest.transform.position - cam.position);
+                // It fights back; keep the test player alive (dying restarts the level).
+                player.GetComponent<Jupiter.Combat.PlayerHealth>().Model.Heal(100f);
+                if (pistol.Model.State == Jupiter.Combat.WeaponState.Empty) pistol.Reload();
+                pistol.Fire();
+                yield return null;
+            }
+            string diag = Physics.Raycast(cam.position, cam.forward, out var dh, 50f, ~0, QueryTriggerInteraction.Ignore) ? dh.collider.name + " @" + dh.distance.ToString("0.0") : "nothing";
+            Assert.AreEqual(CreatureCondition.Dead, health.Model.Condition, $"knocked down, then finished on the floor (shots {pistol.ShotsFired}, loaded {pistol.Model.Loaded}/{pistol.Model.Reserve}, ray hits {diag}, cam {cam.position}, creature {creature.transform.position})");
+        }
+
+        [UnityTest]
         public IEnumerator Objectives_CarryOnFromChapterSix()
         {
             var mission = Object.FindAnyObjectByType<MissionManager>();
@@ -165,7 +225,12 @@ namespace Jupiter.Tests
             story.SetFlag("left_drill_chamber");
             Assert.AreEqual("Get to the safe room", mission.CurrentText);
             story.SetFlag("reached_safe_room");
-            Assert.AreEqual("Rest. For now.", mission.CurrentText);
+            Assert.AreEqual("Head for the lander pad", mission.CurrentText);
+            story.MarkCompleted("ch07_luca_radio");
+            Assert.AreEqual("Find Ashford (the galley, off corridor B)", mission.CurrentText);
+            story.MarkCompleted("ch07_ashford_radio");
+            story.SetFlag("reached_ascent_tunnel");
+            Assert.AreEqual("Chapter 7 complete. To be continued...", mission.CurrentText);
             yield return null;
         }
     }

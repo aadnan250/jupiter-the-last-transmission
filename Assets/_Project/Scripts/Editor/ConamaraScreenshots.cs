@@ -14,12 +14,16 @@ namespace Jupiter.EditorTools
             EditorSceneManager.OpenScene(ConamaraBaseBuilder.ScenePath);
             var cam = Object.FindAnyObjectByType<Camera>();
             Directory.CreateDirectory("docs/images");
-            var listener = GameObject.Find("Listener");
+            // The Listener is hidden behind a story gate until contact: show it for the shot.
+            var ai = Object.FindObjectsByType<Jupiter.Creatures.CreatureAI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var listener = ai.Length > 0 ? ai[0].gameObject : null;
+            if (listener != null) listener.SetActive(true);
             Vector3 l = listener != null ? listener.transform.position : new Vector3(-11f, 0f, 55f);
 
             Shot(cam, "phase4-listener.png", l + new Vector3(3.2f, 1.7f, -1.6f), l + Vector3.up * 1.7f, 55f);
             Shot(cam, "phase4-drill-chamber.png", new Vector3(-1f, 1.7f, 44.5f), new Vector3(-8f, 0.8f, 54f), 70f);
             Shot(cam, "phase4-corridor.png", new Vector3(0f, 1.62f, 12f), new Vector3(0f, 1.4f, 30f), 70f);
+            if (listener != null) listener.SetActive(false);
             Debug.Log("[ConamaraScreenshots] Saved");
         }
 

@@ -42,6 +42,7 @@ Sight only works at short range (it is nearly blind), so standing still in the d
 
 - **Body hits** wear it down to a threshold, then it collapses into **torpor**, which looks like death.
 - After **20–40 s** of torpor it **recovers** with partial health. This is why it "gets back up" in Chapter 8.
+- **Finishing it:** shots into it while it is down (120 damage, `CreatureHealthModel.FinishDamage`) kill it for good. A burst node stops catching shots, so bullets reach the body behind it.
 - It only truly dies if **3 of its 6 pressure nodes** are ruptured (the glowing cyan spheres take heavy damage), or if it takes
   explosive damage while in torpor.
 

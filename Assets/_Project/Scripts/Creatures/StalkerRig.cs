@@ -72,7 +72,7 @@ namespace Jupiter.Creatures
                 case StalkerPose.Dead:
                     Set("hips", 70); Set("spine", 30); Set("chest", 20); Set("neck", -10); Set("head", 10); Set("jaw", 30);
                     Limbs(-95, 150, -60, -10, 40, 30);
-                    drop = 0.9f;
+                    drop = crouchDrop * 1.6f;   // lying on the floor, whatever the creature's size
                     break;
 
                 case StalkerPose.Emerging:

@@ -14,6 +14,8 @@ namespace Jupiter.Combat
         public const string FlarePistolId = "flare_pistol";
         /// <summary>The arc beam rifle (weapon slot), used on the surface.</summary>
         public const string BeamRifleId = "beam_rifle";
+        /// <summary>Sam's pistol (weapon slot), carried inside the base.</summary>
+        public const string SidearmId = "sidearm";
         public const string Flare = "flare";
 
         [SerializeField] InputReader input;
@@ -23,12 +25,15 @@ namespace Jupiter.Combat
         [SerializeField] bool startWithBoltDriver;
         [Tooltip("Levels where the landing party is armed start with the beam rifle (overrides the bolt driver).")]
         [SerializeField] bool startWithBeamRifle;
+        [Tooltip("Start with the pistol (the base).")]
+        [SerializeField] bool startWithSidearm;
         [SerializeField] int startingMedPatches;
 
         public InventoryModel Model { get; } = new InventoryModel();
         public bool HasBoltDriver => Model.Weapon == BoltDriverId;
         public bool HasFlarePistol => Model.Tool == FlarePistolId;
         public bool HasBeamRifle => Model.Weapon == BeamRifleId;
+        public bool HasSidearm => Model.Weapon == SidearmId;
 
         void Awake()
         {
@@ -36,6 +41,7 @@ namespace Jupiter.Combat
             if (health == null) health = GetComponent<PlayerHealth>();
             if (startWithBoltDriver) Model.EquipWeapon(BoltDriverId);
             if (startWithBeamRifle) Model.EquipWeapon(BeamRifleId);
+            if (startWithSidearm) Model.EquipWeapon(SidearmId);
             if (startingMedPatches > 0) Model.Add(MedPatch, startingMedPatches);
         }
 

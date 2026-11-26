@@ -154,6 +154,31 @@ namespace Jupiter.Tests
         }
 
         [Test]
+        public void Creature_WithAFinishThreshold_ShotsWhileDownKillIt()
+        {
+            var c = new CreatureHealthModel(() => 0f) { FinishDamage = 120f };
+            c.TakeBodyDamage(1000f);
+            Assert.AreEqual(CreatureCondition.Torpor, c.Condition);
+            c.TakeBodyDamage(100f);
+            Assert.AreEqual(CreatureCondition.Torpor, c.Condition, "not enough yet");
+            c.TakeBodyDamage(30f);
+            Assert.AreEqual(CreatureCondition.Dead, c.Condition, "finished while it was down");
+        }
+
+        [Test]
+        public void Creature_FinishDamageResetsEachTimeItGoesDown()
+        {
+            var c = new CreatureHealthModel(() => 0f) { FinishDamage = 120f, TorporMinSeconds = 1f, TorporMaxSeconds = 1f };
+            c.TakeBodyDamage(1000f);
+            c.TakeBodyDamage(100f);
+            c.Tick(2f);                                   // it gets back up
+            Assert.AreEqual(CreatureCondition.Active, c.Condition);
+            c.TakeBodyDamage(1000f);
+            c.TakeBodyDamage(100f);
+            Assert.AreEqual(CreatureCondition.Torpor, c.Condition, "damage from the last time it was down does not count");
+        }
+
+        [Test]
         public void Creature_BodyHitsInTorporDoNothing()
         {
             var c = new CreatureHealthModel();
