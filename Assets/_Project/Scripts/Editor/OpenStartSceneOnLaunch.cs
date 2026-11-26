@@ -16,7 +16,7 @@ namespace Jupiter.EditorTools
         /// <summary>The start of the game: the Meridian (Chapter 2), which leads on to Conamara Base (Chapters 6-7).</summary>
         public const string StartScene = MeridianGreyboxBuilder.ScenePath;
         /// <summary>Bump when a new level or chapter becomes the one to show on opening the project.</summary>
-        const string ContentVersion = "slice7-story-from-start";
+        const string ContentVersion = "europa-landing";
 
         const string SessionKey = "Jupiter.OpenStartSceneOnLaunch.Done";
         const string VersionKey = "Jupiter.OpenStartSceneOnLaunch.Version";

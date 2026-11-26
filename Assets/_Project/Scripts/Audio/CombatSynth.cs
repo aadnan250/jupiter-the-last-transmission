@@ -164,6 +164,132 @@ namespace Jupiter.Audio
             return ProceduralAudio.Normalize(o, 0.9f);
         }
 
+        /// <summary>The arc beam: a seamless 2 s loop of an electric hum with a crackling edge (loops cleanly).</summary>
+        public static float[] BeamHum()
+        {
+            int n = 2 * Rate;
+            var rng = new Random(3131);
+            var o = new float[n];
+            double crackle = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                // Whole-number cycles in 2 s, so the loop point is seamless.
+                double hum = Math.Sin(TwoPi * 110 * t) * 0.35 + Math.Sin(TwoPi * 220 * t) * 0.2 + Math.Sin(TwoPi * 331 * t) * 0.12;
+                double wobble = 0.8 + 0.2 * Math.Sin(TwoPi * 3 * t);
+                if (rng.NextDouble() < 0.004) crackle = 1;
+                crackle *= 0.93;
+                o[i] = (float)(hum * wobble + (rng.NextDouble() * 2 - 1) * crackle * 0.5);
+            }
+            return ProceduralAudio.Normalize(o, 0.7f);
+        }
+
+        /// <summary>A Stalker's shriek: a rising, tearing screech made of detuned harmonics and noise.</summary>
+        public static float[] Shriek()
+        {
+            int n = (int)(1.4 * Rate);
+            var rng = new Random(6661);
+            var o = new float[n];
+            double hp = 0, prev = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double env = Math.Min(1, t / 0.08) * Math.Exp(-Math.Max(0, t - 0.5) * 3.5);
+                double f = 620 + 900 * t + 60 * Math.Sin(TwoPi * 17 * t);
+                double tone = Math.Sin(TwoPi * f * t) + 0.6 * Math.Sin(TwoPi * f * 1.51 * t) + 0.4 * Math.Sin(TwoPi * f * 2.03 * t);
+                double white = rng.NextDouble() * 2 - 1;
+                hp = 0.9 * (hp + white - prev); prev = white;
+                o[i] = (float)((tone * 0.4 + hp * 0.6) * env);
+            }
+            return ProceduralAudio.Normalize(o, 0.85f);
+        }
+
+        /// <summary>The moon quaking: six seconds of sub-bass rumble with grinding ice, felt through the boots.</summary>
+        public static float[] Quake()
+        {
+            int n = 6 * Rate;
+            var rng = new Random(4040);
+            var o = new float[n];
+            double lp = 0, lp2 = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double white = rng.NextDouble() * 2 - 1;
+                lp += 0.008 * (white - lp);
+                lp2 += 0.06 * (white - lp2);
+                double env = Math.Min(1, t / 0.8) * Math.Min(1, (6 - t) / 1.5);
+                double sub = Math.Sin(TwoPi * (28 + 4 * Math.Sin(TwoPi * 0.7 * t)) * t) * 0.5;
+                o[i] = (float)((lp * 14 + sub + lp2 * 1.2 * (0.5 + 0.5 * Math.Sin(TwoPi * 1.3 * t))) * env);
+            }
+            return ProceduralAudio.Normalize(o, 0.95f);
+        }
+
+        /// <summary>Ice bursting open from below: a sharp crack, shards, a heavy thump.</summary>
+        public static float[] IceBurst()
+        {
+            int n = (int)(1.1 * Rate);
+            var rng = new Random(5150);
+            var o = new float[n];
+            double hp = 0, prev = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double white = rng.NextDouble() * 2 - 1;
+                hp = 0.85 * (hp + white - prev); prev = white;
+                double crack = hp * Math.Exp(-t * 18);
+                double thump = Math.Sin(TwoPi * (70 - 30 * t) * t) * Math.Exp(-t * 6) * 0.9;
+                double shards = 0;
+                foreach (double at in new[] { 0.12, 0.2, 0.31, 0.45 })
+                {
+                    double u = t - at;
+                    if (u >= 0) shards += Math.Sin(TwoPi * (2600 + at * 3000) * u) * Math.Exp(-u * 60) * 0.25;
+                }
+                o[i] = (float)(crack + thump + shards);
+            }
+            return ProceduralAudio.Normalize(o, 0.9f);
+        }
+
+        /// <summary>Breathing inside a sealed helmet: a slow 4 s loop of filtered in and out breaths.</summary>
+        public static float[] SuitBreath()
+        {
+            int n = 4 * Rate;
+            var rng = new Random(2020);
+            var o = new float[n];
+            double lp = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double white = rng.NextDouble() * 2 - 1;
+                lp += 0.05 * (white - lp);
+                double inhale = t < 1.6 ? Math.Sin(Math.PI * t / 1.6) : 0;
+                double exhale = t >= 2.0 && t < 3.6 ? Math.Sin(Math.PI * (t - 2.0) / 1.6) : 0;
+                o[i] = (float)(lp * (inhale * 0.8 + exhale));
+            }
+            return ProceduralAudio.Normalize(o, 0.5f);
+        }
+
+        /// <summary>The pistol: a hard, short crack with a metallic snap of the slide and a quick echo.</summary>
+        public static float[] PistolShot()
+        {
+            int n = (int)(0.7 * Rate);
+            var rng = new Random(4545);
+            var o = new float[n];
+            double hp = 0, prev = 0, lp = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double white = rng.NextDouble() * 2 - 1;
+                hp = 0.88 * (hp + white - prev); prev = white;
+                lp += 0.2 * (white - lp);
+                double crack = hp * Math.Exp(-t * 70) * 1.2;
+                double body = Math.Sin(TwoPi * (190 - 90 * t) * t) * Math.Exp(-t * 30) * 0.8;
+                double slide = Clack(t - 0.03) * 0.35;
+                double echo = t > 0.12 ? lp * Math.Exp(-(t - 0.12) * 9) * 0.3 : 0;
+                o[i] = (float)(crack + body + slide + echo);
+            }
+            return ProceduralAudio.Normalize(o, 0.9f);
+        }
+
         static double Clack(double t) => t < 0 ? 0 : Math.Exp(-t * 70) * (Math.Sin(TwoPi * 900 * t) * 0.5 + Math.Sin(TwoPi * 210 * t));
     }
 }

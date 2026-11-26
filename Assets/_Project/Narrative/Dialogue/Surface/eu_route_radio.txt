@@ -1,0 +1,11 @@
+# Europa surface. The last Stalker falls. Shock, then Ashford sends the team to Tiamat's lander, not the base.
+# Plays on the move. (Replaces the old "into the base" call: the story now stays out on the ice.)
+
+=== start
+ASHFORD (radio): Cease fire. Cease fire. (beat) Is everyone still breathing?
+MARA (radio): Breathing. Barely.
+HANA (radio): Daniel, those things were alive. Under the ice. Waiting for us.
+ASHFORD (radio): Not the base. Not yet. Tiamat's lander is north-east of here, under the green beacon. We need what's on it.
+MARA (radio): After that? Daniel, after that?
+ASHFORD (radio): Move.
+-> END

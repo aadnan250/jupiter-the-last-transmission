@@ -14,6 +14,9 @@ namespace Jupiter.Creatures
         [SerializeField] Transform crest;
         [SerializeField] Renderer[] nodes;
         [SerializeField] CreatureHealth health;
+        [Tooltip("When set (the Blender model), states drive this procedural rig instead of the primitive parts.")]
+        [SerializeField] StalkerRig rig;
+        UnityEngine.AI.NavMeshAgent agent;
         [SerializeField] Color nodeColor = new Color(0.2f, 0.9f, 1f) * 2.5f;
 
         static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
@@ -32,6 +35,7 @@ namespace Jupiter.Creatures
             if (crest != null) crestRestScale = crest.localScale;
             dead = new bool[nodes != null ? nodes.Length : 0];
             if (health == null) health = GetComponentInParent<CreatureHealth>();
+            agent = GetComponentInParent<UnityEngine.AI.NavMeshAgent>();
         }
 
         void OnEnable() { if (health != null) health.NodeRuptured += OnNode; }
@@ -42,6 +46,7 @@ namespace Jupiter.Creatures
         public void SetState(CreatureState s)
         {
             ShownState = s;
+            if (rig != null) PoseRig(s);
             switch (s)
             {
                 case CreatureState.Listening:
@@ -63,9 +68,26 @@ namespace Jupiter.Creatures
             }
         }
 
+        /// <summary>The Listener's states on the creature rig: crouched and still while it listens, loping when it moves.</summary>
+        void PoseRig(CreatureState s)
+        {
+            switch (s)
+            {
+                case CreatureState.Investigating:
+                case CreatureState.Hunting: rig.Pose = StalkerPose.Run; break;
+                case CreatureState.Attacking: rig.Pose = StalkerPose.Idle; rig.Attack(); break;
+                case CreatureState.Torpor:
+                case CreatureState.Dead: rig.Pose = StalkerPose.Dead; break;
+                case CreatureState.Recovering: rig.Pose = StalkerPose.Emerging; break;
+                case CreatureState.Blinded: rig.Pose = StalkerPose.Idle; rig.Flinch(); break;
+                default: rig.Pose = StalkerPose.Idle; break;
+            }
+        }
+
         void Update()
         {
             float k = 1f - Mathf.Exp(-6f * Time.deltaTime);
+            if (rig != null && agent != null && agent.enabled) rig.Speed = Mathf.Clamp01(agent.velocity.magnitude / 4f);
             if (body != null)
             {
                 body.localPosition = Vector3.Lerp(body.localPosition, bodyRestPos + targetOffset, k);

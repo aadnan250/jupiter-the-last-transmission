@@ -42,6 +42,7 @@ Sight only works at short range (it is nearly blind), so standing still in the d
 
 - **Body hits** wear it down to a threshold, then it collapses into **torpor**, which looks like death.
 - After **20–40 s** of torpor it **recovers** with partial health. This is why it "gets back up" in Chapter 8.
+- **Finishing it:** shots into it while it is down (120 damage, `CreatureHealthModel.FinishDamage`) kill it for good. A burst node stops catching shots, so bullets reach the body behind it.
 - It only truly dies if **3 of its 6 pressure nodes** are ruptured (the glowing cyan spheres take heavy damage), or if it takes
   explosive damage while in torpor.
 
@@ -77,6 +78,17 @@ Story beats talk to the creature through the same senses as everything else. `Cr
 adds a perceived stimulus (used by the bore eruption and by Ashford's pressure door giving way), so the creature still
 investigates or hunts through its normal states. The drill-chamber pressure door carries a carving `NavMeshObstacle`: while
 it is shut, the creature genuinely cannot path out.
+
+## 7. Stalkers and the landing party (Europa surface)
+
+- **Stalkers** (`Creatures/StalkerAI`, `Creatures/StalkerRig`): the surface forms that wait under the ice. The
+  `AmbushDirector` brings them up one after another in a ring around the squad (`AmbushTimeline`, golden-angle spacing so
+  none come up together). Each runs down the nearest person (Sam counts as a little nearer: he is the one they want),
+  slashes in reach, flinches when hit and dies to sustained beam fire. `StalkerRig` animates the Blender model's named
+  bones procedurally: hunched crouch with sudden head tilts, a low four-limbed run, a two-armed slash, an emergence and a collapse.
+- **The landing party** (`Combat/SquadMember`, `Combat/SuitAnimator`): Ashford, Mara and Hana hold formation slots around
+  Sam and walk with him with a low-gravity lope. When a Stalker is up and within 32 m they stop, shoulder their rifles and
+  fire short beam bursts at the nearest one. They can be knocked about but do not die here: the story still needs them.
 
 ## Known limitations
 

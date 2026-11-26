@@ -1,0 +1,7 @@
+# Europa surface. Tiamat's lander, down since 2171, half buried. Its borehole is frozen over from below.
+
+=== start
+HANA (radio): It's Tiamat. Seventy-one. It's been sitting out here for twelve years.
+MARA (radio): Look at the borehole. It's frozen over. From below.
+ASHFORD (radio): Okafor, you're the geophysicist. Pull what you can from the data box.
+-> END

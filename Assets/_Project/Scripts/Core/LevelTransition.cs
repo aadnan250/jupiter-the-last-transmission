@@ -14,6 +14,8 @@ namespace Jupiter.Core
     public class LevelTransition : MonoBehaviour
     {
         [SerializeField] string requiresCompleted;
+        [Tooltip("Or/and a story flag (e.g. reaching the base door).")]
+        [SerializeField] string requiresFlag;
         [SerializeField] string nextScene;
         [SerializeField] string cardTitle = "LATER";
         [SerializeField, TextArea(1, 3)] string cardSubtitle = "";
@@ -28,6 +30,8 @@ namespace Jupiter.Core
         bool loading;
 
         public bool Started => t >= 0f;
+        /// <summary>True once the card is fully up (and, with no next scene, staying up).</summary>
+        public bool Holding => loading;
         public string NextScene => nextScene;
 
         void Start()
@@ -38,11 +42,12 @@ namespace Jupiter.Core
 
         void Update()
         {
-            if (loading || dialogue == null || string.IsNullOrEmpty(nextScene)) return;
+            if (loading || dialogue == null) return;
             if (!Started)
             {
                 // Wait until the last conversation is over, then give the moment a few seconds to land.
-                if (dialogue.IsActive || !dialogue.Story.IsCompleted(requiresCompleted)) { waited = 0f; return; }
+                // Radio chatter on the move never holds the story up; a conversation the player is in does.
+                if ((dialogue.IsActive && !dialogue.OnTheMove) || !Ready()) { waited = 0f; return; }
                 if ((waited += Time.deltaTime) < delaySeconds) return;
                 Begin();
             }
@@ -52,8 +57,17 @@ namespace Jupiter.Core
             if (TransitionTimeline.ShouldLoad(t, fadeSeconds, holdSeconds))
             {
                 loading = true;
-                SceneManager.LoadScene(nextScene);
+                // No next scene: the end of what is built so far. The card stays up.
+                if (!string.IsNullOrEmpty(nextScene)) SceneManager.LoadScene(nextScene);
             }
+        }
+
+        bool Ready()
+        {
+            var story = dialogue.Story;
+            if (!string.IsNullOrEmpty(requiresCompleted) && !story.IsCompleted(requiresCompleted)) return false;
+            if (!string.IsNullOrEmpty(requiresFlag) && !story.HasFlag(requiresFlag)) return false;
+            return !string.IsNullOrEmpty(requiresCompleted) || !string.IsNullOrEmpty(requiresFlag);
         }
 
         /// <summary>Starts the fade now. Public for tests and for a "skip to the next level" shortcut.</summary>

@@ -14,6 +14,8 @@ namespace Jupiter.UI
     {
         [SerializeField] PlayerHealth health;
         [SerializeField] BoltDriver weapon;
+        [SerializeField] BeamRifle beam;
+        [SerializeField] Sidearm pistol;
         [SerializeField] PlayerInventory inventory;
         [SerializeField] Text healthText;
         [SerializeField] Text ammoText;
@@ -36,13 +38,33 @@ namespace Jupiter.UI
             if (health != null && healthText != null)
             {
                 var m = health.Model;
-                bool show = m.Current < m.Max || (inventory != null && inventory.HasBoltDriver);
+                bool show = m.Current < m.Max || (inventory != null && (inventory.HasBoltDriver || inventory.HasBeamRifle || inventory.HasSidearm));
                 healthText.enabled = show;
                 int patches = inventory != null ? inventory.Model.Count(PlayerInventory.MedPatch) : 0;
                 string colour = m.IsLow ? "#FF5A5A" : "#E6EEF2";
-                healthText.text = $"<color={colour}>HEALTH {Mathf.CeilToInt(m.Current)}</color>   med-patches {patches}";
+                // The heal button is always shown with the patches left; at low health it flashes a reminder.
+                string heal = patches > 0 ? $"   <color=#9FE8A0>[{HealGlyph}] HEAL</color> x{patches}" : "   no med-patches";
+                string warn = m.IsLow && patches > 0 && Mathf.Repeat(Time.time, 0.8f) < 0.5f
+                    ? $"<color=#FF5A5A>LOW HEALTH: PRESS {HealGlyph} TO HEAL</color>\n" : (m.IsLow ? "\n" : "");
+                healthText.text = $"{warn}<color={colour}>HEALTH {Mathf.CeilToInt(m.Current)}</color>{heal}";
             }
-            if (weapon != null && ammoText != null)
+            if (beam != null && ammoText != null && inventory != null && inventory.HasBeamRifle)
+            {
+                var b = beam.Model;
+                int pct = Mathf.CeilToInt(b.ChargeFraction * 100f);
+                string colour = b.ChargeFraction < 0.25f ? "#FF8A5A" : "#9FE8FF";
+                string state = b.State == BeamState.Reloading ? "  SWAPPING CELL" : b.State == BeamState.Empty ? "  EMPTY" : "";
+                ammoText.enabled = true;
+                ammoText.text = $"<color={colour}>ARC CHARGE {pct}%</color>   CELLS {b.SpareCells}{state}";
+            }
+            else if (pistol != null && ammoText != null && inventory != null && inventory.HasSidearm)
+            {
+                var w = pistol.Model;
+                string state = w.State == WeaponState.Reloading ? "  RELOADING" : w.State == WeaponState.Empty ? "  EMPTY [R]" : "";
+                ammoText.enabled = true;
+                ammoText.text = $"PISTOL {w.Loaded} / {w.Reserve}{state}";
+            }
+            else if (weapon != null && ammoText != null)
             {
                 bool armed = inventory != null && inventory.HasBoltDriver;
                 ammoText.enabled = armed;
@@ -77,6 +99,8 @@ namespace Jupiter.UI
             toolText.enabled = toolLine.Length > 0;
             if (toolText.enabled) toolText.text = toolLine.ToString().TrimEnd();
         }
+
+        static string HealGlyph => !InputDeviceWatcher.UsingGamepad ? "H" : "D-PAD UP";
 
         static string ThrowGlyph =>
             !InputDeviceWatcher.UsingGamepad ? "G" : InputDeviceWatcher.UsingPlayStation ? "R1" : "RB";

@@ -38,7 +38,7 @@ namespace Jupiter.Creatures
 
         [Header("Attack")]
         [SerializeField] float attackRange = 1.8f;
-        [SerializeField] float attackDamage = 35f;
+        [SerializeField] float attackDamage = 20f;
         [SerializeField] float attackCooldown = 1.6f;
 
         NavMeshAgent agent;

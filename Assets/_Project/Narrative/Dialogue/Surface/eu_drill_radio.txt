@@ -1,0 +1,7 @@
+# Europa surface. Half way down the borehole. Something is wrong with the bit.
+
+=== start
+HANA (radio): Twenty metres. The bit's warm. It shouldn't be warm.
+HANA (radio): The torque's spiking. Something is holding the bit. It's... it's pulling back.
+MARA (radio): Hana, kill the drill!
+-> END

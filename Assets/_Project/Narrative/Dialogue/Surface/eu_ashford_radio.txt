@@ -1,0 +1,14 @@
+# Europa surface. Ashford, suit breached, lies by the borehole. His confession, and the ascent vehicle's codes.
+
+=== start
+ASHFORD (radio): Sam. Listen. I don't have long, and I want to say this properly.
+[if flag demanded_truth] ASHFORD (radio): I promised you'd hear it from me. Here it is.
+ASHFORD (radio): Tiamat heard it in seventy-one. They sent us to find where it came from. And to bring some of it home.
+SAM (radio): You ran the radar. Every orbit. You made me run it.
+ASHFORD (radio): (beat) I thought it was saying hello.
+[if flag loyal_to_ashford] ASHFORD (radio): You were a good officer. Better than I deserved.
+ASHFORD (radio): The ascent vehicle, Halcyon, on the pad by the base. The codes are four, one, one, seven. Take Mara. Go home.
+ASHFORD (radio): (beat) Tell them I...
+~ flag knows_ascent_code
+~ flag ashford_lost
+-> END

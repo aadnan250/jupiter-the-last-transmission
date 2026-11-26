@@ -23,6 +23,9 @@ namespace Jupiter.EditorTools
         public const string ConvBlackout = "ch07_blackout_radio";
         public const string ConvDoor = "ch07_door_radio";
         public const string ConvSafeRoom = "ch07_safe_room";
+        public const string ConvLuca = "ch07_luca_radio";
+        public const string ConvAshford = "ch07_ashford_radio";
+        public const string AscentFlag = "reached_ascent_tunnel";
 
         public const string BlackoutFlag = "eruption_blackout";
         public const string LeftDrillFlag = "left_drill_chamber";
@@ -39,6 +42,7 @@ namespace Jupiter.EditorTools
             BuildEruption(level, lights, story, creature, dialogue);
             BuildPressureDoor(level, story, creature, dialogue);
             BuildSafeRoom(story, dialogue);
+            BuildLastTransmissions(level, story, dialogue);
             ExtendObjectives();
         }
 
@@ -182,16 +186,56 @@ namespace Jupiter.EditorTools
             Set(t, "setsFlagOnEnter", SafeRoomFlag);
         }
 
+        // ------------------------------------------------------------------ 7.5 Luca, 7.6 Ashford
+
+        /// <summary>
+        /// Leaving the safe room, Luca's last transmission plays on the move. Ashford has sealed himself in the galley:
+        /// at its pressure door his confession comes over the radio, with the ascent vehicle's codes. Then the way on
+        /// is the ascent tunnel past the drill chamber (Chapter 8).
+        /// </summary>
+        static void BuildLastTransmissions(Transform level, Transform story, DialogueManager dialogue)
+        {
+            var galley = ConamaraBaseBuilder.Door(level, "Door_GalleyPressure", new Vector3(8f, 0f, 43f), 0f, 1.8f, true,
+                Mat("CB_Hatch", new Color(0.9f, 0.72f, 0.1f)));
+            var panel = galley.transform.Find("Panel");
+            var obstacle = panel.gameObject.AddComponent<NavMeshObstacle>();
+            obstacle.shape = NavMeshObstacleShape.Box;
+            obstacle.size = Vector3.one;
+            obstacle.carving = true;
+            Box(level, "Galley_DoorLight", new Vector3(8f, 2.5f, 42.86f), new Vector3(0.5f, 0.08f, 0.05f), Mat("CB_LedRed", new Color(0.3f, 0.02f, 0.02f), new Color(1f, 0.1f, 0.05f) * 3f), collider: false);
+
+            var luca = Six.Trigger(story, "Trigger_LucaLastRadio", new Vector3(0f, 1.4f, 34f), new Vector3(3f, 2.8f, 8f), dialogue);
+            Set(luca, "conversation", Dialogue(ConvLuca));
+            Set(luca, "onTheMove", true);
+            var so = new SerializedObject(luca);
+            Six.SetStrings(so.FindProperty("requiresCompleted"), ConvSafeRoom);
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            var ash = Six.Trigger(story, "Trigger_AshfordDoor", new Vector3(8f, 1.4f, 41.5f), new Vector3(3.5f, 2.8f, 3f), dialogue);
+            Set(ash, "conversation", Dialogue(ConvAshford));
+            Set(ash, "onTheMove", true);
+            so = new SerializedObject(ash);
+            Six.SetStrings(so.FindProperty("requiresCompleted"), ConvLuca);
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            var tunnel = Six.Trigger(story, "Trigger_AscentTunnel", new Vector3(-7f, 1.4f, 66f), new Vector3(2f, 2.8f, 4f), dialogue);
+            Set(tunnel, "requiresFlag", "knows_ascent_code");
+            Set(tunnel, "setsFlagOnEnter", AscentFlag);
+        }
+
         static void ExtendObjectives()
         {
             var mission = Object.FindAnyObjectByType<MissionManager>();
-            Set(mission, "completeText", "Rest. For now.");
+            Set(mission, "completeText", "Chapter 7 complete. To be continued...");
             var so = new SerializedObject(mission);
             var list = so.FindProperty("objectives");
             int start = list.arraySize;
-            list.arraySize = start + 2;
+            list.arraySize = start + 5;
             Six.Objective(list.GetArrayElementAtIndex(start), "Get out of the drill chamber", new string[0], new[] { LeftDrillFlag });
             Six.Objective(list.GetArrayElementAtIndex(start + 1), "Get to the safe room", new string[0], new[] { SafeRoomFlag });
+            Six.Objective(list.GetArrayElementAtIndex(start + 2), "Head for the lander pad", new[] { ConvLuca }, new string[0]);
+            Six.Objective(list.GetArrayElementAtIndex(start + 3), "Find Ashford (the galley, off corridor B)", new[] { ConvAshford }, new string[0]);
+            Six.Objective(list.GetArrayElementAtIndex(start + 4), "Reach the ascent tunnel past the drill chamber", new string[0], new[] { AscentFlag });
             so.ApplyModifiedPropertiesWithoutUndo();
         }
     }

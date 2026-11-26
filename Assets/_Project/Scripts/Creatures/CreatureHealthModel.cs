@@ -19,6 +19,13 @@ namespace Jupiter.Creatures
         public float TorporMinSeconds = 20f;
         public float TorporMaxSeconds = 40f;
         public float RecoverHealthFraction = 0.5f;
+        /// <summary>
+        /// Body damage taken while it is down (in torpor) that finishes it for good. 0 keeps the original rule:
+        /// only nodes or explosives can finish it.
+        /// </summary>
+        public float FinishDamage;
+
+        float downDamage;
 
         readonly Func<float> random01;
         readonly bool[] ruptured;
@@ -42,10 +49,16 @@ namespace Jupiter.Creatures
 
         public bool IsNodeRuptured(int index) => index >= 0 && index < ruptured.Length && ruptured[index];
 
-        /// <summary>Ordinary hits. Ignored in torpor (it is already down; only nodes or explosives finish it).</summary>
+        /// <summary>Ordinary hits. In torpor they only count towards <see cref="FinishDamage"/>, if that is set.</summary>
         public void TakeBodyDamage(float amount)
         {
-            if (Condition != CreatureCondition.Active || amount <= 0f) return;
+            if (amount <= 0f || Condition == CreatureCondition.Dead) return;
+            if (Condition == CreatureCondition.Torpor)
+            {
+                // Shooting it while it is down: enough, and it does not get back up.
+                if (FinishDamage > 0f && (downDamage += amount) >= FinishDamage) SetCondition(CreatureCondition.Dead);
+                return;
+            }
             Health -= amount;
             if (Health <= 0f) EnterTorpor();
         }
@@ -87,6 +100,7 @@ namespace Jupiter.Creatures
         void EnterTorpor()
         {
             Health = 0f;
+            downDamage = 0f;
             TorporRemaining = TorporMinSeconds + (TorporMaxSeconds - TorporMinSeconds) * Clamp01(random01());
             SetCondition(CreatureCondition.Torpor);
         }

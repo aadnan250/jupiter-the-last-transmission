@@ -1,0 +1,9 @@
+# Europa surface. The borehole erupts and the Listener climbs out. Hana is dragged under, Ashford is struck down.
+
+=== start
+HANA (radio): It's coming up the bore! It's got the...
+MARA (radio): Hana! (beat) Hana!
+ASHFORD (radio): Fire! Everything you have, fire!
+ASHFORD (radio): My suit... it's breached, I'm venting...
+MARA (radio): Daniel's down! Okafor, it's coming for you! Put it down and keep shooting!
+-> END

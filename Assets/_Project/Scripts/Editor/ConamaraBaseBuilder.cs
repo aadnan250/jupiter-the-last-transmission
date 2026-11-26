@@ -78,6 +78,7 @@ namespace Jupiter.EditorTools
             var rig = PlayerRigBuilder.Spawn(new Vector3(0f, 0.05f, 3f), 0f, profile);
             var inv = rig.GetComponent<PlayerInventory>();
             Set(inv, "startWithBoltDriver", false);
+            Set(inv, "startWithSidearm", true);   // the landing kit pistol; the bolt driver is still on the drill console
             Set(inv, "startingMedPatches", 1);
 
             // The Listener: dormant beside the bore, facing it.
@@ -116,11 +117,11 @@ namespace Jupiter.EditorTools
             // Europa's real gravity (0.134 g), but inside a pressurised habitat: sound carries.
             p.displayName = "EuropaPressurised";
             p.gravity = 1.315f;
-            p.walkSpeed = 1.7f;
-            p.runSpeed = 3.0f;
-            p.crouchSpeed = 0.9f;
+            p.walkSpeed = 2.5f;
+            p.runSpeed = 4.8f;
+            p.crouchSpeed = 1.3f;
             p.jumpHeight = 0.5f;
-            p.groundAcceleration = 7f;
+            p.groundAcceleration = 10f;
             p.airControl = 0.15f;
             p.isVacuum = false;
             p.terminalFallSpeed = 12f;

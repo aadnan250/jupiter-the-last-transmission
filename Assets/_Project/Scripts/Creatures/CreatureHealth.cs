@@ -11,6 +11,8 @@ namespace Jupiter.Creatures
         [SerializeField] float torporMinSeconds = 20f;
         [SerializeField] float torporMaxSeconds = 40f;
         [SerializeField] int nodeCount = 6;
+        [Tooltip("Body damage while it is down that kills it for good (0 = only nodes or explosives can).")]
+        [SerializeField] float finishDamage = 120f;
 
         public CreatureHealthModel Model { get; private set; }
 
@@ -24,7 +26,8 @@ namespace Jupiter.Creatures
             Model = new CreatureHealthModel(() => UnityEngine.Random.value, nodeCount, maxHealth)
             {
                 TorporMinSeconds = torporMinSeconds,
-                TorporMaxSeconds = torporMaxSeconds
+                TorporMaxSeconds = torporMaxSeconds,
+                FinishDamage = finishDamage
             };
         }
 
