@@ -24,7 +24,7 @@ namespace Jupiter.Combat
         [SerializeField] Transform muzzle;
         [SerializeField] LineRenderer beam;
         [SerializeField] float range = 32f;
-        [SerializeField] float damagePerSecond = 26f;
+        [SerializeField] float damagePerSecond = 45f;
         [SerializeField] float burstSeconds = 1.1f;
         [SerializeField] float pauseSeconds = 0.7f;
         [SerializeField] AudioSource gunAudio;
@@ -78,7 +78,7 @@ namespace Jupiter.Combat
                     agent.isStopped = false;
                     Vector3 slot = player.position + Quaternion.Euler(0f, player.eulerAngles.y, 0f) * formationOffset;
                     float far = Vector3.Distance(transform.position, slot);
-                    agent.speed = far > 6f ? 3.2f : 1.8f;
+                    agent.speed = far > 6f ? 5.5f : 2.8f;
                     if (far > 0.8f) agent.SetDestination(slot);
                 }
             }

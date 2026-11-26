@@ -12,7 +12,7 @@ namespace Jupiter.World
         public const float QuakeSeconds = 6.5f;
         public const float RadioAt = 0.6f;
         public const float FirstEmergeAt = 3.2f;
-        public const float EmergeInterval = 0.55f;
+        public const float EmergeInterval = 1.2f;
 
         public static float EmergeTime(int index) => FirstEmergeAt + index * EmergeInterval;
 

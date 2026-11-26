@@ -78,7 +78,7 @@ namespace Jupiter.EditorTools
 
             var healthText = Corner(hud, "HealthText", font, new Vector2(-20, 44));
             var ammoText = Corner(hud, "AmmoText", font, new Vector2(-20, 16));
-            var toolText = Corner(hud, "ToolText", font, new Vector2(-20, 72));
+            var toolText = Corner(hud, "ToolText", font, new Vector2(-20, 98));
 
             var combatHud = hud.gameObject.AddComponent<CombatHUD>();
             GreyboxKit.Set(combatHud, "health", health);
@@ -223,10 +223,11 @@ namespace Jupiter.EditorTools
             t.color = new Color(0.9f, 0.93f, 0.95f, 0.9f);
             t.raycastTarget = false;
             t.supportRichText = true;
+            t.verticalOverflow = VerticalWrapMode.Overflow; // the health line can grow upward with a low-health warning
             var rt = t.rectTransform;
             rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(1, 0);
             rt.anchoredPosition = pos;
-            rt.sizeDelta = new Vector2(420, 24);
+            rt.sizeDelta = new Vector2(560, 24);
             return t;
         }
     }

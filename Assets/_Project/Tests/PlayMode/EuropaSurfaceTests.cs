@@ -95,7 +95,7 @@ namespace Jupiter.Tests
             yield return new WaitForSeconds(AmbushTimeline.EmergeTime(EuropaCount - 1) + 2.5f - 0.8f);
             Assert.AreEqual(EuropaCount, ambush.Emerged);
             Assert.IsTrue(StalkerAI.All.All(s => s.State != StalkerState.Buried));
-            Assert.IsTrue(StalkerAI.All.Count(s => s.Active) >= 8, "most are up and hunting");
+            Assert.IsTrue(StalkerAI.All.All(s => s.Active || s.State == StalkerState.Dead), "every one is up and hunting, or already shot down");
             Assert.IsTrue(StalkerAI.All.Where(s => s.Active).All(s => s.Target != null), "each has picked someone to run at");
         }
 

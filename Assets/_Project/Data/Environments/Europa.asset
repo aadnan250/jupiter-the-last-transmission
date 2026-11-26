@@ -16,9 +16,9 @@ MonoBehaviour:
   gravity: 1.315
   terminalFallSpeed: 12
   isVacuum: 1
-  walkSpeed: 1.6
-  runSpeed: 2.8
-  crouchSpeed: 0.9
+  walkSpeed: 2.6
+  runSpeed: 5.2
+  crouchSpeed: 1.3
   jumpHeight: 0.55
-  groundAcceleration: 6
-  airControl: 0.12
+  groundAcceleration: 9
+  airControl: 0.18

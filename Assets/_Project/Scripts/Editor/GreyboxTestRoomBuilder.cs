@@ -25,7 +25,7 @@ namespace Jupiter.EditorTools
             EnsureFolder(ProfileFolder);
             Earth = Profile("Earth", 9.81f, 2.2f, 4.0f, 1.1f, 0.45f, 18f, 0.35f, false);
             MeridianRing = Profile("MeridianRing", 5.886f, 2.2f, 4.0f, 1.1f, 0.40f, 16f, 0.35f, false); // 0.6 g spin gravity
-            Europa = Profile("Europa", 1.315f, 1.6f, 2.8f, 0.9f, 0.55f, 6f, 0.12f, true);               // 0.134 g
+            Europa = Profile("Europa", 1.315f, 2.6f, 5.2f, 1.3f, 0.55f, 9f, 0.18f, true);               // 0.134 g; brisk, so the open plain is fun to cross
         }
 
         /// <summary>Called by <see cref="GeneratedContent.RebuildAll"/>.</summary>

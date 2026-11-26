@@ -41,7 +41,11 @@ namespace Jupiter.UI
                 healthText.enabled = show;
                 int patches = inventory != null ? inventory.Model.Count(PlayerInventory.MedPatch) : 0;
                 string colour = m.IsLow ? "#FF5A5A" : "#E6EEF2";
-                healthText.text = $"<color={colour}>HEALTH {Mathf.CeilToInt(m.Current)}</color>   med-patches {patches}";
+                // The heal button is always shown with the patches left; at low health it flashes a reminder.
+                string heal = patches > 0 ? $"   <color=#9FE8A0>[{HealGlyph}] HEAL</color> x{patches}" : "   no med-patches";
+                string warn = m.IsLow && patches > 0 && Mathf.Repeat(Time.time, 0.8f) < 0.5f
+                    ? $"<color=#FF5A5A>LOW HEALTH: PRESS {HealGlyph} TO HEAL</color>\n" : (m.IsLow ? "\n" : "");
+                healthText.text = $"{warn}<color={colour}>HEALTH {Mathf.CeilToInt(m.Current)}</color>{heal}";
             }
             if (beam != null && ammoText != null && inventory != null && inventory.HasBeamRifle)
             {
@@ -87,6 +91,8 @@ namespace Jupiter.UI
             toolText.enabled = toolLine.Length > 0;
             if (toolText.enabled) toolText.text = toolLine.ToString().TrimEnd();
         }
+
+        static string HealGlyph => !InputDeviceWatcher.UsingGamepad ? "H" : "D-PAD UP";
 
         static string ThrowGlyph =>
             !InputDeviceWatcher.UsingGamepad ? "G" : InputDeviceWatcher.UsingPlayStation ? "R1" : "RB";

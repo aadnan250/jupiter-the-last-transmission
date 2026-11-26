@@ -25,11 +25,11 @@ namespace Jupiter.Creatures
         public static event Action<StalkerAI> Killed;
 
         [SerializeField] StalkerRig rig;
-        [SerializeField] float maxHealth = 90f;
-        [SerializeField] float runSpeed = 6.2f;
+        [SerializeField] float maxHealth = 45f;
+        [SerializeField] float runSpeed = 4.6f;
         [SerializeField] float attackRange = 1.9f;
-        [SerializeField] float attackDamage = 14f;
-        [SerializeField] float attackCooldown = 1.1f;
+        [SerializeField] float attackDamage = 7f;
+        [SerializeField] float attackCooldown = 1.5f;
         [SerializeField] float emergeSeconds = 1.6f;
         [SerializeField] float buriedDepth = 2.6f;
         [SerializeField] ParticleSystem burst;

@@ -89,7 +89,7 @@ namespace Jupiter.EditorTools
             var rig = PlayerRigBuilder.Spawn(new Vector3(0f, FloorH + 0.05f, 2.2f), 180f, vacuum);
             var inv = rig.GetComponent<PlayerInventory>();
             Kit.Set(inv, "startWithBeamRifle", true);
-            Kit.Set(inv, "startingMedPatches", 2);
+            Kit.Set(inv, "startingMedPatches", 4);
             var cam = rig.GetComponentInChildren<Camera>();
             cam.clearFlags = CameraClearFlags.Skybox;
             cam.farClipPlane = 2600f;

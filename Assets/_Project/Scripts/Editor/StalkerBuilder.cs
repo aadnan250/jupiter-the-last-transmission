@@ -48,7 +48,7 @@ namespace Jupiter.EditorTools
             var agent = root.AddComponent<NavMeshAgent>();
             agent.radius = 0.45f;
             agent.height = 1.6f;
-            agent.speed = 6.2f;
+            agent.speed = 4.6f;
             agent.acceleration = 30f;
             agent.angularSpeed = 540f;
             agent.autoBraking = false;

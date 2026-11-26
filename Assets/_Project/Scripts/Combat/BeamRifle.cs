@@ -18,7 +18,7 @@ namespace Jupiter.Combat
         [SerializeField] LineRenderer beam;
         [SerializeField] Light beamLight;
         [SerializeField] float range = 60f;
-        [SerializeField] float damagePerSecond = 70f;
+        [SerializeField] float damagePerSecond = 120f;
         [SerializeField] float noiseRadius = 12f;
         [SerializeField] AudioSource loop;
         [SerializeField] AudioSource oneShots;

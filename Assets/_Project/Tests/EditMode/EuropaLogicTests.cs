@@ -58,7 +58,7 @@ namespace Jupiter.Tests
         {
             Assert.Greater(AmbushTimeline.EmergeTime(0), AmbushTimeline.RadioAt, "the radio panics first");
             for (int i = 1; i < 10; i++) Assert.Greater(AmbushTimeline.EmergeTime(i), AmbushTimeline.EmergeTime(i - 1));
-            Assert.Less(AmbushTimeline.EmergeTime(9), 10f, "all ten within ten seconds");
+            Assert.Less(AmbushTimeline.EmergeTime(9), 16f, "all ten within sixteen seconds, spread so they never all arrive at once");
         }
 
         [Test]
