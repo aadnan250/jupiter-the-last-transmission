@@ -45,6 +45,10 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(driver, "reloadClip", CombatAudioGenerator.Load(CombatAudioGenerator.Reload));
             GreyboxKit.Set(driver, "flash", flash);
 
+            // The arc beam rifle (unequipped by default; the landing party carries it) and Sam's arms holding it.
+            var beam = AddBeamRifle(root, input, inventory, camera, weaponAudio);
+            camera.gameObject.AddComponent<CameraShake>();
+
             // Stealth tools: hiding, one throwable in hand, Mara's flare pistol (unequipped until picked up).
             var concealment = root.AddComponent<PlayerConcealment>();
             GreyboxKit.Set(concealment, "input", input);
@@ -79,6 +83,7 @@ namespace Jupiter.EditorTools
             var combatHud = hud.gameObject.AddComponent<CombatHUD>();
             GreyboxKit.Set(combatHud, "health", health);
             GreyboxKit.Set(combatHud, "weapon", driver);
+            GreyboxKit.Set(combatHud, "beam", beam);
             GreyboxKit.Set(combatHud, "inventory", inventory);
             GreyboxKit.Set(combatHud, "healthText", healthText);
             GreyboxKit.Set(combatHud, "ammoText", ammoText);
@@ -86,6 +91,126 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(combatHud, "thrower", thrower);
             GreyboxKit.Set(combatHud, "concealment", concealment);
             GreyboxKit.Set(combatHud, "toolText", toolText);
+        }
+
+        /// <summary>
+        /// The beam rifle, its visible beam and impact light, and the first-person view model: suited forearms and
+        /// gloves holding a sleek rifle with glowing coils and a muzzle emitter, parented to the camera.
+        /// </summary>
+        static BeamRifle AddBeamRifle(GameObject root, InputReader input, PlayerInventory inventory, Transform camera, AudioSource oneShots)
+        {
+            var beamMat = BeamMaterial("FX_ArcBeam", new Color(0.5f, 1.8f, 2.6f));
+            var suit = GreyboxKit.Mat("VM_SuitWhite", new Color(0.86f, 0.87f, 0.85f), smoothness: 0.35f);
+            var glove = GreyboxKit.Mat("VM_Glove", new Color(0.22f, 0.23f, 0.25f), smoothness: 0.3f);
+            var gunDark = GreyboxKit.Mat("VM_GunDark", new Color(0.09f, 0.1f, 0.11f), smoothness: 0.65f);
+            var gunWhite = GreyboxKit.Mat("VM_GunWhite", new Color(0.78f, 0.8f, 0.82f), smoothness: 0.6f);
+            var coil = GreyboxKit.Mat("VM_Coil", new Color(0.1f, 0.3f, 0.35f), new Color(0.3f, 0.85f, 1f) * 1.5f, 0.8f);
+            var cellMat = GreyboxKit.Mat("VM_Cell", new Color(0.2f, 0.15f, 0.05f), new Color(1f, 0.6f, 0.15f) * 1.2f, 0.7f);
+
+            var vm = new GameObject("ViewModel").transform;
+            vm.SetParent(camera, false);
+            vm.localPosition = new Vector3(0.2f, -0.23f, 0.42f);
+            var visual = new GameObject("Visual").transform;
+            visual.SetParent(vm, false);
+            visual.localScale = Vector3.one * 0.78f;
+
+            var glow = new System.Collections.Generic.List<Renderer>();
+            // Rifle
+            Part(visual, PrimitiveType.Cube, "Body", new Vector3(0f, 0f, 0.05f), new Vector3(0.065f, 0.085f, 0.5f), Vector3.zero, gunDark);
+            Part(visual, PrimitiveType.Cube, "TopRail", new Vector3(0f, 0.052f, 0.02f), new Vector3(0.028f, 0.02f, 0.36f), Vector3.zero, gunWhite);
+            Part(visual, PrimitiveType.Cylinder, "Shroud", new Vector3(0f, 0.005f, 0.36f), new Vector3(0.07f, 0.11f, 0.07f), new Vector3(90f, 0f, 0f), gunWhite);
+            for (int i = 0; i < 3; i++)
+                glow.Add(Part(visual, PrimitiveType.Cylinder, $"Coil{i}", new Vector3(0f, 0.005f, 0.28f + i * 0.05f), new Vector3(0.085f, 0.008f, 0.085f), new Vector3(90f, 0f, 0f), coil));
+            var muzzleGo = Part(visual, PrimitiveType.Sphere, "Emitter", new Vector3(0f, 0.005f, 0.48f), Vector3.one * 0.045f, Vector3.zero, coil);
+            glow.Add(muzzleGo);
+            glow.Add(Part(visual, PrimitiveType.Cube, "Cell", new Vector3(0f, -0.075f, -0.02f), new Vector3(0.05f, 0.075f, 0.09f), Vector3.zero, cellMat));
+            Part(visual, PrimitiveType.Cube, "Grip", new Vector3(0f, -0.08f, -0.15f), new Vector3(0.035f, 0.1f, 0.05f), new Vector3(15f, 0f, 0f), gunDark);
+            Part(visual, PrimitiveType.Cube, "Stock", new Vector3(0f, -0.015f, -0.3f), new Vector3(0.05f, 0.07f, 0.16f), Vector3.zero, gunWhite);
+            glow.Add(Part(visual, PrimitiveType.Cube, "HoloSight", new Vector3(0f, 0.085f, 0.0f), new Vector3(0.03f, 0.022f, 0.004f), Vector3.zero, coil));
+            // Arms: the right hand on the grip, the left under the shroud; bulky white suit sleeves running back out of view.
+            Part(visual, PrimitiveType.Sphere, "GloveR", new Vector3(0.005f, -0.085f, -0.15f), new Vector3(0.07f, 0.075f, 0.09f), Vector3.zero, glove);
+            Part(visual, PrimitiveType.Capsule, "SleeveR", new Vector3(0.07f, -0.17f, -0.33f), new Vector3(0.11f, 0.2f, 0.11f), new Vector3(70f, -20f, 0f), suit);
+            Part(visual, PrimitiveType.Sphere, "GloveL", new Vector3(-0.01f, -0.05f, 0.24f), new Vector3(0.06f, 0.055f, 0.08f), Vector3.zero, glove);
+
+            var muzzle = new GameObject("Muzzle").transform;
+            muzzle.SetParent(muzzleGo.transform.parent, false);
+            muzzle.localPosition = new Vector3(0f, 0.005f, 0.5f);
+
+            // The beam itself, drawn in world space from the muzzle to whatever it hits.
+            var beamGo = new GameObject("ArcBeam");
+            beamGo.transform.SetParent(root.transform, false);
+            var line = beamGo.AddComponent<LineRenderer>();
+            line.useWorldSpace = true;
+            line.positionCount = 2;
+            line.sharedMaterial = beamMat;
+            line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            line.receiveShadows = false;
+            line.numCapVertices = 4;
+            line.enabled = false;
+            var impact = new GameObject("BeamImpactLight").AddComponent<Light>();
+            impact.transform.SetParent(root.transform, false);
+            impact.type = LightType.Point;
+            impact.color = new Color(0.4f, 0.9f, 1f);
+            impact.range = 5f;
+            impact.shadows = LightShadows.None;
+            impact.enabled = false;
+
+            var hum = new GameObject("BeamHum").AddComponent<AudioSource>();
+            hum.transform.SetParent(root.transform, false);
+            hum.clip = CombatAudioGenerator.Load(CombatAudioGenerator.BeamHum);
+            hum.loop = true;
+            hum.playOnAwake = false;
+            hum.spatialBlend = 0f;
+            hum.volume = 0.55f;
+
+            var rifle = root.AddComponent<BeamRifle>();
+            GreyboxKit.Set(rifle, "input", input);
+            GreyboxKit.Set(rifle, "inventory", inventory);
+            GreyboxKit.Set(rifle, "aim", camera);
+            GreyboxKit.Set(rifle, "muzzle", muzzle);
+            GreyboxKit.Set(rifle, "beam", line);
+            GreyboxKit.Set(rifle, "beamLight", impact);
+            GreyboxKit.Set(rifle, "loop", hum);
+            GreyboxKit.Set(rifle, "oneShots", oneShots);
+            GreyboxKit.Set(rifle, "reloadClip", CombatAudioGenerator.Load(CombatAudioGenerator.Reload));
+
+            var view = vm.gameObject.AddComponent<WeaponViewModel>();
+            GreyboxKit.Set(view, "rifle", rifle);
+            GreyboxKit.Set(view, "input", input);
+            GreyboxKit.Set(view, "visual", visual.gameObject);
+            GreyboxKit.Set(view, "glowParts", glow.ToArray());
+            visual.gameObject.SetActive(false);
+            return rifle;
+        }
+
+        static Renderer Part(Transform parent, PrimitiveType type, string name, Vector3 pos, Vector3 scale, Vector3 euler, Material mat)
+        {
+            var go = GameObject.CreatePrimitive(type);
+            go.name = name;
+            Object.DestroyImmediate(go.GetComponent<Collider>());
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = pos;
+            go.transform.localRotation = Quaternion.Euler(euler);
+            go.transform.localScale = scale;
+            var r = go.GetComponent<Renderer>();
+            r.sharedMaterial = mat;
+            r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            return r;
+        }
+
+        /// <summary>An unlit HDR-bright material for beams: bloom turns it into a glow.</summary>
+        public static Material BeamMaterial(string name, Color hdr)
+        {
+            string path = $"{GreyboxKit.MaterialFolder}/{name}.mat";
+            var m = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (m == null)
+            {
+                m = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+                UnityEditor.AssetDatabase.CreateAsset(m, path);
+            }
+            m.SetColor("_BaseColor", hdr);
+            UnityEditor.EditorUtility.SetDirty(m);
+            return m;
         }
 
         static Text Corner(Transform parent, string name, Font font, Vector2 pos)

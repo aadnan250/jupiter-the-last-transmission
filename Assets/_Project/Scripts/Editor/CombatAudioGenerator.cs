@@ -18,6 +18,11 @@ namespace Jupiter.EditorTools
         public const string LockerDoor = Folder + "/sfx_locker_door.wav";
         public const string Eruption = Folder + "/sfx_bore_eruption.wav";
         public const string DoorPound = Folder + "/sfx_door_pound.wav";
+        public const string BeamHum = Folder + "/sfx_beam_hum.wav";
+        public const string Shriek = Folder + "/sfx_stalker_shriek.wav";
+        public const string Quake = Folder + "/sfx_quake.wav";
+        public const string IceBurst = Folder + "/sfx_ice_burst.wav";
+        public const string SuitBreath = Folder + "/sfx_suit_breath.wav";
 
         public static void Generate()
         {
@@ -30,6 +35,11 @@ namespace Jupiter.EditorTools
             Write(LockerDoor, CombatSynth.LockerDoor());
             Write(Eruption, CombatSynth.Eruption());
             Write(DoorPound, CombatSynth.DoorPound());
+            Write(BeamHum, CombatSynth.BeamHum());
+            Write(Shriek, CombatSynth.Shriek());
+            Write(Quake, CombatSynth.Quake());
+            Write(IceBurst, CombatSynth.IceBurst());
+            Write(SuitBreath, CombatSynth.SuitBreath());
         }
 
         static void Write(string path, float[] samples)

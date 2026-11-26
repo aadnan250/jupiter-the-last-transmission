@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Jupiter.Combat
 {
-    public enum DamageType { Bolt, Explosive, Melee }
+    public enum DamageType { Bolt, Explosive, Melee, Beam }
 
     public struct DamageInfo
     {

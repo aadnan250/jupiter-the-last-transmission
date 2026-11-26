@@ -42,8 +42,11 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [ ] Needles (vent crawlers)
 - [ ] Playtest pass: is it frightening?
 
-## Slice 8: Europa surface
-- [ ] Surface level (Conamara Chaos), Jupiter fixed low on the horizon
+## Slice 8: Europa surface (in progress)
+- [x] Surface level (Conamara Chaos), Jupiter fixed low on the horizon, moons, Milky Way
+- [x] Landing in the lander Wren: ramp onto the ice, suited landing party (Ashford, Mara, Hana) walking and fighting with Sam
+- [x] Quake and ambush: ten Stalkers burst from the ice; arc beam rifles with first-person arms, charge and cells HUD
+- [ ] Story pass: reconcile the surface ambush with the quieter Chapter 6 investigation
 - [ ] Vacuum audio (suit, boots and radio only), suit integrity, radiation timer
 - [ ] Distant silhouette reveal, Rime fields
 

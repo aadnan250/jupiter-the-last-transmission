@@ -1,0 +1,9 @@
+# Chapter 5. The last Stalker falls. Shock, then orders: get to Conamara Base. On the move.
+
+=== start
+ASHFORD (radio): Cease fire. Cease fire. (beat) Is everyone still breathing?
+MARA (radio): Breathing. Barely.
+HANA (radio): Daniel, those things were alive. Under the ice. Waiting.
+LUCA (radio): I see the base beacon from here. Two hundred metres, the way you're facing.
+ASHFORD (radio): The base. Now. Eyes on the ground. Move.
+-> END

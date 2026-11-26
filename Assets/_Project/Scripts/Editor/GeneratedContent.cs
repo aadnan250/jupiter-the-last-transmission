@@ -21,8 +21,11 @@ namespace Jupiter.EditorTools
             CombatAudioGenerator.Generate();
             PlayerRigBuilder.BuildPrefab();
             ListenerBuilder.BuildPrefab();
+            EuropaTextureGenerator.Generate();
+            StalkerBuilder.BuildPrefab();
             GreyboxTestRoomBuilder.Build();
             MeridianGreyboxBuilder.Build();
+            EuropaSurfaceBuilder.Build();
             ConamaraBaseBuilder.Build();
             RenderPipelineTuner.Apply();
 
@@ -61,12 +64,33 @@ namespace Jupiter.EditorTools
             Debug.Log("[GeneratedContent] Meridian rebuilt.");
         }
 
+        /// <summary>
+        /// Rebuilds the Europa landing (sky and ice textures, combat audio, player prefab, the Stalker, the surface
+        /// level) and the Meridian, whose ending leads to it. Batch:
+        /// -executeMethod Jupiter.EditorTools.GeneratedContent.RebuildEuropaLanding
+        /// </summary>
+        [MenuItem("Jupiter/Rebuild Europa Landing")]
+        public static void RebuildEuropaLanding()
+        {
+            EuropaTextureGenerator.Generate();
+            CombatAudioGenerator.Generate();
+            PlayerRigBuilder.BuildPrefab();
+            StalkerBuilder.BuildPrefab();
+            GreyboxTestRoomBuilder.BuildProfiles();
+            MeridianGreyboxBuilder.Build();
+            EuropaSurfaceBuilder.Build();
+            SetBuildScenes();
+            AssetDatabase.SaveAssets();
+            Debug.Log("[GeneratedContent] Europa landing rebuilt.");
+        }
+
         static void SetBuildScenes()
         {
             EditorBuildSettings.scenes = new[]
             {
-                // A build plays the story in order: the Meridian, then Conamara Base.
+                // A build plays the story in order: the Meridian, the landing on Europa, then Conamara Base.
                 new EditorBuildSettingsScene(MeridianGreyboxBuilder.ScenePath, true),
+                new EditorBuildSettingsScene(EuropaSurfaceBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(ConamaraBaseBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(GreyboxTestRoomBuilder.ScenePath, true),
             };

@@ -44,6 +44,8 @@ namespace Jupiter.Player
         public bool InteractPressedThisFrame => !DialogueMode && interact != null && interact.WasPressedThisFrame();
 
         public bool FirePressedThisFrame => Active && fire != null && fire.WasPressedThisFrame();
+        /// <summary>Fire held down: for the beam rifle, which fires continuously.</summary>
+        public bool FireHeld => Active && fire != null && fire.IsPressed();
         public bool ReloadPressedThisFrame => Active && reload != null && reload.WasPressedThisFrame();
         public bool HealPressedThisFrame => Active && heal != null && heal.WasPressedThisFrame();
 

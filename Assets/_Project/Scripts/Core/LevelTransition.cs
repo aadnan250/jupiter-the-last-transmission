@@ -14,6 +14,8 @@ namespace Jupiter.Core
     public class LevelTransition : MonoBehaviour
     {
         [SerializeField] string requiresCompleted;
+        [Tooltip("Or/and a story flag (e.g. reaching the base door).")]
+        [SerializeField] string requiresFlag;
         [SerializeField] string nextScene;
         [SerializeField] string cardTitle = "LATER";
         [SerializeField, TextArea(1, 3)] string cardSubtitle = "";
@@ -42,7 +44,8 @@ namespace Jupiter.Core
             if (!Started)
             {
                 // Wait until the last conversation is over, then give the moment a few seconds to land.
-                if (dialogue.IsActive || !dialogue.Story.IsCompleted(requiresCompleted)) { waited = 0f; return; }
+                // Radio chatter on the move never holds the story up; a conversation the player is in does.
+                if ((dialogue.IsActive && !dialogue.OnTheMove) || !Ready()) { waited = 0f; return; }
                 if ((waited += Time.deltaTime) < delaySeconds) return;
                 Begin();
             }
@@ -54,6 +57,14 @@ namespace Jupiter.Core
                 loading = true;
                 SceneManager.LoadScene(nextScene);
             }
+        }
+
+        bool Ready()
+        {
+            var story = dialogue.Story;
+            if (!string.IsNullOrEmpty(requiresCompleted) && !story.IsCompleted(requiresCompleted)) return false;
+            if (!string.IsNullOrEmpty(requiresFlag) && !story.HasFlag(requiresFlag)) return false;
+            return !string.IsNullOrEmpty(requiresCompleted) || !string.IsNullOrEmpty(requiresFlag);
         }
 
         /// <summary>Starts the fade now. Public for tests and for a "skip to the next level" shortcut.</summary>

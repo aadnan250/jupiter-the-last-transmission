@@ -1,0 +1,11 @@
+# Chapter 5. Touchdown on Europa, inside the lander Wren. Plays on the move while Sam looks around the cabin;
+# the ramp comes down part-way through. No replies.
+
+=== start
+LUCA (radio): Contact light. Engine stop. (beat) Wren is down. Welcome to Europa, everyone.
+ASHFORD (radio): Good flying, Luca. Landing party, helmets sealed, suits on internal air.
+HANA (radio): Suit telemetry is green across the board. Heart rates are... a little high.
+MARA (radio): Venting the cabin. Ramp coming down.
+ASHFORD (radio): Rifles are for the ice and for emergencies. We walk out together and we stay together.
+LUCA (radio): I'll keep her warm. Bring me back a postcard.
+-> END

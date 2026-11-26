@@ -790,13 +790,13 @@ namespace Jupiter.EditorTools
             mso.ApplyModifiedPropertiesWithoutUndo();
             Kit.Set(mission, "completeText", "Chapter 2 complete");
 
-            // The end of the chapter: after the observation deck radio call, on to Europa. Chapters 3-5 are not built
+            // The end of the chapter: after the observation deck radio call, on to the landing on Europa. Chapters 3-4 are not built
             // yet, so a time card bridges the gap. The GameSession carries every Chapter 2 choice into the base.
             var transition = new GameObject("LevelTransition").AddComponent<Core.LevelTransition>();
             Kit.Set(transition, "requiresCompleted", ConvObservation);
-            Kit.Set(transition, "nextScene", System.IO.Path.GetFileNameWithoutExtension(ConamaraBaseBuilder.ScenePath));
+            Kit.Set(transition, "nextScene", System.IO.Path.GetFileNameWithoutExtension(EuropaSurfaceBuilder.ScenePath));
             Kit.Set(transition, "cardTitle", "SEVEN MONTHS LATER");
-            Kit.Set(transition, "cardSubtitle", "Europa. Conamara Base.");
+            Kit.Set(transition, "cardSubtitle", "Europa. Conamara Chaos.");
             Kit.Set(transition, "dialogue", dialogue);
         }
 

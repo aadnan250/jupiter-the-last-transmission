@@ -1,0 +1,10 @@
+# Chapter 5. The moon quakes under the landing party and the ice breaks open. Panic on the radio, on the move.
+
+=== start
+HANA (radio): Seismic spike. A big one. It's... it's right under us!
+LUCA (radio): Wren is rocking on her legs! What is that?
+MARA (radio): The ice is moving! Everyone get down!
+ASHFORD (radio): Weapons up! Something is coming up through the...
+HANA (radio): Contact! Contact! They're coming out of the ground!
+MARA (radio): Back to back! Okafor, on me!
+-> END

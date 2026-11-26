@@ -78,6 +78,17 @@ adds a perceived stimulus (used by the bore eruption and by Ashford's pressure d
 investigates or hunts through its normal states. The drill-chamber pressure door carries a carving `NavMeshObstacle`: while
 it is shut, the creature genuinely cannot path out.
 
+## 7. Stalkers and the landing party (Europa surface)
+
+- **Stalkers** (`Creatures/StalkerAI`, `Creatures/StalkerRig`): the surface forms that wait under the ice. The
+  `AmbushDirector` brings them up one after another in a ring around the squad (`AmbushTimeline`, golden-angle spacing so
+  none come up together). Each runs down the nearest person (Sam counts as a little nearer: he is the one they want),
+  slashes in reach, flinches when hit and dies to sustained beam fire. `StalkerRig` animates the Blender model's named
+  bones procedurally: hunched crouch with sudden head tilts, a low four-limbed run, a two-armed slash, an emergence and a collapse.
+- **The landing party** (`Combat/SquadMember`, `Combat/SuitAnimator`): Ashford, Mara and Hana hold formation slots around
+  Sam and walk with him with a low-gravity lope. When a Stalker is up and within 32 m they stop, shoulder their rifles and
+  fire short beam bursts at the nearest one. They can be knocked about but do not die here: the story still needs them.
+
 ## Known limitations
 
 - The Listener is a primitive-shape placeholder; its final model and animations come later.
