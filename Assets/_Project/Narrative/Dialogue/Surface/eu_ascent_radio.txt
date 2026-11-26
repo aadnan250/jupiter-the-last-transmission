@@ -1,0 +1,5 @@
+# Europa surface. The ascent vehicle accepts the codes.
+
+=== start
+MARA (radio): Halcyon's waking up. Get in, Okafor. (beat) Don't look back. There's nothing back there for us now.
+-> END

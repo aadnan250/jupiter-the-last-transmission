@@ -68,9 +68,9 @@ git clone https://github.com/aadnan250/jupiter-the-last-transmission.git
 1. In Unity Hub: **Add → Add project from disk** and select the cloned folder.
 2. The first level, `Assets/_Project/Scenes/L02_Meridian.unity` (Chapter 2 on the ship), opens automatically; press **Play**.
    The Game view plays maximized over the whole editor (Shift+Space toggles it); a built game starts in borderless full screen.
-   After the observation deck radio call, a time card leads on to the landing on Europa (`L03_EuropaSurface`): the lander's ramp drops, you walk out with the crew in EVA suits, and the ice breaks open. Clearing the plain and reaching the base airlock leads into `L04_ConamaraBase` (Chapters 6 and 7). Your choices carry all the way through. To jump straight to Europa, open `L03_EuropaSurface` and press Play.
+   After the observation deck radio call, a time card leads on to the landing on Europa (`L03_EuropaSurface`): the lander's ramp drops, you walk out with the crew in EVA suits, and the ice breaks open. The whole story then plays out on the surface: Tiamat's lander and Directive 7, the drill and the Listener, and the run to the ascent vehicle Halcyon. Your choices carry all the way through. To jump straight to Europa, open `L03_EuropaSurface` and press Play.
 3. Talk to the crew: Luca and Hana in the galley, Mara in the workshop, Commander Ashford in command. Then go to the observation deck.
-   On Europa: check the mail cache with Mara in comms, then find out what Ashford is hiding (the lab, the med bay and his office terminal).
+   On Europa: survive the ambush, follow the green beacon to Tiamat's lander, read its cargo manifest, cover Hana at the drill, kill what comes out of the bore (knock it down, then keep firing), then take Ashford's code (4117) to Halcyon by the base.
 4. To regenerate all generated levels, audio and prefabs: **Jupiter → Rebuild All Generated Content**.
 
 ### Controls

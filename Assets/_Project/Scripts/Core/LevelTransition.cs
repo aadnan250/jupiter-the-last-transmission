@@ -30,6 +30,8 @@ namespace Jupiter.Core
         bool loading;
 
         public bool Started => t >= 0f;
+        /// <summary>True once the card is fully up (and, with no next scene, staying up).</summary>
+        public bool Holding => loading;
         public string NextScene => nextScene;
 
         void Start()
@@ -40,7 +42,7 @@ namespace Jupiter.Core
 
         void Update()
         {
-            if (loading || dialogue == null || string.IsNullOrEmpty(nextScene)) return;
+            if (loading || dialogue == null) return;
             if (!Started)
             {
                 // Wait until the last conversation is over, then give the moment a few seconds to land.
@@ -55,7 +57,8 @@ namespace Jupiter.Core
             if (TransitionTimeline.ShouldLoad(t, fadeSeconds, holdSeconds))
             {
                 loading = true;
-                SceneManager.LoadScene(nextScene);
+                // No next scene: the end of what is built so far. The card stays up.
+                if (!string.IsNullOrEmpty(nextScene)) SceneManager.LoadScene(nextScene);
             }
         }
 

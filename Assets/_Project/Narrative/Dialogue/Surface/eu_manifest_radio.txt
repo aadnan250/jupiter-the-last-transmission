@@ -1,0 +1,11 @@
+# Europa surface. Sam reads Tiamat's cargo manifest: Directive 7, a sample canister addressed to Ashford.
+
+=== start
+MARA (radio): Directive Seven. Return a viable biological sample. (beat) Daniel. You knew.
+[if flag demanded_truth] MARA (radio): He asked you to your face, on the ship.
+ASHFORD (radio): I knew there was something down here. I didn't know it would come up to meet us.
+HANA (radio): Daniel, those things...
+ASHFORD (radio): Hana. Set the drill on the borehole. Forty seconds. Then we go home with what we came for.
+MARA (radio): You can't be serious.
+ASHFORD (radio): Okafor, Lindqvist, cover her. That is an order.
+-> END

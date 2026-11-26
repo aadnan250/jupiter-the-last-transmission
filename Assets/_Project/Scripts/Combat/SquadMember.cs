@@ -57,7 +57,24 @@ namespace Jupiter.Combat
         }
 
         /// <summary>Lets them leave their place and follow Sam.</summary>
-        public void Release() => Released = true;
+        public void Release() { Released = true; holdPoint = null; }
+
+        /// <summary>Sends them to a spot to work (Hana at the drill) and keeps them there. They still fight from it.</summary>
+        public void HoldAt(Vector3 point) { Released = true; holdPoint = point; }
+
+        /// <summary>Back to following Sam.</summary>
+        public void ResumeFollowing() => holdPoint = null;
+
+        /// <summary>Gone: taken into the ice, or down and not getting up. They leave the squad for good.</summary>
+        public void Lose()
+        {
+            Lost = true;
+            SetBeam(false);
+            gameObject.SetActive(false);
+        }
+
+        public bool Lost { get; private set; }
+        Vector3? holdPoint;
 
         void Update()
         {
@@ -73,7 +90,13 @@ namespace Jupiter.Combat
                 SetBeam(false);
                 Firing = false;
                 if (anim != null) anim.Aiming = false;
-                if (Released && player != null && agent.isOnNavMesh)
+                if (Released && holdPoint.HasValue && agent.isOnNavMesh)
+                {
+                    agent.isStopped = false;
+                    agent.speed = 3.2f;
+                    if (Vector3.Distance(transform.position, holdPoint.Value) > 0.8f) agent.SetDestination(holdPoint.Value);
+                }
+                else if (Released && player != null && agent.isOnNavMesh)
                 {
                     agent.isStopped = false;
                     Vector3 slot = player.position + Quaternion.Euler(0f, player.eulerAngles.y, 0f) * formationOffset;

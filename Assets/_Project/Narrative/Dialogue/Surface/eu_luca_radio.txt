@@ -1,0 +1,12 @@
+# Europa surface. With the Listener dead, Luca calls from the lander Wren. Then something reaches him.
+
+=== start
+LUCA (radio): Wren is warm, I'm on pre-flight. Get back here, I'll have the ramp down.
+LUCA (radio): Fuel's good. Gimbals good. (beat) Hey, Mara, the ramp's doing the thing again, the thing you said not to...
+[if flag heard_luca_song] LUCA (radio): Okafor. If this goes bad, that song. Play it for my mother.
+LUCA (radio): (beat) Something's on the hull.
+MARA (radio): Luca, get inside and seal the...
+LUCA (radio): I'm in, I'm in. It's... it's listening. It's got its hands on the...
+MARA (radio): Luca. (beat) Luca, respond. (beat) Wren, Lindqvist. Respond.
+~ flag luca_lost
+-> END

@@ -47,7 +47,8 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [x] Surface level (Conamara Chaos), Jupiter fixed low on the horizon, moons, Milky Way
 - [x] Landing in the lander Wren: ramp onto the ice, suited landing party (Ashford, Mara, Hana) walking and fighting with Sam
 - [x] Quake and ambush: ten Stalkers burst from the ice; arc beam rifles with first-person arms, charge and cells HUD
-- [ ] Story pass: reconcile the surface ambush with the quieter Chapter 6 investigation
+- [x] Story moved onto the surface: Tiamat's lander and Directive 7, the drill and the Listener's eruption, Luca and Ashford's last calls, the run to the ascent vehicle Halcyon
+- [x] Conamara Base interiors taken out of the story flow (scene kept in the project; tests still cover it)
 - [ ] Vacuum audio (suit, boots and radio only), suit integrity, radiation timer
 - [ ] Distant silhouette reveal, Rime fields
 

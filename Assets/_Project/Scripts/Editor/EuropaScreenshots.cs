@@ -29,8 +29,18 @@ namespace Jupiter.EditorTools
             Shot(cam, "europa-lander.png", new Vector3(9f, 2.5f, -14f), new Vector3(0f, 2.2f, 0f), 60f);
             Shot(cam, "europa-crew.png", new Vector3(0.2f, floor, 1.4f), new Vector3(-0.5f, 2.3f, -1.4f), 60f);
             Shot(cam, "europa-base.png", new Vector3(6f, 3f, -180f), new Vector3(0f, 3f, -210f), 60f);
+            Shot(cam, "europa-tiamat.png", Ground(100f, -84f, 2.2f), Ground(113f, -68f, 1.2f), 65f);
+            Shot(cam, "europa-halcyon.png", Ground(32f, -222f, 2.5f), Ground(47f, -200f, 11f), 65f);
             ramp.localRotation = Quaternion.identity;
             Debug.Log("[EuropaScreenshots] Saved");
+        }
+
+        /// <summary>A point <paramref name="up"/> metres above the terrain at (x, z).</summary>
+        static Vector3 Ground(float x, float z, float up)
+        {
+            var t = Object.FindAnyObjectByType<Terrain>();
+            float y = t != null ? t.SampleHeight(new Vector3(x, 0f, z)) + t.transform.position.y : 0f;
+            return new Vector3(x, y + up, z);
         }
 
         public static void Shot(Camera cam, string file, Vector3 pos, Vector3 lookAt, float fov)

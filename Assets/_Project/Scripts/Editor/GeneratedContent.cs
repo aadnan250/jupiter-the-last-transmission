@@ -76,6 +76,7 @@ namespace Jupiter.EditorTools
             CombatAudioGenerator.Generate();
             PlayerRigBuilder.BuildPrefab();
             StalkerBuilder.BuildPrefab();
+            ListenerBuilder.BuildPrefab();
             GreyboxTestRoomBuilder.BuildProfiles();
             MeridianGreyboxBuilder.Build();
             EuropaSurfaceBuilder.Build();

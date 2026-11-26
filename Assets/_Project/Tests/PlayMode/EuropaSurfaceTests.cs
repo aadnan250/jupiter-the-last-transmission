@@ -53,12 +53,16 @@ namespace Jupiter.Tests
             Assert.Greater(player.transform.position.y, 1f, "inside the lander, above the ice");
             Assert.IsTrue(player.GetComponent<PlayerInventory>().HasBeamRifle);
             Assert.AreEqual(3, SquadMember.All.Count, "Ashford, Mara and Hana");
-            Assert.AreEqual(EuropaCount, StalkerAI.All.Count);
+            Assert.AreEqual(EuropaCount, Ambushers.Count(), "ten for the ambush");
+            Assert.AreEqual(4, StalkerAI.All.Count - EuropaCount, "and four more for the drill site");
             Assert.IsTrue(StalkerAI.All.All(s => s.State == StalkerState.Buried), "nothing in the lander");
             Assert.IsTrue(dialogue.IsActive && dialogue.OnTheMove, "radio chatter on touchdown, without stopping Sam");
         }
 
         const int EuropaCount = 10;
+
+        /// <summary>The ten Stalkers of the first ambush (the drill-site wave waits separately).</summary>
+        static System.Collections.Generic.IEnumerable<StalkerAI> Ambushers => StalkerAI.All.Where(s => !s.name.StartsWith("DrillWave"));
 
         [UnityTest]
         public IEnumerator Ramp_DropsAndTheCrewWalkOutWithSam()
@@ -94,9 +98,9 @@ namespace Jupiter.Tests
 
             yield return new WaitForSeconds(AmbushTimeline.EmergeTime(EuropaCount - 1) + 2.5f - 0.8f);
             Assert.AreEqual(EuropaCount, ambush.Emerged);
-            Assert.IsTrue(StalkerAI.All.All(s => s.State != StalkerState.Buried));
-            Assert.IsTrue(StalkerAI.All.All(s => s.Active || s.State == StalkerState.Dead), "every one is up and hunting, or already shot down");
-            Assert.IsTrue(StalkerAI.All.Where(s => s.Active).All(s => s.Target != null), "each has picked someone to run at");
+            Assert.IsTrue(Ambushers.All(s => s.State != StalkerState.Buried));
+            Assert.IsTrue(Ambushers.All(s => s.Active || s.State == StalkerState.Dead), "every one is up and hunting, or already shot down");
+            Assert.IsTrue(Ambushers.Where(s => s.Active).All(s => s.Target != null), "each has picked someone to run at");
         }
 
         [UnityTest]
@@ -136,11 +140,67 @@ namespace Jupiter.Tests
             Assert.IsTrue(ambush.Cleared);
             Assert.IsTrue(story.HasFlag("ambush_cleared"));
 
-            var door = Object.FindObjectsByType<DialogueTrigger>().First(t => t.name == "Trigger_BaseAirlock");
-            door.TryFire();
-            Assert.IsTrue(story.HasFlag("reached_base_door"));
-            for (float t = 0f; t < 12f && SceneManager.GetActiveScene().name != "L04_ConamaraBase"; t += Time.deltaTime) yield return null;
-            Assert.AreEqual("L04_ConamaraBase", SceneManager.GetActiveScene().name, "inside Conamara Base");
+            Assert.AreEqual("Reach Tiamat's lander (the green beacon, north-east)", Object.FindAnyObjectByType<MissionManager>().CurrentText,
+                "the story stays out on the ice");
+        }
+
+        [UnityTest]
+        public IEnumerator SurfaceStory_Tiamat_Drill_Eruption_Listener_Ascent()
+        {
+            var director = Object.FindAnyObjectByType<SurfaceStoryDirector>();
+            var mission = Object.FindAnyObjectByType<MissionManager>();
+            story.SetFlag("ramp_open");
+            story.SetFlag("quake_started");
+            story.SetFlag("ambush_cleared");
+            foreach (var m in SquadMember.All) m.Release();
+            yield return null;
+            Assert.AreEqual(SurfaceBeat.ToTiamat, director.Beat);
+
+            // Tiamat's lander, and its cargo manifest.
+            Object.FindObjectsByType<DialogueTrigger>().First(t => t.name == "Trigger_TiamatSite").TryFire();
+            yield return null;
+            Assert.AreEqual(SurfaceBeat.AtTiamat, director.Beat);
+            Assert.AreEqual("Search Tiamat's data box (read the cargo manifest)", mission.CurrentText);
+            Object.FindObjectsByType<Readable>().First(r => r.name == "Readable_CargoManifest").Interact(player.gameObject);
+            Object.FindAnyObjectByType<Jupiter.UI.ReadableUI>().Close();
+            director.DrillSeconds = 3f;
+            yield return null;
+            Assert.AreEqual(SurfaceBeat.Drilling, director.Beat, "Ashford orders the borehole drilled");
+            var hana = SquadMember.All.First(m => m.CharacterId == "HANA");
+            var ashford = SquadMember.All.First(m => m.CharacterId == "ASHFORD");
+            Assert.IsTrue(Object.FindAnyObjectByType<DrillRig>().Running);
+
+            // The bore erupts.
+            for (float t = 0f; t < 6f && director.Beat == SurfaceBeat.Drilling; t += Time.deltaTime) yield return null;
+            Assert.AreEqual(SurfaceBeat.Boss, director.Beat);
+            Assert.IsTrue(story.HasFlag("site_eruption"));
+            Assert.IsTrue(hana.Lost && ashford.Lost, "Hana is taken and Ashford is down");
+            Assert.AreEqual(1, SquadMember.All.Count, "only Mara is left");
+            yield return null;
+            var listener = Object.FindAnyObjectByType<CreatureAI>();
+            Assert.IsNotNull(listener, "the Listener is out of the bore");
+            Assert.AreEqual("KILL IT: knock it down, then keep firing", mission.CurrentText);
+
+            // Knock it down, then finish it.
+            var body = listener.GetComponentsInChildren<CreatureHitbox>().First(h => !h.IsNode);
+            for (int i = 0; i < 40 && listener.Health.Model.Condition != CreatureCondition.Dead; i++)
+                body.TakeDamage(new DamageInfo(40f, DamageType.Beam, body.transform.position));
+            yield return null;
+            Assert.IsTrue(story.HasFlag("listener_killed"));
+            Assert.AreEqual(SurfaceBeat.Aftermath, director.Beat);
+
+            // The radio calls give the code; the ascent vehicle takes it.
+            story.SetFlag("knows_ascent_code");
+            yield return null;
+            Assert.AreEqual(SurfaceBeat.ToAscent, director.Beat);
+            var keypad = Object.FindObjectsByType<KeypadTerminal>().First(k => k.name == "Terminal_Halcyon");
+            keypad.Interact(player.gameObject);
+            foreach (char c in "4117") keypad.Press(c - '0');
+            Assert.IsTrue(story.HasFlag("ascent_unlocked"), "Halcyon's hatch opens");
+            var end = Object.FindObjectsByType<LevelTransition>().First();
+            for (float t = 0f; t < 15f && !end.Holding; t += Time.deltaTime) yield return null;
+            Assert.IsTrue(end.Holding, "the end card holds: to be continued");
+            Assert.AreEqual("L03_EuropaSurface", SceneManager.GetActiveScene().name, "no next level yet");
         }
 
         [UnityTest]
