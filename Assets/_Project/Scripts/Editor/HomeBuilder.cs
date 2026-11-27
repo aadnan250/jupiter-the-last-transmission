@@ -67,6 +67,7 @@ namespace Jupiter.EditorTools
 
             new GameObject("GameSession").AddComponent<Core.GameSession>();
             var dialogue = rig.GetComponentInChildren<DialogueManager>();
+            MusicKit.Add(dialogue, ("", CombatAudioGenerator.MusicTheme, 0.28f), ("home_reunited", CombatAudioGenerator.MusicEnding, 0.35f));
             var story = new GameObject("Story").transform;
 
             Six.Crew(story, "Crew_GRACE", "GRACE", new Vector3(1.6f, 0f, 2.5f), 200f, new Color(0.7f, 0.7f, 0.75f), dialogue,

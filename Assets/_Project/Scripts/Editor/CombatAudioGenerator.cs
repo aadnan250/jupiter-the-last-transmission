@@ -26,6 +26,12 @@ namespace Jupiter.EditorTools
         public const string PistolShot = Folder + "/sfx_pistol_shot.wav";
         public const string OceanWind = Folder + "/amb_ocean_wind.wav";
         public const string Feature7 = Folder + "/sfx_feature7_pulse.wav";
+        public const string MusicFolder = "Assets/_Project/Audio/Generated/Music";
+        public const string MusicTheme = MusicFolder + "/mus_theme.wav";
+        public const string MusicShip = MusicFolder + "/mus_ship.wav";
+        public const string MusicDread = MusicFolder + "/mus_dread.wav";
+        public const string MusicCombat = MusicFolder + "/mus_combat.wav";
+        public const string MusicEnding = MusicFolder + "/mus_ending.wav";
 
         public static void Generate()
         {
@@ -46,6 +52,12 @@ namespace Jupiter.EditorTools
             Write(PistolShot, CombatSynth.PistolShot());
             Write(OceanWind, CombatSynth.OceanWind());
             Write(Feature7, CombatSynth.Feature7());
+            GreyboxKit.EnsureFolder(MusicFolder);
+            Write(MusicTheme, MusicSynth.Theme());
+            Write(MusicShip, MusicSynth.Ship());
+            Write(MusicDread, MusicSynth.Dread());
+            Write(MusicCombat, MusicSynth.Combat());
+            Write(MusicEnding, MusicSynth.Ending());
         }
 
         static void Write(string path, float[] samples)

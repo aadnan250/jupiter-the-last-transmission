@@ -40,7 +40,7 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [x] Luca's radio death and Ashford's confession over a failing channel (on the move; Ashford gives the ascent code)
 - [x] The Listener rebuilt on the Blender creature (crest, six back nodes); a pistol for the base; a downed Listener can be finished off
 - [x] Hiding spots (lockers), thrown distractions, flare pistol
-- [ ] Needles (vent crawlers)
+- [x] Needles (vent crawlers): they pour out of vents in the ice during the siege at Halcyon
 - [ ] Playtest pass: is it frightening?
 
 ## Slice 8: Europa surface (in progress)
@@ -59,9 +59,11 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 
 ## Slice 10: Art and polish
 - [ ] Final Listener model and animation; facial expressions for the crew
-- [ ] Baked lighting, real Jupiter imagery, music cues
+- [x] Music cues: a synthesised score (family theme, ship, Europa dread, fights, ending) that follows the story
+- [ ] Baked lighting, real Jupiter imagery
 - [x] Accessibility (subtitles size, invert Y, head-bob toggle, look sensitivity, volume), settings menu, pause menu (Esc / Options)
-- [ ] Performance pass on Iris Xe (60 fps at 720p)
+- [x] Performance: graphics presets (Low / Medium / High: render scale, shadow distance, MSAA), 60 fps cap with vsync; Medium by default
+- [ ] Measure 60 fps at 720p on Iris Xe (needs the laptop)
 
 ## Slice 11: Release
 - [ ] Windows build as a GitHub Release, trailer video, final README and screenshots

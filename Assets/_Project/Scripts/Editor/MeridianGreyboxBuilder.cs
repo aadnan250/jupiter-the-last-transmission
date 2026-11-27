@@ -750,6 +750,7 @@ namespace Jupiter.EditorTools
             new GameObject("GameSession").AddComponent<Core.GameSession>();
 
             var dialogue = rig.GetComponentInChildren<DialogueManager>();
+            MusicKit.Add(dialogue, ("", CombatAudioGenerator.MusicShip, 0.22f), ("ship_blackout", CombatAudioGenerator.MusicDread, 0.35f), ("comms_restored", CombatAudioGenerator.MusicShip, 0.22f));
             var crew = new GameObject("Crew").transform;
 
             // Each faces roughly toward their room's door, so the player sees faces on entering.
