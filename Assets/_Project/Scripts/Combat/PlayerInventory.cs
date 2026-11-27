@@ -52,9 +52,13 @@ namespace Jupiter.Combat
 
         public bool UseMedPatch()
         {
-            if (health == null || health.Model.IsDead || health.Model.Current >= health.Model.Max) return false;
+            if (health == null || health.Model.IsDead) return false;
+            var suit = GetComponent<PlayerSuit>();
+            bool suitNeedsIt = suit != null && suit.NeedsSeal;
+            if (health.Model.Current >= health.Model.Max && !suitNeedsIt) return false;
             if (!Model.Consume(MedPatch)) return false;
             health.Model.Heal(medPatchHeal);
+            if (suit != null) suit.Seal();   // the patch kit carries suit sealant too
             return true;
         }
     }

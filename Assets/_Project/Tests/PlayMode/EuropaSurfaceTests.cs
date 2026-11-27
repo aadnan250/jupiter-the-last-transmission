@@ -60,6 +60,45 @@ namespace Jupiter.Tests
             Assert.IsTrue(dialogue.IsActive && dialogue.OnTheMove, "radio chatter on touchdown, without stopping Sam");
         }
 
+        [UnityTest]
+        public IEnumerator Suit_CracksUnderHits_PatchSeals_AndTheWorldIsMuffled()
+        {
+            var suit = player.GetComponent<PlayerSuit>();
+            story.SetFlag("ramp_open");
+            Teleport(new Vector3(0f, 0.2f, -16f));   // out of the pressurised cabin, onto the ice
+            yield return new WaitForSeconds(1f);
+            Assert.IsTrue(suit.Active, "Europa is vacuum: the suit is running");
+            Assert.Greater(suit.Model.Dose, 0f, "Jupiter's radiation starts counting");
+
+            player.GetComponent<PlayerHealth>().TakeDamage(new DamageInfo(60f, DamageType.Melee, player.transform.position));
+            Assert.Less(suit.Model.Integrity, SuitModel.MaxIntegrity, "the hit cracked the suit");
+            var inv = player.GetComponent<PlayerInventory>();
+            inv.Model.Add(PlayerInventory.MedPatch, 1);
+            float before = suit.Model.Integrity;
+            Assert.IsTrue(inv.UseMedPatch());
+            Assert.Greater(suit.Model.Integrity, before, "the patch sealed the suit");
+
+            var vacuum = player.GetComponent<Jupiter.Audio.VacuumAudio>();
+            Assert.IsTrue(vacuum.InVacuum);
+            Assert.Greater(vacuum.MuffledCount, 0, "sounds out on the ice come through muffled");
+        }
+
+        [UnityTest]
+        public IEnumerator Silhouette_RisesBeyondTheRidge_AfterTheAmbush_ThenSinks()
+        {
+            var reveal = Object.FindAnyObjectByType<SilhouetteReveal>();
+            reveal.Begin();
+            Assert.IsFalse(reveal.Started, "not before the ambush is cleared");
+            story.SetFlag("ambush_cleared");
+            reveal.Begin();
+            Assert.IsTrue(reveal.Started);
+            yield return new WaitForSeconds(7f);
+            Assert.Greater(reveal.Raised, 0.9f, "it stands against the sky");
+            for (float t = 0f; t < 20f && !reveal.Finished; t += Time.deltaTime) yield return null;
+            Assert.IsTrue(reveal.Finished, "and goes back down");
+            Assert.GreaterOrEqual(Object.FindObjectsByType<RimePatch>().Length, 8, "Rime fields on the ice");
+        }
+
         const int EuropaCount = 10;
 
         /// <summary>The ten Stalkers of the first ambush (the drill-site wave waits separately).</summary>

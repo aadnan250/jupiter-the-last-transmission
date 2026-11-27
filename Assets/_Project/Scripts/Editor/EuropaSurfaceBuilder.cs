@@ -158,6 +158,9 @@ namespace Jupiter.EditorTools
             BuildSurfaceStory(world, story, nest, prefab, dialogue,
                 hana.GetComponent<SquadMember>(), ashford.GetComponent<SquadMember>(), mara.GetComponent<SquadMember>(), quakeSource);
 
+            BuildSilhouette(world, story, dialogue);
+            BuildRimeFields(world);
+
             // The end of what is built so far: the ascent vehicle's hatch opens and the screen holds on a card.
             var transition = new GameObject("LevelTransition").AddComponent<Core.LevelTransition>();
             Kit.Set(transition, "requiresFlag", BoardedFlag);
@@ -270,6 +273,96 @@ namespace Jupiter.EditorTools
             Vector2.Distance(new Vector2(x, z), new Vector2(site.x, site.z)) < radius;
 
         static Vector3 OnGround(Vector3 p) => new Vector3(p.x, GroundY(p.x, p.z), p.z);
+
+        /// <summary>
+        /// Halfway to Tiamat, something three hundred metres tall stands up beyond the eastern ridge, holds against
+        /// the sky, and sinks back into the ice. It is the Stalker's shape, scaled past belief, in pure black.
+        /// </summary>
+        static void BuildSilhouette(Transform world, Transform story, DialogueManager dialogue)
+        {
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(StalkerBuilder.ModelPath);
+            var dark = Kit.Mat("EU_Silhouette", new Color(0.005f, 0.006f, 0.01f), smoothness: 0f);
+            var figureRoot = new GameObject("Silhouette").transform;
+            figureRoot.SetParent(world, false);
+            figureRoot.position = new Vector3(430f, -300f, -120f);
+            figureRoot.rotation = Quaternion.LookRotation(new Vector3(-1f, 0f, 0.25f));
+            if (model != null)
+            {
+                var body = (GameObject)PrefabUtility.InstantiatePrefab(model);
+                PrefabUtility.UnpackPrefabInstance(body, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                body.transform.SetParent(figureRoot, false);
+                body.transform.localScale = Vector3.one * 140f;
+                foreach (var r in body.GetComponentsInChildren<Renderer>())
+                {
+                    var mats = new Material[r.sharedMaterials.Length];
+                    for (int i = 0; i < mats.Length; i++) mats[i] = dark;
+                    r.sharedMaterials = mats;
+                    r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                }
+            }
+            // Spines along the back, like the Needles' antennae, catching Jupiter's light at the tips.
+            for (int i = 0; i < 6; i++)
+            {
+                var spine = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                Object.DestroyImmediate(spine.GetComponent<Collider>());
+                spine.name = $"Spine_{i}";
+                spine.transform.SetParent(figureRoot, false);
+                spine.transform.localPosition = new Vector3((i - 2.5f) * 14f, 230f + Mathf.Sin(i * 1.7f) * 20f, -20f);
+                spine.transform.localRotation = Quaternion.Euler(-20f + i * 6f, 0f, (i - 2.5f) * 7f);
+                spine.transform.localScale = new Vector3(3f, 45f + i * 4f, 3f);
+                spine.GetComponent<Renderer>().sharedMaterial = dark;
+            }
+
+            var trig = new GameObject("Trigger_Silhouette");
+            trig.transform.SetParent(story, false);
+            trig.transform.position = OnGround(new Vector3(55f, 0f, -35f)) + Vector3.up * 3f;
+            var box = trig.AddComponent<BoxCollider>();
+            box.isTrigger = true;
+            box.size = new Vector3(70f, 12f, 30f);
+            var rumble = trig.AddComponent<AudioSource>();
+            rumble.clip = CombatAudioGenerator.Load(CombatAudioGenerator.Feature7);
+            rumble.playOnAwake = false;
+            rumble.spatialBlend = 0f;   // felt through the boots
+            rumble.volume = 0.9f;
+            var reveal = trig.AddComponent<SilhouetteReveal>();
+            Kit.Set(reveal, "figure", figureRoot);
+            Kit.Set(reveal, "requiresFlag", ClearedFlag);
+            Kit.Set(reveal, "dialogue", dialogue);
+            Kit.Set(reveal, "radio", SurfaceDialogue("eu_silhouette_radio"));
+            Kit.Set(reveal, "rumble", rumble);
+        }
+
+        /// <summary>
+        /// Rime on the open ice: it looks like hoarfrost, but it is the colony's nerve tissue. Anything that
+        /// happens on it is heard twice as far, and it flashes cyan when it hears you.
+        /// </summary>
+        static void BuildRimeFields(Transform world)
+        {
+            var root = new GameObject("RimeFields").transform;
+            root.SetParent(world, false);
+            var mat = Kit.Mat("EU_Rime", new Color(0.86f, 0.93f, 1f), new Color(0.02f, 0.06f, 0.07f), 0.85f);
+            Vector3[] spots =
+            {
+                new Vector3(28f, 0f, -18f), new Vector3(46f, 0f, -26f), new Vector3(70f, 0f, -50f), new Vector3(88f, 0f, -58f),
+                new Vector3(96f, 0f, -92f), new Vector3(78f, 0f, -130f), new Vector3(60f, 0f, -168f), new Vector3(30f, 0f, -186f),
+            };
+            for (int i = 0; i < spots.Length; i++)
+            {
+                var go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                go.name = $"RimeField_{i}";
+                Object.DestroyImmediate(go.GetComponent<Collider>());
+                go.transform.SetParent(root, false);
+                go.transform.position = OnGround(spots[i]) + Vector3.up * 0.03f;
+                float r = 3f + (i % 3);
+                go.transform.localScale = new Vector3(r * 2f, 0.01f, r * 2f * 0.8f);
+                go.transform.rotation = Quaternion.Euler(0f, i * 37f, 0f);
+                go.GetComponent<Renderer>().sharedMaterial = mat;
+                go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                var patch = go.AddComponent<RimePatch>();
+                Kit.Set(patch, "glow", go.GetComponent<Renderer>());
+                Kit.Set(patch, "radius", r);
+            }
+        }
 
         static TextAsset SurfaceDialogue(string name)
         {
