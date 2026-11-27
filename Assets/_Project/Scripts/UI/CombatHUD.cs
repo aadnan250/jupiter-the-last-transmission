@@ -23,6 +23,7 @@ namespace Jupiter.UI
         [SerializeField] PlayerThrower thrower;
         [SerializeField] PlayerConcealment concealment;
         [SerializeField] Text toolText;
+        [SerializeField] PlayerSuit suit;
 
         readonly StringBuilder toolLine = new StringBuilder();
 
@@ -90,6 +91,7 @@ namespace Jupiter.UI
         {
             if (toolText == null) return;
             toolLine.Clear();
+            AppendSuit();
             if (concealment != null && concealment.IsHidden) toolLine.Append("<color=#9FD8E8>HIDDEN</color>   ");
             if (inventory != null && inventory.HasFlarePistol)
                 toolLine.Append("FLARES ").Append(inventory.Model.Count(PlayerInventory.Flare)).Append("   ");
@@ -98,6 +100,21 @@ namespace Jupiter.UI
 
             toolText.enabled = toolLine.Length > 0;
             if (toolText.enabled) toolText.text = toolLine.ToString().TrimEnd();
+        }
+
+        void AppendSuit()
+        {
+            if (suit == null || !suit.Active) return;
+            var s = suit.Model;
+            int integrity = Mathf.CeilToInt(s.Integrity);
+            int dose = Mathf.FloorToInt(s.DoseFraction * 100f);
+            string ic = s.Breached ? "#FF5A5A" : integrity < 70 ? "#FFC860" : "#9FD8E8";
+            string dc = s.OverDose ? "#FF5A5A" : dose >= 75 ? "#FFC860" : "#9FD8E8";
+            bool blink = Mathf.Repeat(Time.time, 0.8f) < 0.5f;
+            if (s.Breached && blink) toolLine.Append("<color=#FF5A5A>SUIT BREACH: ").Append(HealGlyph).Append(" TO SEAL</color>\n");
+            if (s.OverDose && blink) toolLine.Append("<color=#FF5A5A>RADIATION LIMIT REACHED</color>\n");
+            toolLine.Append("<color=").Append(ic).Append(">SUIT ").Append(integrity).Append("%</color>   ");
+            toolLine.Append("<color=").Append(dc).Append(">RAD ").Append(dose).Append("%</color>   ");
         }
 
         static string HealGlyph => !InputDeviceWatcher.UsingGamepad ? "H" : "D-PAD UP";

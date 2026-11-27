@@ -35,7 +35,7 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 
 ## Slice 7: Chapters 6–7 story in the base (in progress)
 - [x] Ch. 6 "The Discovery": base exploration, Tomas's message choice, Tiamat log, Ashford's sealed orders, palm prints
-- [ ] Ch. 6.3 EVA to the *Tiamat* site itself (needs the Slice 8 surface level; the log is read in the lab for now)
+- [x] Ch. 6.3 EVA to the *Tiamat* site itself (on the Europa surface: the lander, the manifest, Directive 7)
 - [x] Ch. 7 "Contact": confrontation, drill chamber eruption, first Listener encounter, Ashford's door, retreat, safe room
 - [x] Luca's radio death and Ashford's confession over a failing channel (on the move; Ashford gives the ascent code)
 - [x] The Listener rebuilt on the Blender creature (crest, six back nodes); a pistol for the base; a downed Listener can be finished off
@@ -49,8 +49,8 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [x] Quake and ambush: ten Stalkers burst from the ice; arc beam rifles with first-person arms, charge and cells HUD
 - [x] Story moved onto the surface: Tiamat's lander and Directive 7, the drill and the Listener's eruption, Luca and Ashford's last calls, the run to the ascent vehicle Halcyon
 - [x] Conamara Base interiors taken out of the story flow (scene kept in the project; tests still cover it)
-- [ ] Vacuum audio (suit, boots and radio only), suit integrity, radiation timer
-- [ ] Distant silhouette reveal, Rime fields
+- [x] Vacuum audio (suit, boots and radio only; the world muffled through the suit), suit integrity (breach leaks, patches seal), radiation dose timer
+- [x] Distant silhouette reveal beyond the ridge on the way to Tiamat, Rime fields on the ice
 
 ## Slice 9: Remaining chapters ✅ (the story plays start to finish)
 - [x] Ch. 1 Cabo Lumen at dawn: the family goodbye (Ada, Zara), the gantry, the launch; Ch. 3 the first sound; Ch. 4 the blackout and relay puzzle

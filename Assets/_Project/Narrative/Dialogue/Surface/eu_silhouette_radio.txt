@@ -1,0 +1,11 @@
+# Chapter 6, on the way to Tiamat. Something enormous stands up beyond the ridge, against Jupiter, and goes back down.
+
+=== start
+HANA (radio): ...Sam. Sam, look east. Over the ridge.
+SAM (radio): I see it.
+MARA (radio): That's not ice. Ice doesn't stand up.
+ASHFORD (radio): Eyes on the beacon. All of you.
+HANA (radio): Commander, that was three hundred metres tall.
+ASHFORD (radio): And it's gone. Keep walking.
+~ flag saw_silhouette
+-> END

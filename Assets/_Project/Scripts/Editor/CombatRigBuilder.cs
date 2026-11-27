@@ -93,6 +93,14 @@ namespace Jupiter.EditorTools
             GreyboxKit.Set(combatHud, "thrower", thrower);
             GreyboxKit.Set(combatHud, "concealment", concealment);
             GreyboxKit.Set(combatHud, "toolText", toolText);
+
+            // On Europa's surface: the suit (integrity, radiation dose) and sound through the suit only.
+            var suit = root.AddComponent<PlayerSuit>();
+            GreyboxKit.Set(suit, "health", health);
+            GreyboxKit.Set(suit, "player", root.GetComponent<PlayerController>());
+            GreyboxKit.Set(combatHud, "suit", suit);
+            var vacuum = root.AddComponent<Jupiter.Audio.VacuumAudio>();
+            GreyboxKit.Set(vacuum, "player", root.GetComponent<PlayerController>());
         }
 
         /// <summary>
