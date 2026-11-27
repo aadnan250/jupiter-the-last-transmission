@@ -6,6 +6,8 @@ A first-person science-fiction survival-horror game set in 2183, built in **Unit
 
 [![Repository checks](https://github.com/aadnan250/jupiter-the-last-transmission/actions/workflows/repo-checks.yml/badge.svg)](https://github.com/aadnan250/jupiter-the-last-transmission/actions/workflows/repo-checks.yml)
 
+> **[Download v1.0.0 for Windows](https://github.com/aadnan250/jupiter-the-last-transmission/releases/tag/v1.0.0)**: unzip, then double-click `JupiterTheLastTransmission.exe`.
+>
 > **Status: the whole game plays start to finish.** Ten chapters: the launch from Cabo Lumen, the voyage on the *Meridian*, the landing and the fight on Europa, the siege at the ascent vehicle, the long way home, and an ending that depends on what you did. Fully voiced, with a score, a pause and settings menu, and a Windows build. More than 210 automated tests.
 
 | | | |
@@ -186,7 +188,7 @@ docs/                  Design and technical documentation
 | 4. Vertical slice (Chapters 6–7 on Europa) | Done |
 | 5. Full story, Chapters 1–10 with the ending | Done |
 | 6. Polish (pause and settings, suit and radiation, music, Needles, faces, Listener animation, lighting, Jupiter, graphics presets) | Done |
-| 7. Release (Windows build, README, screenshots) | Done; a public GitHub Release is the last step |
+| 7. Release (Windows build, README, screenshots, GitHub Release v1.0.0) | Done |
 
 ## Known limitations
 
