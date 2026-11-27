@@ -33,7 +33,7 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [x] Health, inventory, bolt driver, combat HUD
 - [x] Conamara Base grey-box with the Listener and a NavMesh
 
-## Slice 7: Chapters 6–7 story in the base (in progress)
+## Slice 7: Chapters 6–7 ✅ (only the owner's playtest left)
 - [x] Ch. 6 "The Discovery": base exploration, Tomas's message choice, Tiamat log, Ashford's sealed orders, palm prints
 - [x] Ch. 6.3 EVA to the *Tiamat* site itself (on the Europa surface: the lander, the manifest, Directive 7)
 - [x] Ch. 7 "Contact": confrontation, drill chamber eruption, first Listener encounter, Ashford's door, retreat, safe room
@@ -43,7 +43,7 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [x] Needles (vent crawlers): they pour out of vents in the ice during the siege at Halcyon
 - [ ] Playtest pass: is it frightening?
 
-## Slice 8: Europa surface (in progress)
+## Slice 8: Europa surface ✅
 - [x] Surface level (Conamara Chaos), Jupiter fixed low on the horizon, moons, Milky Way
 - [x] Landing in the lander Wren: ramp onto the ice, suited landing party (Ashford, Mara, Hana) walking and fighting with Sam
 - [x] Quake and ambush: ten Stalkers burst from the ice; arc beam rifles with first-person arms, charge and cells HUD
@@ -57,13 +57,15 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [x] Ch. 8 the siege at Halcyon and Mara's last words; Ch. 9 the sample (vent or keep) and the last transmission; Ch. 10 home with Grace, Ada and Zara
 - [x] Ending variants from the sample choice, the five names, credits (voice licence credited)
 
-## Slice 10: Art and polish
-- [ ] Final Listener model and animation; facial expressions for the crew
+## Slice 10: Art and polish ✅ (only the on-hardware measurement left)
+- [x] Final Listener model and animation (longer forearms, a ridge of back spines; kneels to listen, stalks upright, recoils from light, slumps in torpor); facial expressions for the crew (brows and mouth corners follow each line)
 - [x] Music cues: a synthesised score (family theme, ship, Europa dread, fights, ending) that follows the story
-- [ ] Baked lighting, real Jupiter imagery
+- [x] Lighting pass (box-projected reflection probes in every interior; lights stay real-time for the blackout and alarms) and Jupiter rebuilt on the real band layout (belts, festoons, white ovals, the Great Red Spot, 2048 px)
 - [x] Accessibility (subtitles size, invert Y, head-bob toggle, look sensitivity, volume), settings menu, pause menu (Esc / Options)
 - [x] Performance: graphics presets (Low / Medium / High: render scale, shadow distance, MSAA), 60 fps cap with vsync; Medium by default
 - [ ] Measure 60 fps at 720p on Iris Xe (needs the laptop)
 
-## Slice 11: Release
-- [ ] Windows build as a GitHub Release, trailer video, final README and screenshots
+## Slice 11: Release (build done; publishing is the owner's call)
+- [x] Windows build (Jupiter > Build Windows Player), final README and screenshots
+- [ ] Publish the build as a GitHub Release (public: needs the owner's go-ahead)
+- [ ] Trailer video (needs screen recording by the owner)

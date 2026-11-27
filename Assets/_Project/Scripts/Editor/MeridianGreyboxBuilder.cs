@@ -751,6 +751,9 @@ namespace Jupiter.EditorTools
 
             var dialogue = rig.GetComponentInChildren<DialogueManager>();
             MusicKit.Add(dialogue, ("", CombatAudioGenerator.MusicShip, 0.22f), ("ship_blackout", CombatAudioGenerator.MusicDread, 0.35f), ("comms_restored", CombatAudioGenerator.MusicShip, 0.22f));
+            LightingKit.Probe(null, "ReflectionProbe_Galley", new Vector3(-6f, 1.5f, 17f), new Vector3(10f, 3.2f, 8f));
+            LightingKit.Probe(null, "ReflectionProbe_Workshop", new Vector3(-6f, 1.5f, 34f), new Vector3(10f, 3.2f, 8f));
+            LightingKit.Probe(null, "ReflectionProbe_Command", new Vector3(4f, 1.5f, 7f), new Vector3(10f, 3.2f, 8f));
             var crew = new GameObject("Crew").transform;
 
             // Each faces roughly toward their room's door, so the player sees faces on entering.

@@ -65,6 +65,33 @@ namespace Jupiter.EditorTools
             var bones = new Dictionary<string, Transform>();
             foreach (var t in model.GetComponentsInChildren<Transform>(true)) if (!bones.ContainsKey(t.name)) bones[t.name] = t;
 
+            // What sets the Listener apart from the Stalkers it leads: longer forearms and hands that reach the floor
+            // from a crouch, and a ridge of spines down the back like the thing beyond the ridge.
+            foreach (var arm in new[] { "forearm.L", "forearm.R" })
+                if (bones.TryGetValue(arm, out var fa)) fa.localScale *= 1.22f;
+            var spineMat = Mat("CR_ListenerSpine", new Color(0.16f, 0.18f, 0.2f), new Color(0.05f, 0.2f, 0.25f), 0.7f);
+            (string bone, float up, float back, float len)[] spines =
+            {
+                ("chest", 0.2f, 0.12f, 0.34f), ("chest", 0.08f, 0.15f, 0.42f), ("chest", -0.04f, 0.16f, 0.38f),
+                ("spine", 0.1f, 0.15f, 0.32f), ("spine", -0.02f, 0.15f, 0.26f), ("hips", 0.08f, 0.14f, 0.2f),
+            };
+            for (int i = 0; i < spines.Length; i++)
+            {
+                if (!bones.TryGetValue(spines[i].bone, out var sb)) continue;
+                var sp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                sp.name = $"Spine_{i}";
+                Object.DestroyImmediate(sp.GetComponent<Collider>());
+                sp.transform.SetParent(sb, true);
+                var up = root.transform.up; var back = -root.transform.forward;
+                sp.transform.position = sb.position + (up * spines[i].up + back * spines[i].back) * Scale;
+                var dir = (up * 0.8f + back * 0.6f).normalized;
+                sp.transform.rotation = Quaternion.LookRotation(Vector3.Cross(dir, root.transform.right), dir);
+                sp.transform.position += dir * spines[i].len * 0.5f * Scale;
+                float ls = sb.lossyScale.x;
+                sp.transform.localScale = new Vector3(0.025f, spines[i].len, 0.06f) * Scale / ls;
+                sp.GetComponent<Renderer>().sharedMaterial = spineMat;
+            }
+
             // Body hitboxes on the bones, sized to the flesh and pointing along each bone to its child.
             foreach (var (boneName, radius) in BodyColliders)
             {

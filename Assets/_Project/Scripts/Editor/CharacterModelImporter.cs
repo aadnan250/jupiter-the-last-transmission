@@ -49,6 +49,18 @@ namespace Jupiter.EditorTools
                 GreyboxKit.Set(lip, "jaw", jaw);
             }
 
+            if (head != null)
+            {
+                var face = go.AddComponent<FaceExpression>();
+                GreyboxKit.Set(face, "head", head);
+                GreyboxKit.Set(face, "browInnerL", Find(t, "oculi01.L"));
+                GreyboxKit.Set(face, "browInnerR", Find(t, "oculi01.R"));
+                GreyboxKit.Set(face, "browOuterL", Find(t, "oculi02.L"));
+                GreyboxKit.Set(face, "browOuterR", Find(t, "oculi02.R"));
+                GreyboxKit.Set(face, "cornerL", Find(t, "risorius03.L"));
+                GreyboxKit.Set(face, "cornerR", Find(t, "risorius03.R"));
+            }
+
             var idle = go.AddComponent<CharacterIdleMotion>();
             GreyboxKit.Set(idle, "spine", spine);
             GreyboxKit.Set(idle, "neck", neck);

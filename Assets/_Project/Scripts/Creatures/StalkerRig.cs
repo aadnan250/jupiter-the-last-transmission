@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Jupiter.Creatures
 {
-    public enum StalkerPose { Buried, Emerging, Idle, Run, Attack, Dead }
+    public enum StalkerPose { Buried, Emerging, Idle, Run, Attack, Dead, Listen, Stalk, Recoil, Slump }
 
     /// <summary>
     /// Procedural animation for the Stalker model (Tools/CreaturePipeline/make_stalker.py names every bone). It
@@ -90,6 +90,45 @@ namespace Jupiter.Creatures
                     Set("upperarm.L", -75 - 45 * s, 8); Set("forearm.L", -20 + 15 * c);
                     Set("upperarm.R", -75 + 45 * s, -8); Set("forearm.R", -20 - 15 * c);
                     drop = crouchDrop + 0.12f + 0.06f * Mathf.Abs(s);
+                    break;
+
+                case StalkerPose.Listen:
+                    // Kneeling, palms flat on the ice, head down and turning slowly: feeling for footsteps.
+                    float scan = Mathf.Sin(Time.time * 0.7f) * 18f;
+                    Set("hips", 60); Set("spine", 35); Set("chest", 25 + Mathf.Sin(Time.time * 1.1f) * 2f);
+                    Set("neck", -15); Set("head", 25, scan + twitch * 0.3f); Set("jaw", 4);
+                    Set("thigh.L", -105); Set("thigh.R", -105); Set("shin.L", 140); Set("shin.R", 140); Set("foot.L", -40); Set("foot.R", -40);
+                    Set("upperarm.L", -55, 12); Set("upperarm.R", -55, -12); Set("forearm.L", -10); Set("forearm.R", -10);
+                    drop = crouchDrop * 1.25f;
+                    break;
+
+                case StalkerPose.Stalk:
+                    // Upright and slow: long careful strides, arms half raised, head pushed forward and sweeping.
+                    Set("hips", 15 + 3 * c); Set("spine", 10); Set("chest", 8);
+                    Set("neck", -25); Set("head", -10, Mathf.Sin(Time.time * 0.9f) * 25f);
+                    Set("jaw", 10 + 4 * Mathf.Sin(Time.time * 3f));
+                    Set("thigh.L", -30 + 25 * s); Set("shin.L", 35 - 25 * c); Set("foot.L", -10);
+                    Set("thigh.R", -30 - 25 * s); Set("shin.R", 35 + 25 * c); Set("foot.R", -10);
+                    Set("upperarm.L", -55 - 10 * s, 18); Set("forearm.L", -45);
+                    Set("upperarm.R", -55 + 10 * s, -18); Set("forearm.R", -45);
+                    drop = crouchDrop * 0.4f;
+                    break;
+
+                case StalkerPose.Recoil:
+                    // Blinded: reared back on its haunches, arms thrown up across the face, jaw wide.
+                    Set("hips", -10); Set("spine", -20); Set("chest", -25); Set("neck", 20); Set("head", 15, twitch * 0.5f); Set("jaw", 42);
+                    Set("thigh.L", -50); Set("thigh.R", -50); Set("shin.L", 80); Set("shin.R", 80); Set("foot.L", -25); Set("foot.R", -25);
+                    Set("upperarm.L", -150, 25); Set("upperarm.R", -150, -25); Set("forearm.L", -100); Set("forearm.R", -100);
+                    drop = crouchDrop * 0.8f;
+                    break;
+
+                case StalkerPose.Slump:
+                    // Torpor: collapsed forward on its knees, head hanging, heaving, the odd spasm.
+                    float heave = Mathf.Sin(Time.time * 2.4f) * 5f;
+                    Set("hips", 55); Set("spine", 45 + heave); Set("chest", 35 + heave); Set("neck", 30); Set("head", 30, twitch * 0.15f); Set("jaw", 20);
+                    Set("thigh.L", -110); Set("thigh.R", -110); Set("shin.L", 150); Set("shin.R", 150); Set("foot.L", -45); Set("foot.R", -45);
+                    Set("upperarm.L", -15, 30); Set("upperarm.R", -15, -30); Set("forearm.L", -5); Set("forearm.R", -5);
+                    drop = crouchDrop * 1.4f;
                     break;
 
                 default: // Idle and Attack share the hunched crouch

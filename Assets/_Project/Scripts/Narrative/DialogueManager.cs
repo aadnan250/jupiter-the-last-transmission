@@ -121,6 +121,7 @@ namespace Jupiter.Narrative
                     var line = runner.CurrentLine;
                     if (line.Radio && radioSource != null && radioSquelch != null) radioSource.PlayOneShot(radioSquelch, 0.6f);
                     PlayVoice(line);
+                    if (!line.Radio) FaceExpression.Express(line.Speaker, line.Text);
                     if (ui != null) ui.ShowLine(Characters.DisplayName(line.Speaker), Characters.SubtitleColor(line.Speaker), line.Text, line.Radio);
                     lineEndsAt = Time.time + DialogueTiming.LineSeconds(speaking != null ? speaking.clip.length : 0f, line.Text.Length);
                     break;

@@ -140,6 +140,19 @@ namespace Jupiter.Tests
         }
 
         [UnityTest]
+        public IEnumerator Faces_WearTheLine()
+        {
+            yield return Load("L06_Home");
+            var faces = Object.FindObjectsByType<FaceExpression>();
+            Assert.GreaterOrEqual(faces.Length, 3, "Grace, Ada and Zara have faces");
+            FaceExpression.Express("ADA", "(smiling) You're home.");
+            var ada = faces.First(f => f.GetComponentInParent<CrewMember>().CharacterId == "ADA");
+            Assert.AreEqual(Expression.Smile, ada.Current);
+            yield return new WaitForSeconds(3.5f);
+            Assert.AreEqual(Expression.Neutral, ada.Current, "and it eases back");
+        }
+
+        [UnityTest]
         public IEnumerator Chapter10_Home_TheAnswerToZara_ThenTheEnding()
         {
             yield return Load("L06_Home");
