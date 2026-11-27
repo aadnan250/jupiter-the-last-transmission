@@ -65,7 +65,7 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [x] Performance: graphics presets (Low / Medium / High: render scale, shadow distance, MSAA), 60 fps cap with vsync; Medium by default
 - [ ] Measure 60 fps at 720p on Iris Xe (needs the laptop)
 
-## Slice 11: Release (build done; publishing is the owner's call)
+## Slice 11: Release ✅ (v1.0.0; only the trailer left)
 - [x] Windows build (Jupiter > Build Windows Player), final README and screenshots
-- [ ] Publish the build as a GitHub Release (public: needs the owner's go-ahead)
+- [x] Published as GitHub Release v1.0.0 (Windows zip)
 - [ ] Trailer video (needs screen recording by the owner)
