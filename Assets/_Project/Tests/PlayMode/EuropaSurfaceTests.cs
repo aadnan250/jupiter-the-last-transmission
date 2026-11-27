@@ -54,7 +54,8 @@ namespace Jupiter.Tests
             Assert.IsTrue(player.GetComponent<PlayerInventory>().HasBeamRifle);
             Assert.AreEqual(3, SquadMember.All.Count, "Ashford, Mara and Hana");
             Assert.AreEqual(EuropaCount, Ambushers.Count(), "ten for the ambush");
-            Assert.AreEqual(4, StalkerAI.All.Count - EuropaCount, "and four more for the drill site");
+            Assert.AreEqual(4, StalkerAI.All.Count(s => s.name.StartsWith("DrillWave")), "four more for the drill site");
+            Assert.AreEqual(6, StalkerAI.All.Count(s => s.name.StartsWith("SiegeWave")), "and six for the siege at Halcyon");
             Assert.IsTrue(StalkerAI.All.All(s => s.State == StalkerState.Buried), "nothing in the lander");
             Assert.IsTrue(dialogue.IsActive && dialogue.OnTheMove, "radio chatter on touchdown, without stopping Sam");
         }
@@ -62,7 +63,7 @@ namespace Jupiter.Tests
         const int EuropaCount = 10;
 
         /// <summary>The ten Stalkers of the first ambush (the drill-site wave waits separately).</summary>
-        static System.Collections.Generic.IEnumerable<StalkerAI> Ambushers => StalkerAI.All.Where(s => !s.name.StartsWith("DrillWave"));
+        static System.Collections.Generic.IEnumerable<StalkerAI> Ambushers => StalkerAI.All.Where(s => !s.name.StartsWith("DrillWave") && !s.name.StartsWith("SiegeWave"));
 
         [UnityTest]
         public IEnumerator Ramp_DropsAndTheCrewWalkOutWithSam()
@@ -197,10 +198,24 @@ namespace Jupiter.Tests
             keypad.Interact(player.gameObject);
             foreach (char c in "4117") keypad.Press(c - '0');
             Assert.IsTrue(story.HasFlag("ascent_unlocked"), "Halcyon's hatch opens");
-            var end = Object.FindObjectsByType<LevelTransition>().First();
-            for (float t = 0f; t < 15f && !end.Holding; t += Time.deltaTime) yield return null;
-            Assert.IsTrue(end.Holding, "the end card holds: to be continued");
-            Assert.AreEqual("L03_EuropaSurface", SceneManager.GetActiveScene().name, "no next level yet");
+
+            // Chapter 8: the hatch cycles while they hold the pad; Mara does not make it.
+            director.SiegeSeconds = 3f;
+            yield return null;
+            Assert.AreEqual(SurfaceBeat.Siege, director.Beat);
+            var mara = SquadMember.All.First(m => m.CharacterId == "MARA");
+            for (float t = 0f; t < 8f && director.Beat == SurfaceBeat.Siege; t += Time.deltaTime) yield return null;
+            Assert.AreEqual(SurfaceBeat.Boarding, director.Beat);
+            Assert.IsTrue(mara.Lost, "Mara is gone");
+            Assert.AreEqual(0, SquadMember.All.Count, "Sam is alone");
+            // Earlier calls (Luca, Ashford) may still be on the radio; her last words play after them.
+            for (float t = 0f; t < 120f && !story.HasFlag("mara_lost"); t += Time.deltaTime) yield return null;
+            Assert.IsTrue(story.HasFlag("mara_lost"), "her last words: that's five, go");
+
+            Object.FindObjectsByType<DialogueTrigger>().First(t => t.name == "Trigger_BoardHalcyon").TryFire();
+            Assert.IsTrue(story.HasFlag("boarded_halcyon"));
+            for (float t = 0f; t < 20f && SceneManager.GetActiveScene().name != "L05_Return"; t += Time.deltaTime) yield return null;
+            Assert.AreEqual("L05_Return", SceneManager.GetActiveScene().name, "Halcyon climbs to the Meridian");
         }
 
         [UnityTest]

@@ -139,7 +139,7 @@ namespace Jupiter.Tests
             story.MarkCompleted("ch02_command_ashford");
             Assert.AreEqual("Go to the observation deck", mission.CurrentText);
             story.SetFlag("reached_observation");
-            Assert.AreEqual("Chapter 2 complete", mission.CurrentText);
+            Assert.AreEqual("Month 11, Jupiter: bring Tiamat's seismometers online (science lab)", mission.CurrentText, "the ship chapters carry on into Jupiter");
         }
 
         [UnityTest]

@@ -52,10 +52,10 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 - [ ] Vacuum audio (suit, boots and radio only), suit integrity, radiation timer
 - [ ] Distant silhouette reveal, Rime fields
 
-## Slice 9: Remaining chapters
-- [ ] Ch. 1 Earth launch, Ch. 2 journey scenes, Ch. 3 Jupiter arrival and first sound, Ch. 4 signal loss puzzle
-- [ ] Ch. 8 Mara's death sequence, Ch. 9 escape (the Keel) and last transmission, Ch. 10 home
-- [ ] Ending variants from the sample choice
+## Slice 9: Remaining chapters ✅ (the story plays start to finish)
+- [x] Ch. 1 Cabo Lumen at dawn: the family goodbye (Ada, Zara), the gantry, the launch; Ch. 3 the first sound; Ch. 4 the blackout and relay puzzle
+- [x] Ch. 8 the siege at Halcyon and Mara's last words; Ch. 9 the sample (vent or keep) and the last transmission; Ch. 10 home with Grace, Ada and Zara
+- [x] Ending variants from the sample choice, the five names, credits (voice licence credited)
 
 ## Slice 10: Art and polish
 - [ ] Final Listener model and animation; facial expressions for the crew

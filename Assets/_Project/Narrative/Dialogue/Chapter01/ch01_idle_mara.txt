@@ -1,0 +1,5 @@
+# Mara at the lounge window on launch morning. She does not want company.
+
+=== start
+MARA: Okafor. (beat) Go and say goodbye properly. We don't get another one.
+-> END

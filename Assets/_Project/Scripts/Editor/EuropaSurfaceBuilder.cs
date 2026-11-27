@@ -38,6 +38,7 @@ namespace Jupiter.EditorTools
         public const string KilledFlag = "listener_killed";
         public const string AscentFlag = "ascent_unlocked";
         public const string AscentCode = "4117";
+        public const string BoardedFlag = "boarded_halcyon";
         public const int StalkerCount = 10;
 
         const float FloorH = 1.3f;          // lander cabin floor above the ice
@@ -155,14 +156,14 @@ namespace Jupiter.EditorTools
 
             // After the ambush the story stays on the ice: Tiamat's lander, the borehole, the Listener, the ascent vehicle.
             BuildSurfaceStory(world, story, nest, prefab, dialogue,
-                hana.GetComponent<SquadMember>(), ashford.GetComponent<SquadMember>(), quakeSource);
+                hana.GetComponent<SquadMember>(), ashford.GetComponent<SquadMember>(), mara.GetComponent<SquadMember>(), quakeSource);
 
             // The end of what is built so far: the ascent vehicle's hatch opens and the screen holds on a card.
             var transition = new GameObject("LevelTransition").AddComponent<Core.LevelTransition>();
-            Kit.Set(transition, "requiresFlag", AscentFlag);
-            Kit.Set(transition, "nextScene", "");
-            Kit.Set(transition, "cardTitle", "CHAPTER 8: THE LAST CREW MEMBER");
-            Kit.Set(transition, "cardSubtitle", "To be continued.");
+            Kit.Set(transition, "requiresFlag", BoardedFlag);
+            Kit.Set(transition, "nextScene", System.IO.Path.GetFileNameWithoutExtension(ReturnBuilder.ScenePath));
+            Kit.Set(transition, "cardTitle", "THE LAST TRANSMISSION");
+            Kit.Set(transition, "cardSubtitle", "Halcyon, climbing out of Europa's gravity. One seat taken.");
             Kit.Set(transition, "delaySeconds", 6f);
             Kit.Set(transition, "dialogue", dialogue);
 
@@ -285,7 +286,7 @@ namespace Jupiter.EditorTools
         /// and the <see cref="SurfaceStoryDirector"/> that plays it all in order.
         /// </summary>
         static void BuildSurfaceStory(Transform world, Transform story, Transform nest, GameObject stalkerPrefab, DialogueManager dialogue,
-            SquadMember hana, SquadMember ashford, AudioSource quakeSource)
+            SquadMember hana, SquadMember ashford, SquadMember mara, AudioSource quakeSource)
         {
             var site = new GameObject("TiamatSite").transform;
             site.SetParent(world, false);
@@ -424,7 +425,19 @@ namespace Jupiter.EditorTools
             Kit.Set(director, "eruptionRadio", SurfaceDialogue("eu_eruption_radio"));
             Kit.Set(director, "lucaRadio", SurfaceDialogue("eu_luca_radio"));
             Kit.Set(director, "ashfordRadio", SurfaceDialogue("eu_ashford_radio"));
-            Kit.Set(director, "ascentRadio", SurfaceDialogue("eu_ascent_radio"));
+            Kit.Set(director, "halcyonRadio", SurfaceDialogue("eu_halcyon_radio"));
+            Kit.Set(director, "maraRadio", SurfaceDialogue("eu_mara_radio"));
+            Kit.Set(director, "aloneRadio", SurfaceDialogue("eu_alone_radio"));
+            Kit.Set(director, "mara", mara);
+            var siege = new List<Object>();
+            for (int i = 0; i < 6; i++)
+            {
+                var s = (GameObject)PrefabUtility.InstantiatePrefab(stalkerPrefab, nest);
+                s.name = $"SiegeWave_{i}";
+                s.transform.position = new Vector3(i * 3f, -80f, 20f);
+                siege.Add(s.GetComponent<StalkerAI>());
+            }
+            Kit.Set(director, "siegeWave", siege.ToArray());
             Kit.Set(director, "hana", hana);
             Kit.Set(director, "ashford", ashford);
             Kit.Set(director, "drillSpot", drillSpot);
@@ -437,7 +450,20 @@ namespace Jupiter.EditorTools
             Kit.Set(director, "quakeClip", CombatAudioGenerator.Load(CombatAudioGenerator.Eruption));
             Kit.Set(director, "dialogue", dialogue);
 
-            BuildAscentVehicle(world);
+            var halcyon = BuildAscentVehicle(world);
+            Kit.Set(director, "halcyon", halcyon);
+
+            // Boarding: once Mara is gone, the hatch at the foot of the rocket takes Sam alone.
+            var board = new GameObject("Trigger_BoardHalcyon");
+            board.transform.SetParent(story, false);
+            board.transform.position = OnGround(AscentPos) + new Vector3(0f, 1.5f, -3f);
+            var bc = board.AddComponent<BoxCollider>();
+            bc.isTrigger = true;
+            bc.size = new Vector3(8f, 4f, 6f);
+            var bt = board.AddComponent<DialogueTrigger>();
+            Kit.Set(bt, "requiresFlag", "mara_lost");
+            Kit.Set(bt, "setsFlagOnEnter", BoardedFlag);
+            Kit.Set(bt, "dialogue", dialogue);
         }
 
         static void SurfaceReadable(Transform parent, string name, Vector3 position, string title, string body, string flag)
@@ -453,7 +479,7 @@ namespace Jupiter.EditorTools
         /// Halcyon, the ascent vehicle: a white rocket on a pad beside the base, a launch tower with a red beacon,
         /// floodlights, and at the foot of the tower the crew hatch's keypad (Ashford's code, 4117).
         /// </summary>
-        static void BuildAscentVehicle(Transform world)
+        static Transform BuildAscentVehicle(Transform world)
         {
             var root = new GameObject("Halcyon").transform;
             root.SetParent(world, false);
@@ -517,6 +543,7 @@ namespace Jupiter.EditorTools
             Kit.Set(keypad, "audioSource", Kit.Audio3D(screen, null, 0.8f, 8f));
             Kit.Set(keypad, "keyClip", AudioAssetGenerator.Load(AudioAssetGenerator.SwitchClick));
             Kit.Set(keypad, "acceptClip", AudioAssetGenerator.Load(AudioAssetGenerator.DoorOpen));
+            return root;
         }
 
         static float GroundY(float x, float z) => terrain != null ? terrain.SampleHeight(new Vector3(x, 0f, z)) + terrain.transform.position.y : 0f;
@@ -863,10 +890,10 @@ namespace Jupiter.EditorTools
             mission.transform.SetParent(parent, false);
             Kit.Set(mission, "dialogue", dialogue);
             Kit.Set(mission, "objectiveText", rig.transform.Find("HUD/Objective").GetComponent<UnityEngine.UI.Text>());
-            Kit.Set(mission, "completeText", "To be continued");
+            Kit.Set(mission, "completeText", "Launch");
             var so = new SerializedObject(mission);
             var list = so.FindProperty("objectives");
-            list.arraySize = 8;
+            list.arraySize = 10;
             ConamaraChapterSixBuilder.Objective(list.GetArrayElementAtIndex(0), "Wait for the ramp", new string[0], new[] { RampFlag });
             ConamaraChapterSixBuilder.Objective(list.GetArrayElementAtIndex(1), "Walk out onto Europa with the team", new string[0], new[] { QuakeFlag });
             ConamaraChapterSixBuilder.Objective(list.GetArrayElementAtIndex(2), "SURVIVE", new string[0], new[] { ClearedFlag });
@@ -875,6 +902,8 @@ namespace Jupiter.EditorTools
             ConamaraChapterSixBuilder.Objective(list.GetArrayElementAtIndex(5), "Cover Hana while she drills", new string[0], new[] { DrillDoneFlag });
             ConamaraChapterSixBuilder.Objective(list.GetArrayElementAtIndex(6), "KILL IT: knock it down, then keep firing", new string[0], new[] { KilledFlag });
             ConamaraChapterSixBuilder.Objective(list.GetArrayElementAtIndex(7), "Get to the ascent vehicle Halcyon (by the base, red tower)", new string[0], new[] { AscentFlag });
+            ConamaraChapterSixBuilder.Objective(list.GetArrayElementAtIndex(8), "HOLD THE PAD until the hatch opens", new string[0], new[] { "mara_lost" });
+            ConamaraChapterSixBuilder.Objective(list.GetArrayElementAtIndex(9), "Board Halcyon", new string[0], new[] { BoardedFlag });
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 

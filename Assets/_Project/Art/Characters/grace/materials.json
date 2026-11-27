@@ -1,0 +1,68 @@
+{
+  "grace.body": {
+    "all_images": [
+      "middleage_lightskinned_female_diffuse.png"
+    ],
+    "object": "grace.grace.female_generic",
+    "texture": "middleage_lightskinned_female_diffuse.png"
+  },
+  "grace.eyebrow010": {
+    "all_images": [
+      "eyebrow010.png",
+      "eyebrow010.png"
+    ],
+    "object": "grace.eyebrow010",
+    "texture": "eyebrow010.png"
+  },
+  "grace.eyelashes01": {
+    "all_images": [
+      "eyelashes01.png"
+    ],
+    "object": "grace.eyelashes01",
+    "texture": "eyelashes01.png"
+  },
+  "grace.female_casualsuit02": {
+    "all_images": [
+      "female_casualsuit02_diffuse.png",
+      "female_casualsuit02_ao.png",
+      "female_casualsuit02_normal.png"
+    ],
+    "object": "grace.female_casualsuit02",
+    "texture": "female_casualsuit02_diffuse.png"
+  },
+  "grace.low-poly": {
+    "all_images": [
+      "brown_eye.png"
+    ],
+    "object": "grace.low-poly",
+    "texture": "brown_eye.png"
+  },
+  "grace.ponytail01": {
+    "all_images": [
+      "ponytail01_diffuse.png"
+    ],
+    "object": "grace.ponytail01",
+    "texture": "ponytail01_diffuse.png"
+  },
+  "grace.shoes05": {
+    "all_images": [
+      "shoes05_diffuse.png"
+    ],
+    "object": "grace.shoes05",
+    "texture": "shoes05_diffuse.png"
+  },
+  "grace.teeth_base": {
+    "all_images": [
+      "teeth.png"
+    ],
+    "object": "grace.teeth_base",
+    "texture": "teeth.png"
+  },
+  "grace.tongue01": {
+    "all_images": [
+      "tongue01_diffuse.png"
+    ],
+    "object": "grace.tongue01",
+    "texture": "tongue01_diffuse.png"
+  }
+}

@@ -1,0 +1,13 @@
+# Chapter 1. Strapped in at the top of the tower. The launch, on the crew channel. Plays on the move.
+
+=== start
+GRACE (radio): Halcyon, Cabo Lumen. You are go for launch. Have a good flight, everyone.
+LUCA (radio): Copy, Cabo. (beat) See you in a couple of years.
+ASHFORD (radio): Internal power. Guidance is internal.
+GRACE (radio): Ten. Nine. Eight. Ignition sequence start.
+MARA (radio): Fem. Fyra. Tre.
+GRACE (radio): And liftoff.
+LUCA (radio): Roll program. Feels good. Feels great.
+ASHFORD (radio): Main engine cut-off.
+LUCA (radio): (long beat) Okay. Okay, that's... yeah.
+-> END

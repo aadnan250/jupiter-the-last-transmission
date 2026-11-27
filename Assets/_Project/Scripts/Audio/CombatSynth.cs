@@ -290,6 +290,58 @@ namespace Jupiter.Audio
             return ProceduralAudio.Normalize(o, 0.9f);
         }
 
+        /// <summary>
+        /// Earth: an eight-second loop of sea and wind, slow swells of surf under a steady breeze, with the odd gull.
+        /// The first natural sound in the game, and the last (Chapters 1 and 10).
+        /// </summary>
+        public static float[] OceanWind()
+        {
+            int n = 8 * Rate;
+            var rng = new Random(1010);
+            var o = new float[n];
+            double lp = 0, lp2 = 0;
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double white = rng.NextDouble() * 2 - 1;
+                lp += 0.03 * (white - lp);
+                lp2 += 0.2 * (white - lp2);
+                // Two swells per loop (whole cycles, so it loops cleanly), surf hiss riding on them.
+                double swell = 0.5 + 0.5 * Math.Sin(TwoPi * t / 4.0);
+                double surf = lp2 * (0.25 + 0.75 * swell * swell) * 0.6;
+                double wind = lp * 5.0 * (0.8 + 0.2 * Math.Sin(TwoPi * t / 8.0));
+                double gull = 0;
+                foreach (double at in new[] { 2.3, 2.55, 6.1 })
+                {
+                    double u = t - at;
+                    if (u >= 0 && u < 0.35) gull += Math.Sin(TwoPi * (1500 + 900 * u) * u) * Math.Sin(Math.PI * u / 0.35) * 0.12;
+                }
+                o[i] = (float)(surf + wind + gull);
+            }
+            return ProceduralAudio.Normalize(o, 0.7f);
+        }
+
+        /// <summary>The Feature 7 pulse: four slow, deep pulses and a gap (0.4 Hz), more felt than heard. Loops in 10 s.</summary>
+        public static float[] Feature7()
+        {
+            int n = 10 * Rate;
+            var o = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                double t = (double)i / Rate;
+                double cycle = t % 10.0;
+                double env = 0;
+                for (int k = 0; k < 4; k++)
+                {
+                    double u = cycle - k * 1.25;
+                    if (u >= 0 && u < 1.0) env += Math.Sin(Math.PI * u) * Math.Exp(-u * 1.5);
+                }
+                double tone = Math.Sin(TwoPi * 41 * t) + 0.5 * Math.Sin(TwoPi * 61.5 * t) + 0.25 * Math.Sin(TwoPi * 82 * t + 0.3);
+                o[i] = (float)(tone * env);
+            }
+            return ProceduralAudio.Normalize(o, 0.9f);
+        }
+
         static double Clack(double t) => t < 0 ? 0 : Math.Exp(-t * 70) * (Math.Sin(TwoPi * 900 * t) * 0.5 + Math.Sin(TwoPi * 210 * t));
     }
 }

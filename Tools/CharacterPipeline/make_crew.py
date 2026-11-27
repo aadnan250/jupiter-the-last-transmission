@@ -67,6 +67,27 @@ CREW = {
         proxy="female_generic/female_generic.proxy",
         hair="bob02/bob02.mhclo", eyebrows="eyebrow011/eyebrow011.mhclo",
         clothes=["female_casualsuit01/female_casualsuit01.mhclo", "shoes05/shoes05.mhclo"]),
+    "ADA": dict(  # 37, Sam's sister, British-Nigerian
+        gender=0.0, age=age_value(37), muscle=0.45, weight=0.5, height=0.52, proportions=0.6,
+        race=dict(african=0.9, caucasian=0.1, asian=0.0),
+        skin="young_african_female/young_african_female.mhmat",
+        proxy="female_generic/female_generic.proxy",
+        hair="afro01/afro01.mhclo", eyebrows="eyebrow011/eyebrow011.mhclo",
+        clothes=["female_casualsuit02/female_casualsuit02.mhclo", "shoes05/shoes05.mhclo"]),
+    "GRACE": dict(  # 54, Grace Whitfield, mission control (CAPCOM)
+        gender=0.0, age=age_value(54), muscle=0.45, weight=0.55, height=0.55, proportions=0.6,
+        race=dict(african=0.0, caucasian=1.0, asian=0.0),
+        skin="middleage_caucasian_female/middleage_caucasian_female.mhmat",
+        proxy="female_generic/female_generic.proxy",
+        hair="ponytail01/ponytail01.mhclo", eyebrows="eyebrow010/eyebrow010.mhclo",
+        clothes=["female_casualsuit02/female_casualsuit02.mhclo", "shoes05/shoes05.mhclo"]),
+    "ZARA": dict(  # 7, Ada's daughter, Sam's niece
+        gender=0.0, age=age_value(7), muscle=0.5, weight=0.5, height=0.5, proportions=0.5,
+        race=dict(african=0.9, caucasian=0.1, asian=0.0),
+        skin="young_african_female/young_african_female.mhmat",
+        proxy="female_generic/female_generic.proxy",
+        hair="afro01/afro01.mhclo", eyebrows="eyebrow011/eyebrow011.mhclo",
+        clothes=["female_casualsuit01/female_casualsuit01.mhclo", "shoes05/shoes05.mhclo"]),
 }
 
 

@@ -1,0 +1,68 @@
+{
+  "ada.afro01": {
+    "all_images": [
+      "afro_diffuse.png"
+    ],
+    "object": "ada.afro01",
+    "texture": "afro_diffuse.png"
+  },
+  "ada.body": {
+    "all_images": [
+      "young_darkskinned_female_diffuse.png"
+    ],
+    "object": "ada.ada.female_generic",
+    "texture": "young_darkskinned_female_diffuse.png"
+  },
+  "ada.eyebrow011": {
+    "all_images": [
+      "eyebrow011.png",
+      "eyebrow011.png"
+    ],
+    "object": "ada.eyebrow011",
+    "texture": "eyebrow011.png"
+  },
+  "ada.eyelashes01": {
+    "all_images": [
+      "eyelashes01.png"
+    ],
+    "object": "ada.eyelashes01",
+    "texture": "eyelashes01.png"
+  },
+  "ada.female_casualsuit02": {
+    "all_images": [
+      "female_casualsuit02_diffuse.png",
+      "female_casualsuit02_ao.png",
+      "female_casualsuit02_normal.png"
+    ],
+    "object": "ada.female_casualsuit02",
+    "texture": "female_casualsuit02_diffuse.png"
+  },
+  "ada.low-poly": {
+    "all_images": [
+      "brown_eye.png"
+    ],
+    "object": "ada.low-poly",
+    "texture": "brown_eye.png"
+  },
+  "ada.shoes05": {
+    "all_images": [
+      "shoes05_diffuse.png"
+    ],
+    "object": "ada.shoes05",
+    "texture": "shoes05_diffuse.png"
+  },
+  "ada.teeth_base": {
+    "all_images": [
+      "teeth.png"
+    ],
+    "object": "ada.teeth_base",
+    "texture": "teeth.png"
+  },
+  "ada.tongue01": {
+    "all_images": [
+      "tongue01_diffuse.png"
+    ],
+    "object": "ada.tongue01",
+    "texture": "tongue01_diffuse.png"
+  }
+}

@@ -27,6 +27,9 @@ namespace Jupiter.EditorTools
             MeridianGreyboxBuilder.Build();
             EuropaSurfaceBuilder.Build();
             ConamaraBaseBuilder.Build();
+            CaboLumenBuilder.Build();
+            ReturnBuilder.Build();
+            HomeBuilder.Build();
             RenderPipelineTuner.Apply();
 
             SetBuildScenes();
@@ -85,13 +88,42 @@ namespace Jupiter.EditorTools
             Debug.Log("[GeneratedContent] Europa landing rebuilt.");
         }
 
+        /// <summary>
+        /// Rebuilds everything the full story needs from Chapter 1 to the end credits: audio, character materials
+        /// (Ada, Zara and Grace included), the player and creatures, and every level in story order. Batch:
+        /// -executeMethod Jupiter.EditorTools.GeneratedContent.RebuildFullStory
+        /// </summary>
+        [MenuItem("Jupiter/Rebuild Full Story")]
+        public static void RebuildFullStory()
+        {
+            EuropaTextureGenerator.Generate();
+            CombatAudioGenerator.Generate();
+            CharacterMaterialBuilder.Build();
+            PlayerRigBuilder.BuildPrefab();
+            StalkerBuilder.BuildPrefab();
+            ListenerBuilder.BuildPrefab();
+            GreyboxTestRoomBuilder.BuildProfiles();
+            CaboLumenBuilder.Build();
+            MeridianGreyboxBuilder.Build();
+            EuropaSurfaceBuilder.Build();
+            ReturnBuilder.Build();
+            HomeBuilder.Build();
+            SetBuildScenes();
+            AssetDatabase.SaveAssets();
+            Debug.Log("[GeneratedContent] Full story rebuilt.");
+        }
+
         static void SetBuildScenes()
         {
             EditorBuildSettings.scenes = new[]
             {
-                // A build plays the story in order: the Meridian, the landing on Europa, then Conamara Base.
+                // A build plays the whole story in order, Earth to Jupiter to Europa and home.
+                new EditorBuildSettingsScene(CaboLumenBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(MeridianGreyboxBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(EuropaSurfaceBuilder.ScenePath, true),
+                new EditorBuildSettingsScene(ReturnBuilder.ScenePath, true),
+                new EditorBuildSettingsScene(HomeBuilder.ScenePath, true),
+                // Kept for its tests: the old base interiors are no longer part of the story.
                 new EditorBuildSettingsScene(ConamaraBaseBuilder.ScenePath, true),
                 new EditorBuildSettingsScene(GreyboxTestRoomBuilder.ScenePath, true),
             };

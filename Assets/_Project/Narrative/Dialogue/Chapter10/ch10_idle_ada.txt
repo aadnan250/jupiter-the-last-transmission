@@ -1,0 +1,5 @@
+# Ada, home.
+
+=== start
+ADA: Come on. Come inside.
+-> END

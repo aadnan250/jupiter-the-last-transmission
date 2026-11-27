@@ -1,0 +1,33 @@
+# Chapter 3. Month 11, Jupiter. Sam brings Tiamat's old seismometers online in the science lab and plays Europa
+# through the speakers. Underneath the ice, a slow pulse. The crew listen on the ship's intercom.
+
+=== start
+SAM: Seismometers are up. Okay, here's Europa. Sonified, sped up a hundred times.
+HANA (radio): (beat) Turn it up.
+LUCA (radio): No. Don't. Why would you say that?
+MARA (radio): That's the reaction wheels. Bearing noise bleeding into the line.
+SAM: It's not on our bus. It's coming from the surface sensors. That's twenty kilometres of ice.
+HANA (radio): Then what's moving under twenty kilometres of ice?
+ASHFORD (radio): Calibration artefact. Twelve-year-old sensors. Log it, Sam. Let's get to work.
+*! "(Log it as a calibration artefact.)" -> artefact
+  ~ flag logged_artefact
+  ~ trust ASHFORD +1
+*! "(Log it as an unknown signal. Call it Feature Seven.)" -> feature
+  ~ flag logged_feature7
+  ~ trust ASHFORD -1
+  ~ trust HANA +1
+* "Commander, that is not an artefact." -> push
+  ~ flag questioned_artefact
+  ~ trust ASHFORD -1
+
+=== artefact
+HANA (radio): (quietly) Sam...
+-> END
+
+=== feature
+ASHFORD (radio): (beat) Fine. Feature Seven. Now get some sleep, all of you.
+-> END
+
+=== push
+ASHFORD (radio): It's an artefact until I say otherwise. Log it.
+-> END

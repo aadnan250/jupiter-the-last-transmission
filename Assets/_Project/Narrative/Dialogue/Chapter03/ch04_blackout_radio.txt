@@ -1,0 +1,8 @@
+# Chapter 4. Signal loss. The ship goes dark under red emergency light. Plays on the move.
+
+=== start
+LUCA (radio): Comms are down. Everything's down. Lights, uplink, the lot.
+LUCA (radio): I'm on the bridge. The board is flickering like it's... like it's being read.
+MARA (radio): Okafor, the comms junction. One of the relays is cooked. Check the readout and reset the right one.
+MARA (radio): Don't touch the housing on the bad one. It's still live.
+-> END

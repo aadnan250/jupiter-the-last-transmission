@@ -1,0 +1,5 @@
+# Zara, after the goodbye.
+
+=== start
+ZARA: Bring me back a piece of Jupiter!
+-> END

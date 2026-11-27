@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 namespace Jupiter.World
 {
-    public enum SurfaceBeat { Ambush, ToTiamat, AtTiamat, Drilling, Boss, Aftermath, ToAscent, Done }
+    public enum SurfaceBeat { Ambush, ToTiamat, AtTiamat, Drilling, Boss, Aftermath, ToAscent, Siege, Boarding, Done }
 
     /// <summary>
     /// The story on Europa's surface after the ambush (the old base chapters, told in the open):
@@ -38,6 +38,17 @@ namespace Jupiter.World
         [SerializeField] TextAsset lucaRadio;
         [SerializeField] TextAsset ashfordRadio;
         [SerializeField] TextAsset ascentRadio;
+        [SerializeField] TextAsset halcyonRadio;
+        [SerializeField] TextAsset maraRadio;
+        [SerializeField] TextAsset aloneRadio;
+
+        [Header("Chapter 8: the siege at Halcyon")]
+        [SerializeField] SquadMember mara;
+        [SerializeField] Transform halcyon;
+        [SerializeField] StalkerAI[] siegeWave;
+        [SerializeField] float siegeSeconds = 40f;
+        [SerializeField] string maraLostFlag = "mara_lost";
+        [SerializeField] string boardedFlag = "boarded_halcyon";
 
         [Header("The site")]
         [SerializeField] SquadMember hana;
@@ -118,9 +129,15 @@ namespace Jupiter.World
                     break;
 
                 case SurfaceBeat.ToAscent:
-                    if (!story.HasFlag(unlockedFlag)) break;
-                    Queue(ascentRadio);
-                    Beat = SurfaceBeat.Done;
+                    if (story.HasFlag(unlockedFlag)) BeginSiege();
+                    break;
+
+                case SurfaceBeat.Siege:
+                    Siege(Time.deltaTime);
+                    break;
+
+                case SurfaceBeat.Boarding:
+                    if (story.HasFlag(boardedFlag)) Beat = SurfaceBeat.Done;
                     break;
             }
         }
@@ -172,6 +189,51 @@ namespace Jupiter.World
             radio.Clear();
             Queue(eruptionRadio);
             Beat = SurfaceBeat.Boss;
+        }
+
+        // ------------------------------------------------------------------ Chapter 8: the last crew member
+
+        float siegeT;
+        int siegeSent;
+
+        /// <summary>
+        /// The hatch takes the code and starts to cycle; the ice under the pad heaves and they come for the rocket.
+        /// Mara and Sam hold until it opens. Public for tests.
+        /// </summary>
+        public void BeginSiege()
+        {
+            if (Beat >= SurfaceBeat.Siege) return;
+            siegeT = 0f;
+            siegeSent = 0;
+            Queue(halcyonRadio);
+            var shake = player != null ? player.GetComponentInChildren<CameraShake>() : null;
+            if (shake != null) shake.Shake(0.7f, 3f, 2f);
+            if (audioSource != null && quakeClip != null) audioSource.PlayOneShot(quakeClip);
+            Beat = SurfaceBeat.Siege;
+        }
+
+        public float SiegeSeconds { get => siegeSeconds; set => siegeSeconds = value; }
+
+        void Siege(float dt)
+        {
+            siegeT += dt;
+            Vector3 centre = halcyon != null ? halcyon.position : (player != null ? player.transform.position : transform.position);
+            if (siegeWave != null)
+                while (siegeSent < siegeWave.Length && siegeT >= 4f + siegeSent * (siegeSeconds - 10f) / Mathf.Max(1, siegeWave.Length))
+                {
+                    Vector3 p = centre + AmbushTimeline.EmergeOffset(siegeSent + 5, siegeWave.Length, 12f, 20f);
+                    if (NavMesh.SamplePosition(p, out var hit, 6f, NavMesh.AllAreas)) p = hit.position;
+                    if (siegeWave[siegeSent] != null) siegeWave[siegeSent].Emerge(p, centre);
+                    siegeSent++;
+                }
+            if (siegeT < siegeSeconds) return;
+
+            // The hatch opens. Mara is behind him, and then she isn't.
+            if (mara != null) mara.Lose();
+            radio.Clear();
+            Queue(maraRadio);
+            Queue(aloneRadio);
+            Beat = SurfaceBeat.Boarding;
         }
 
         void Queue(TextAsset conversation)
