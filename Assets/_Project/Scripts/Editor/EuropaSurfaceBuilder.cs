@@ -109,6 +109,7 @@ namespace Jupiter.EditorTools
             new GameObject("GameSession").AddComponent<Core.GameSession>();
             var dialogue = rig.GetComponentInChildren<DialogueManager>();
             MusicKit.Add(dialogue, ("", CombatAudioGenerator.MusicDread, 0.3f), (QuakeFlag, CombatAudioGenerator.MusicCombat, 0.35f), (ClearedFlag, CombatAudioGenerator.MusicDread, 0.3f), (EruptionFlag, CombatAudioGenerator.MusicCombat, 0.38f), (KilledFlag, CombatAudioGenerator.MusicDread, 0.28f), ("siege_started", CombatAudioGenerator.MusicCombat, 0.4f), ("mara_lost", null, 0f), (BoardedFlag, CombatAudioGenerator.MusicEnding, 0.3f));
+            LightingKit.Probe(null, "ReflectionProbe_Cabin", new Vector3(0f, FloorH + 1.2f, 0f), new Vector3(CabinR * 2f, 2.6f, CabinHalf * 2f));
 
             // The landing party (Luca stays at the controls).
             var story = new GameObject("Story").transform;
@@ -276,8 +277,8 @@ namespace Jupiter.EditorTools
         static Vector3 OnGround(Vector3 p) => new Vector3(p.x, GroundY(p.x, p.z), p.z);
 
         /// <summary>
-        /// Halfway to Tiamat, something three hundred metres tall stands up beyond the eastern ridge, holds against
-        /// the sky, and sinks back into the ice. It is the Stalker's shape, scaled past belief, in pure black.
+        /// Halfway to Tiamat, something three hundred metres tall stands up beyond the southern ridge, black against
+        /// Jupiter, and sinks back into the ice. It is the Stalker's shape, scaled past belief, in pure black.
         /// </summary>
         static void BuildSilhouette(Transform world, Transform story, DialogueManager dialogue)
         {
@@ -285,8 +286,9 @@ namespace Jupiter.EditorTools
             var dark = Kit.Mat("EU_Silhouette", new Color(0.005f, 0.006f, 0.01f), smoothness: 0f);
             var figureRoot = new GameObject("Silhouette").transform;
             figureRoot.SetParent(world, false);
-            figureRoot.position = new Vector3(430f, -300f, -120f);
-            figureRoot.rotation = Quaternion.LookRotation(new Vector3(-1f, 0f, 0.25f));
+            // Straight in front of Jupiter as seen from the trail, so it stands black against the planet's face.
+            figureRoot.position = new Vector3(40f, -300f, -480f);
+            figureRoot.rotation = Quaternion.LookRotation(Vector3.forward);
             if (model != null)
             {
                 var body = (GameObject)PrefabUtility.InstantiatePrefab(model);

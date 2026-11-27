@@ -69,6 +69,13 @@ namespace Jupiter.Tests
             float endDistance = Vector3.Distance(creature.transform.position, player.transform.position);
             CollectionAssert.Contains(new[] { CreatureState.Investigating, CreatureState.Hunting, CreatureState.Attacking }, creature.State);
             Assert.Less(endDistance, startDistance - 2f, "it walks toward where it heard the shot");
+            var rig = creature.GetComponent<StalkerRig>();
+            if (rig != null)
+            {
+                var expected = creature.State == CreatureState.Investigating ? StalkerPose.Stalk
+                             : creature.State == CreatureState.Hunting ? StalkerPose.Run : StalkerPose.Idle;
+                Assert.AreEqual(expected, rig.Pose, "it moves the way it hunts: a slow stalk, then the run");
+            }
         }
 
         [UnityTest]

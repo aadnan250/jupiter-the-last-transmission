@@ -63,6 +63,7 @@ namespace Jupiter.EditorTools
             new GameObject("GameSession").AddComponent<Core.GameSession>();
             var dialogue = rig.GetComponentInChildren<DialogueManager>();
             MusicKit.Add(dialogue, ("", CombatAudioGenerator.MusicTheme, 0.3f), ("at_tower", CombatAudioGenerator.MusicShip, 0.25f));
+            LightingKit.Probe(null, "ReflectionProbe_Lounge", new Vector3(0f, 1.5f, -14f), new Vector3(14f, 3.5f, 12f));
             var story = new GameObject("Story").transform;
 
             // The family, and Mara at the far window on her own.

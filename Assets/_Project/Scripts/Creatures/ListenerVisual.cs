@@ -6,7 +6,8 @@ namespace Jupiter.Creatures
     /// Poses the Listener placeholder from its AI state: kneeling with palms on the floor and crest flared when
     /// listening, upright and crest raised when hunting, reared back from a flare when blinded, collapsed in torpor
     /// (nodes dimming), still when dead.
-    /// Ruptured nodes go dark. Placeholder for real animation.
+    /// Ruptured nodes go dark. On the Blender model the states drive dedicated poses: kneeling to listen, a slow upright stalk, the
+    /// loping run, a recoil with the arms across the face, and a slumped torpor distinct from death.
     /// </summary>
     public class ListenerVisual : MonoBehaviour
     {
@@ -73,13 +74,14 @@ namespace Jupiter.Creatures
         {
             switch (s)
             {
-                case CreatureState.Investigating:
+                case CreatureState.Listening: rig.Pose = StalkerPose.Listen; break;
+                case CreatureState.Investigating: rig.Pose = StalkerPose.Stalk; break;
                 case CreatureState.Hunting: rig.Pose = StalkerPose.Run; break;
                 case CreatureState.Attacking: rig.Pose = StalkerPose.Idle; rig.Attack(); break;
-                case CreatureState.Torpor:
+                case CreatureState.Torpor: rig.Pose = StalkerPose.Slump; break;
                 case CreatureState.Dead: rig.Pose = StalkerPose.Dead; break;
                 case CreatureState.Recovering: rig.Pose = StalkerPose.Emerging; break;
-                case CreatureState.Blinded: rig.Pose = StalkerPose.Idle; rig.Flinch(); break;
+                case CreatureState.Blinded: rig.Pose = StalkerPose.Recoil; rig.Flinch(); break;
                 default: rig.Pose = StalkerPose.Idle; break;
             }
         }
