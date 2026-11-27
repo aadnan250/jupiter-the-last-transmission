@@ -13,6 +13,9 @@ namespace Jupiter.Narrative
         [SerializeField] TextAsset conversation;
         [SerializeField] string prompt = "Use";
         [SerializeField] string[] requiresFlags = new string[0];
+        [Tooltip("Optional sound played when the conversation starts (e.g. the Feature 7 pulse through the speakers).")]
+        [SerializeField] AudioSource startSource;
+        [SerializeField] AudioClip startClip;
         [SerializeField] DialogueManager dialogue;
 
         public string Prompt => prompt;
@@ -37,6 +40,7 @@ namespace Jupiter.Narrative
         {
             if (!CanInteract(interactor)) return;
             var conv = CrewMember.Load(conversation);
+            if (startSource != null && startClip != null) startSource.PlayOneShot(startClip);
             dialogue.Play(conv, () => dialogue.Story.MarkCompleted(conv.Id));
         }
     }

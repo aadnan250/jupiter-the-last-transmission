@@ -1,0 +1,12 @@
+# Chapter 4. Comms restored. Then a packet from Earth arrives twice, and Grace only sent it once. On the move.
+
+=== start
+MARA (radio): (exhales) That's two, Okafor.
+SAM (radio): You're keeping count?
+MARA (radio): Somebody has to.
+GRACE (radio): Meridian, Cabo Lumen. Packet one four one. All systems nominal on our side. Talk soon.
+GRACE (radio): Meridian. Cabo Lumen. Packet one four one. All systems nominal. On our side.
+HANA (radio): Did she just send that twice?
+LUCA (radio): She didn't send the second one. It came from below us. From Europa.
+ASHFORD (radio): Europa descent in seventy-two hours. Everyone, get some rest.
+-> END

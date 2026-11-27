@@ -778,7 +778,7 @@ namespace Jupiter.EditorTools
             Kit.Set(mission, "objectiveText", rig.transform.Find("HUD/Objective").GetComponent<UnityEngine.UI.Text>());
             var mso = new SerializedObject(mission);
             var list = mso.FindProperty("objectives");
-            list.arraySize = 2;
+            list.arraySize = 4;
             var o1 = list.GetArrayElementAtIndex(0);
             o1.FindPropertyRelative("text").stringValue = "Check in with the crew";
             SetStringArray(o1.FindPropertyRelative("requiredConversations"), ConvGalley, ConvMara, ConvAshford);
@@ -787,17 +787,100 @@ namespace Jupiter.EditorTools
             o2.FindPropertyRelative("text").stringValue = "Go to the observation deck";
             SetStringArray(o2.FindPropertyRelative("requiredConversations"));
             SetStringArray(o2.FindPropertyRelative("requiredFlags"), "reached_observation");
+            var o3 = list.GetArrayElementAtIndex(2);
+            o3.FindPropertyRelative("text").stringValue = "Month 11, Jupiter: bring Tiamat's seismometers online (science lab)";
+            SetStringArray(o3.FindPropertyRelative("requiredConversations"), ConvFirstSound);
+            SetStringArray(o3.FindPropertyRelative("requiredFlags"));
+            var o4 = list.GetArrayElementAtIndex(3);
+            o4.FindPropertyRelative("text").stringValue = "Restore comms: reset the faulty relay (comms room)";
+            SetStringArray(o4.FindPropertyRelative("requiredConversations"));
+            SetStringArray(o4.FindPropertyRelative("requiredFlags"), "comms_restored");
             mso.ApplyModifiedPropertiesWithoutUndo();
-            Kit.Set(mission, "completeText", "Chapter 2 complete");
+            Kit.Set(mission, "completeText", "Europa descent in 72 hours");
 
-            // The end of the chapter: after the observation deck radio call, on to the landing on Europa. Chapters 3-4 are not built
-            // yet, so a time card bridges the gap. The GameSession carries every Chapter 2 choice into the base.
+            BuildChaptersThreeAndFour(dialogue);
+
+            // The end of the ship chapters: once comms are back and the doubled packet has played, on to Europa.
             var transition = new GameObject("LevelTransition").AddComponent<Core.LevelTransition>();
-            Kit.Set(transition, "requiresCompleted", ConvObservation);
+            Kit.Set(transition, "requiresCompleted", "ch04_restored_radio");
             Kit.Set(transition, "nextScene", System.IO.Path.GetFileNameWithoutExtension(EuropaSurfaceBuilder.ScenePath));
-            Kit.Set(transition, "cardTitle", "SEVEN MONTHS LATER");
+            Kit.Set(transition, "cardTitle", "MONTH 14");
             Kit.Set(transition, "cardSubtitle", "Europa. Conamara Chaos.");
             Kit.Set(transition, "dialogue", dialogue);
+        }
+
+        const string ConvFirstSound = "ch03_first_sound";
+
+        static TextAsset ChapterThree(string name)
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<TextAsset>($"Assets/_Project/Narrative/Dialogue/Chapter03/{name}.txt");
+            if (asset == null) Debug.LogError($"[MeridianGreyboxBuilder] Missing dialogue {name}");
+            return asset;
+        }
+
+        /// <summary>
+        /// Chapter 3 (Month 11, Jupiter): the seismometer console in the science lab plays Europa through the speakers,
+        /// and under the ice there is a pulse. Chapter 4 (Signal Loss): the ship blacks out to emergency red, and one of
+        /// three relays in the comms room has to be reset; the readout on the comms console says which.
+        /// </summary>
+        static void BuildChaptersThreeAndFour(DialogueManager dialogue)
+        {
+            var root = new GameObject("ChaptersThreeFour").transform;
+
+            var director = root.gameObject.AddComponent<BlackoutDirector>();
+            Kit.Set(director, "blackoutRadio", ChapterThree("ch04_blackout_radio"));
+            Kit.Set(director, "restoredRadio", ChapterThree("ch04_restored_radio"));
+            var alarm = new GameObject("Alarm").AddComponent<AudioSource>();
+            alarm.transform.SetParent(root, false);
+            alarm.clip = AudioAssetGenerator.Load(AudioAssetGenerator.ElectricalHum);
+            alarm.loop = true;
+            alarm.playOnAwake = false;
+            alarm.spatialBlend = 0f;
+            alarm.volume = 0.35f;
+            Kit.Set(director, "alarm", alarm);
+            Kit.Set(director, "dialogue", dialogue);
+
+            // The seismometer console: Europa, sonified, through the lab's speakers.
+            var console = Box(root, "SeismometerConsole", new Vector3(8.6f, 1.13f, 16.3f), new Vector3(0.3f, 0.25f, 0.45f), ScreenCyan, collider: true);
+            console.isStatic = false;
+            var speaker = Kit.Audio3D(console, null, 3f, 25f);
+            var terminal = console.AddComponent<ConversationTerminal>();
+            Kit.Set(terminal, "conversation", ChapterThree(ConvFirstSound));
+            Kit.Set(terminal, "prompt", "Play Europa through the speakers");
+            var so = new SerializedObject(terminal);
+            SetStringArray(so.FindProperty("requiresFlags"), "ch3_jupiter");
+            so.ApplyModifiedPropertiesWithoutUndo();
+            Kit.Set(terminal, "startSource", speaker);
+            Kit.Set(terminal, "startClip", CombatAudioGenerator.Load(CombatAudioGenerator.Feature7));
+            Kit.Set(terminal, "dialogue", dialogue);
+
+            // The comms junction: three relays on the wall, and the readout that shows which one is cooked.
+            var spark = CombatAudioGenerator.Load(CombatAudioGenerator.BoltShot);
+            for (int i = 0; i < 3; i++)
+            {
+                var relay = Box(root, $"Relay_{i + 1}", new Vector3(2.4f + i * 0.6f, 1.3f, 20.2f), new Vector3(0.42f, 0.55f, 0.12f), i == 2 ? Hazard : DarkMetal, collider: true);
+                relay.isStatic = false;
+                Box(relay.transform, $"Relay_{i + 1}_Led", new Vector3(2.4f + i * 0.6f, 1.5f, 20.27f), new Vector3(0.06f, 0.06f, 0.02f), i == 2 ? LedRed : LedGreen, collider: false).isStatic = false;
+                var l = new GameObject("Spark").AddComponent<Light>();
+                l.transform.SetParent(relay.transform, false);
+                l.transform.position = new Vector3(2.4f + i * 0.6f, 1.3f, 20.5f);
+                l.type = LightType.Point;
+                l.range = 3f;
+                l.intensity = 6f;
+                l.color = new Color(0.6f, 0.8f, 1f);
+                l.shadows = LightShadows.None;
+                var panel = relay.AddComponent<RelayPanel>();
+                Kit.Set(panel, "number", i + 1);
+                Kit.Set(panel, "faulty", i == 2);
+                Kit.Set(panel, "director", director);
+                Kit.Set(panel, "sparkLight", l);
+                Kit.Set(panel, "audioSource", Kit.Audio3D(relay, null, 1f, 10f));
+                Kit.Set(panel, "sparkClip", spark);
+                Kit.Set(panel, "resetClip", AudioAssetGenerator.Load(AudioAssetGenerator.SwitchClick));
+            }
+            Readable(root, "Readable_JunctionReadout", new Vector3(8.7f, 1.01f, 24.6f), "Comms junction: relay readout",
+                "COMMS JUNCTION C-2: RELAY LOAD\n\nRELAY 1   4.2 A   nominal\nRELAY 2   4.1 A   nominal\nRELAY 3   0.0 A   FAULT: tripped, housing live\n\n" +
+                "Reset the tripped relay to restore the uplink. Do not reset a loaded relay.");
         }
 
         static void Crew(Transform parent, string id, Vector3 position, float yaw, Color color, DialogueManager dialogue, TextAsset conversation)

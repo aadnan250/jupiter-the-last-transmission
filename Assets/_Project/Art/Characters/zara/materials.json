@@ -1,0 +1,68 @@
+{
+  "zara.afro01": {
+    "all_images": [
+      "afro_diffuse.png"
+    ],
+    "object": "zara.afro01",
+    "texture": "afro_diffuse.png"
+  },
+  "zara.body": {
+    "all_images": [
+      "young_darkskinned_female_diffuse.png"
+    ],
+    "object": "zara.zara.female_generic",
+    "texture": "young_darkskinned_female_diffuse.png"
+  },
+  "zara.eyebrow011": {
+    "all_images": [
+      "eyebrow011.png",
+      "eyebrow011.png"
+    ],
+    "object": "zara.eyebrow011",
+    "texture": "eyebrow011.png"
+  },
+  "zara.eyelashes01": {
+    "all_images": [
+      "eyelashes01.png"
+    ],
+    "object": "zara.eyelashes01",
+    "texture": "eyelashes01.png"
+  },
+  "zara.female_casualsuit01": {
+    "all_images": [
+      "female_casualsuit01_diffuse.png",
+      "female_casualsuit01_ao.png",
+      "female_casualsuit01_normal.png"
+    ],
+    "object": "zara.female_casualsuit01",
+    "texture": "female_casualsuit01_diffuse.png"
+  },
+  "zara.low-poly": {
+    "all_images": [
+      "brown_eye.png"
+    ],
+    "object": "zara.low-poly",
+    "texture": "brown_eye.png"
+  },
+  "zara.shoes05": {
+    "all_images": [
+      "shoes05_diffuse.png"
+    ],
+    "object": "zara.shoes05",
+    "texture": "shoes05_diffuse.png"
+  },
+  "zara.teeth_base": {
+    "all_images": [
+      "teeth.png"
+    ],
+    "object": "zara.teeth_base",
+    "texture": "teeth.png"
+  },
+  "zara.tongue01": {
+    "all_images": [
+      "tongue01_diffuse.png"
+    ],
+    "object": "zara.tongue01",
+    "texture": "tongue01_diffuse.png"
+  }
+}

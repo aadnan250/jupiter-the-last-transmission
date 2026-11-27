@@ -1,0 +1,9 @@
+# Chapter 8. Mara's last words, as the hatch opens. Plays on the move.
+
+=== start
+MARA (radio): Sam...
+SAM (radio): No, no, I'm coming, I'm...
+MARA (radio): Stay down. (beat) That's five.
+MARA (radio): Go.
+~ flag mara_lost
+-> END

@@ -1,0 +1,7 @@
+# Chapter 1. Cabo Lumen Spaceport, dawn. Mara on the facility comms as Sam heads out. Plays on the move.
+
+=== start
+MARA (radio): Okafor. Transport's early. Ashford wants us downstairs.
+SAM (radio): Morning to you too.
+MARA (radio): (beat) It is morning.
+-> END

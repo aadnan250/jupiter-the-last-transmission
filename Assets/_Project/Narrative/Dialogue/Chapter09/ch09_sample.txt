@@ -1,0 +1,20 @@
+# Chapter 9. Back aboard the Meridian, alone. In the cargo hold: Ashford's canister, "FOR HOME", with a piece of
+# the colony pulsing inside at 0.4 Hz. Vent it, or keep it. The choice changes the transmission and the ending.
+
+=== start
+HANA (radio): If it is one thing, then every piece of it is still part of it. Even this.
+SAM: For home. That's what he wrote on it.
+*! "(Vent it. Let it fall toward Jupiter.)" -> vent
+  ~ flag sample_decided
+  ~ flag sample_vented
+*! "(Keep it. Lock it in cold storage.)" -> keep
+  ~ flag sample_decided
+  ~ flag sample_kept
+
+=== vent
+SAM: Go back to where you came from.
+-> END
+
+=== keep
+SAM: They died for this. I don't know if that's a good enough reason.
+-> END

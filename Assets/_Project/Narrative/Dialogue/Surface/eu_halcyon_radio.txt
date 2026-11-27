@@ -1,0 +1,8 @@
+# Chapter 8. Halcyon's hatch takes the code and starts to cycle. The ice moves under the pad. Mara and Sam, alone.
+
+=== start
+MARA (radio): (breathing hard) That's four. Or five. I've lost track.
+SAM (radio): It's four.
+MARA (radio): (beat) You would know.
+MARA (radio): The hatch takes forty seconds to cycle. Back to back, Okafor. Here they come.
+-> END

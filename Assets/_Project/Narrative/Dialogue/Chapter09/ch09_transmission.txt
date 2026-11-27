@@ -1,0 +1,18 @@
+# Chapter 9. The last transmission. The same words as the cold open, steady now. The player chooses how it ends.
+
+=== start
+SAM: Cabo Lumen, this is Okafor, Meridian. Mission day... four hundred and two.
+SAM: Halcyon crew status. Commander Daniel Ashford. Doctor Hana Mori. Luca Ferreira. Mara Lindqvist.
+SAM: (beat) I'm the only one coming home.
+[if flag sample_vented] SAM: There was something under the ice. It's still there. I don't think we should go back. Not like this.
+[if flag sample_kept] SAM: There was something under the ice. I'm bringing a piece of it home, because they died for it, and I don't know if that's the right reason.
+*! "Ada, Zara. I'm coming home." -> sent
+  ~ flag closing_family
+*! "Tell Elias Lindqvist his mother saved my life. Five times." -> sent
+  ~ flag closing_mara
+*! "Okafor, out." -> sent
+  ~ flag closing_out
+
+=== sent
+GRACE (radio): Meridian, Cabo Lumen. Halcyon crew, we have lost your telemetry, please respond. Halcyon, please...
+-> END

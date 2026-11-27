@@ -6,11 +6,20 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_Project/Scenes/L01_CaboLumen.unity
+    guid: de852f13d5636c54aa13013a6c7e1613
+  - enabled: 1
     path: Assets/_Project/Scenes/L02_Meridian.unity
     guid: 2300313ee88d6e341aa443bd1d8cb03e
   - enabled: 1
     path: Assets/_Project/Scenes/L03_EuropaSurface.unity
     guid: 458f6e4cd210b6e44bb06ddea1ee3920
+  - enabled: 1
+    path: Assets/_Project/Scenes/L05_Return.unity
+    guid: 67197d88ddd295346a6a2b22e7a4d795
+  - enabled: 1
+    path: Assets/_Project/Scenes/L06_Home.unity
+    guid: 9d26941a26f40924fbfa001dcd2a2843
   - enabled: 1
     path: Assets/_Project/Scenes/L04_ConamaraBase.unity
     guid: 8c16789f0a45a2a4a84705f2662949b5

@@ -1,0 +1,53 @@
+# Chapter 1. The family lounge. Ada and Zara say goodbye. The promise to Zara pays off in Chapter 10.
+
+=== start
+ZARA: Uncle Sam! Did you bring it?
+SAM: It's going all the way to Jupiter. Front pocket. Very important cargo.
+ZARA: Does Jupiter really have a face?
+*! "I'll find out and tell you." -> promise
+  ~ flag promised_zara
+* "Everything has a face if you look long enough." -> joke
+  ~ flag joked_with_zara
+* "(Show her the drawing, folded in your pocket.)" -> drawing
+  ~ flag showed_zara_drawing
+
+=== promise
+ADA: Don't promise her things you can't check.
+SAM: I can check. That's literally the job.
+-> ada
+
+=== joke
+ZARA: That's not an answer, Uncle Sam.
+ADA: She's got you there.
+-> ada
+
+=== drawing
+ZARA: You kept it! Don't lose it in space.
+-> ada
+
+=== ada
+ADA: (long beat) You'll call.
+SAM: It's forty minutes each way. You'll get very long, very boring messages.
+ADA: Good. Boring is good. Boring means you're fine.
+ZARA: Who's that lady by the window? She's all by herself.
+* "That's Mara. She's on my crew." -> mara
+  ~ flag pointed_out_mara
+* "She was meant to fly with someone else. It's complicated." -> complicated
+  ~ flag told_ada_about_mara
+* "(Wave to Mara. She doesn't wave back.)" -> wave
+  ~ flag waved_to_mara
+  ~ trust MARA +1
+
+=== mara
+ZARA: She looks sad.
+ADA: Go on. They're calling you. Go.
+-> END
+
+=== complicated
+ADA: Be kind to her, Sam. Eleven months is a long time to be angry.
+-> END
+
+=== wave
+ZARA: She saw you. She's pretending she didn't.
+ADA: Go on. They're calling you. Go.
+-> END

@@ -24,6 +24,8 @@ namespace Jupiter.EditorTools
         public const string IceBurst = Folder + "/sfx_ice_burst.wav";
         public const string SuitBreath = Folder + "/sfx_suit_breath.wav";
         public const string PistolShot = Folder + "/sfx_pistol_shot.wav";
+        public const string OceanWind = Folder + "/amb_ocean_wind.wav";
+        public const string Feature7 = Folder + "/sfx_feature7_pulse.wav";
 
         public static void Generate()
         {
@@ -42,6 +44,8 @@ namespace Jupiter.EditorTools
             Write(IceBurst, CombatSynth.IceBurst());
             Write(SuitBreath, CombatSynth.SuitBreath());
             Write(PistolShot, CombatSynth.PistolShot());
+            Write(OceanWind, CombatSynth.OceanWind());
+            Write(Feature7, CombatSynth.Feature7());
         }
 
         static void Write(string path, float[] samples)

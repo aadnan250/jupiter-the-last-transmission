@@ -1,0 +1,17 @@
+# Chapter 10. Ten months later. The recovery ship's deck at golden hour. Grace, Ada and Zara.
+
+=== start
+GRACE: Doctor Okafor. (beat) Welcome home.
+ZARA: You came back!
+ZARA: (beat) Did Jupiter have a face?
+*! "...It was listening." -> end
+  ~ flag told_zara_listening
+* [if flag promised_zara] "I promised I'd find out. I'll tell you everything." -> end
+  ~ flag kept_promise_to_zara
+* "(Kneel down and hold her.)" -> end
+  ~ flag held_zara
+
+=== end
+ADA: (holding him) Boring now. Okay? Boring.
+~ flag home_reunited
+-> END
