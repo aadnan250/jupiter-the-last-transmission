@@ -25,7 +25,29 @@ namespace Jupiter.UI
 
         public bool IsTyping => root != null && root.activeSelf && lineText != null && lineText.enabled && visibleChars < fullText.Length;
 
+        int[] baseSizes;
+
         void Awake() => Hide();
+
+        Text[] ScaledTexts()
+        {
+            var list = new List<Text> { speakerText, lineText, continueHint };
+            if (choiceTexts != null) list.AddRange(choiceTexts);
+            return list.ToArray();
+        }
+
+        /// <summary>Scales the subtitle, speaker and reply text (the accessibility subtitle size option).</summary>
+        public void SetTextScale(float scale)
+        {
+            var texts = ScaledTexts();
+            if (baseSizes == null)
+            {
+                baseSizes = new int[texts.Length];
+                for (int i = 0; i < texts.Length; i++) baseSizes[i] = texts[i] != null ? texts[i].fontSize : 0;
+            }
+            for (int i = 0; i < texts.Length; i++)
+                if (texts[i] != null) texts[i].fontSize = Mathf.RoundToInt(baseSizes[i] * scale);
+        }
 
         void OnEnable() => InputDeviceWatcher.Changed += RefreshGlyphs;
         void OnDisable() => InputDeviceWatcher.Changed -= RefreshGlyphs;
@@ -79,7 +101,7 @@ namespace Jupiter.UI
 
         void Update()
         {
-            if (!IsTyping) return;
+            if (!IsTyping || Time.timeScale == 0f) return;   // paused
             visibleChars = Mathf.Min(fullText.Length, visibleChars + charactersPerSecond * Time.unscaledDeltaTime);
             lineText.text = fullText.Substring(0, Mathf.FloorToInt(visibleChars));
         }

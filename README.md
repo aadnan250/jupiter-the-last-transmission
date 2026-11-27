@@ -98,6 +98,7 @@ git clone https://github.com/aadnan250/jupiter-the-last-transmission.git
 | Replies 1–4 | 1 / 2 / 3 / 4 | ▲ / ● / X / ■ | Y / B / A / X |
 | Quick save / load | F5 / F9 | (autosave after conversations) | |
 | Performance overlay | F3 | | |
+| Pause menu and settings (sensitivity, invert Y, head bob, subtitle size, volume) | Esc | Options | Menu |
 
 ### Running tests
 
@@ -145,8 +146,9 @@ docs/                  Design and technical documentation
 | 1. Project foundation | Done |
 | 2. Visual prototype (*Meridian* grey-box, lighting, interactions, ambience) | Done |
 | 3. Story foundation (dialogue, consequences, radio, objectives, save, controller support) | **Done** |
-| 4. Vertical slice (Chapters 6–7 on Europa) | **In progress**: creature AI, survival, combat, stealth tools and Chapter 6 done; Chapter 7 next |
-| 5–12. Full production and release | Planned |
+| 4. Vertical slice (Chapters 6–7 on Europa) | Done |
+| 5. Full story, Chapters 1–10 with the ending | Done |
+| 6. Polish and release | In progress: pause and settings menu done |
 
 ## Known limitations
 
