@@ -108,6 +108,7 @@ namespace Jupiter.EditorTools
 
             new GameObject("GameSession").AddComponent<Core.GameSession>();
             var dialogue = rig.GetComponentInChildren<DialogueManager>();
+            MusicKit.Add(dialogue, ("", CombatAudioGenerator.MusicDread, 0.3f), (QuakeFlag, CombatAudioGenerator.MusicCombat, 0.35f), (ClearedFlag, CombatAudioGenerator.MusicDread, 0.3f), (EruptionFlag, CombatAudioGenerator.MusicCombat, 0.38f), (KilledFlag, CombatAudioGenerator.MusicDread, 0.28f), ("siege_started", CombatAudioGenerator.MusicCombat, 0.4f), ("mara_lost", null, 0f), (BoardedFlag, CombatAudioGenerator.MusicEnding, 0.3f));
 
             // The landing party (Luca stays at the controls).
             var story = new GameObject("Story").transform;
@@ -364,6 +365,81 @@ namespace Jupiter.EditorTools
             }
         }
 
+        /// <summary>
+        /// A vent in the ice by the pad: a dark crack with a faint glow, full of Needles (hand-sized crawlers with
+        /// six legs and a pale node on the back). The siege lets them out.
+        /// </summary>
+        static NeedleSwarm BuildNeedleVent(Transform world, Vector3 at, int count)
+        {
+            var vent = new GameObject("NeedleVent").transform;
+            vent.SetParent(world, false);
+            vent.position = at + Vector3.up * 0.05f;
+            var crack = Kit.Mat("EU_VentCrack", new Color(0.03f, 0.04f, 0.05f), new Color(0.1f, 0.45f, 0.5f), 0.3f);
+            var hole = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            Object.DestroyImmediate(hole.GetComponent<Collider>());
+            hole.name = "Crack";
+            hole.transform.SetParent(vent, false);
+            hole.transform.localScale = new Vector3(2.2f, 0.02f, 0.9f);
+            hole.GetComponent<Renderer>().sharedMaterial = crack;
+
+            var chitin = Kit.Mat("EU_NeedleChitin", new Color(0.07f, 0.06f, 0.07f), smoothness: 0.6f);
+            var node = Kit.Mat("EU_NeedleNode", new Color(0.7f, 0.9f, 0.9f), new Color(0.3f, 0.9f, 1f) * 1.5f, 0.8f);
+            var needles = new NeedleCrawler[count];
+            for (int i = 0; i < count; i++)
+            {
+                var n = new GameObject($"Needle_{i}");
+                n.transform.SetParent(vent, false);
+                var body = new GameObject("Body").transform;
+                body.SetParent(n.transform, false);
+                body.localPosition = new Vector3(0f, 0.14f, 0f);
+                var shell = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Object.DestroyImmediate(shell.GetComponent<Collider>());
+                shell.name = "Shell";
+                shell.transform.SetParent(body, false);
+                shell.transform.localScale = new Vector3(0.26f, 0.1f, 0.42f);
+                shell.GetComponent<Renderer>().sharedMaterial = chitin;
+                var glow = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Object.DestroyImmediate(glow.GetComponent<Collider>());
+                glow.name = "Node";
+                glow.transform.SetParent(body, false);
+                glow.transform.localPosition = new Vector3(0f, 0.05f, -0.06f);
+                glow.transform.localScale = Vector3.one * 0.07f;
+                glow.GetComponent<Renderer>().sharedMaterial = node;
+                var stinger = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                Object.DestroyImmediate(stinger.GetComponent<Collider>());
+                stinger.name = "Needle";
+                stinger.transform.SetParent(body, false);
+                stinger.transform.localPosition = new Vector3(0f, 0.02f, 0.3f);
+                stinger.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                stinger.transform.localScale = new Vector3(0.015f, 0.12f, 0.015f);
+                stinger.GetComponent<Renderer>().sharedMaterial = chitin;
+                var legs = new Transform[6];
+                for (int l = 0; l < 6; l++)
+                {
+                    var pivot = new GameObject($"Leg_{l}").transform;
+                    pivot.SetParent(body, false);
+                    pivot.localPosition = new Vector3(l % 2 == 0 ? 0.1f : -0.1f, 0f, 0.12f - (l / 2) * 0.12f);
+                    var seg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    Object.DestroyImmediate(seg.GetComponent<Collider>());
+                    seg.transform.SetParent(pivot, false);
+                    seg.transform.localPosition = new Vector3(0f, -0.13f, 0f);
+                    seg.transform.localScale = new Vector3(0.012f, 0.13f, 0.012f);
+                    seg.GetComponent<Renderer>().sharedMaterial = chitin;
+                    legs[l] = pivot;
+                }
+                var col = n.AddComponent<SphereCollider>();
+                col.center = new Vector3(0f, 0.15f, 0f);
+                col.radius = 0.28f;
+                var crawler = n.AddComponent<NeedleCrawler>();
+                Kit.Set(crawler, "legs", legs);
+                Kit.Set(crawler, "body", body);
+                needles[i] = crawler;
+            }
+            var swarm = vent.gameObject.AddComponent<NeedleSwarm>();
+            Kit.Set(swarm, "needles", needles);
+            return swarm;
+        }
+
         static TextAsset SurfaceDialogue(string name)
         {
             var asset = AssetDatabase.LoadAssetAtPath<TextAsset>($"{SurfaceFolder}/{name}.txt");
@@ -531,6 +607,11 @@ namespace Jupiter.EditorTools
                 siege.Add(s.GetComponent<StalkerAI>());
             }
             Kit.Set(director, "siegeWave", siege.ToArray());
+            Kit.Set(director, "needleVents", new Object[]
+            {
+                BuildNeedleVent(world, OnGround(AscentPos + new Vector3(15f, 0f, 7f)), 5),
+                BuildNeedleVent(world, OnGround(AscentPos + new Vector3(-13f, 0f, 11f)), 5),
+            });
             Kit.Set(director, "hana", hana);
             Kit.Set(director, "ashford", ashford);
             Kit.Set(director, "drillSpot", drillSpot);

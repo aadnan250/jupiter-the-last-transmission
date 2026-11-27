@@ -99,6 +99,38 @@ namespace Jupiter.Tests
             Assert.GreaterOrEqual(Object.FindObjectsByType<RimePatch>().Length, 8, "Rime fields on the ice");
         }
 
+        [UnityTest]
+        public IEnumerator Music_FollowsTheStory_FromDreadToTheFight()
+        {
+            var music = Object.FindAnyObjectByType<Jupiter.Audio.MusicDirector>();
+            yield return null;
+            Assert.AreEqual("mus_dread", music.CurrentClip.name, "landing: the low drone");
+            story.SetFlag("quake_started");
+            yield return null;
+            Assert.AreEqual("mus_combat", music.CurrentClip.name, "the quake: the fight");
+            story.SetFlag("ambush_cleared");
+            yield return null;
+            Assert.AreEqual("mus_dread", music.CurrentClip.name);
+        }
+
+        [UnityTest]
+        public IEnumerator Siege_LetsTheNeedlesOut_AndOneShotKillsOne()
+        {
+            var director = Object.FindAnyObjectByType<SurfaceStoryDirector>();
+            var vents = Object.FindObjectsByType<NeedleSwarm>();
+            Assert.AreEqual(2, vents.Length, "two vents by the pad");
+            Teleport(new Vector3(45f, 0.5f, -196f));
+            director.BeginSiege();
+            Assert.IsTrue(story.HasFlag("siege_started"));
+            Assert.IsTrue(vents.All(v => v.Released));
+            yield return new WaitForSeconds(8.5f);
+            var out_ = vents.SelectMany(v => v.Needles).Where(n => n.gameObject.activeSelf).ToArray();
+            Assert.Greater(out_.Length, 0, "they pour out of the ice");
+            var needle = out_[0];
+            needle.TakeDamage(new DamageInfo(32f, DamageType.Bolt, needle.transform.position));
+            Assert.AreEqual(NeedleState.Dead, needle.Brain.State);
+        }
+
         const int EuropaCount = 10;
 
         /// <summary>The ten Stalkers of the first ambush (the drill-site wave waits separately).</summary>

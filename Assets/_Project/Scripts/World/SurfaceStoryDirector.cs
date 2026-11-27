@@ -46,6 +46,8 @@ namespace Jupiter.World
         [SerializeField] SquadMember mara;
         [SerializeField] Transform halcyon;
         [SerializeField] StalkerAI[] siegeWave;
+        [SerializeField] Creatures.NeedleSwarm[] needleVents;
+        [SerializeField] string siegeFlag = "siege_started";
         [SerializeField] float siegeSeconds = 40f;
         [SerializeField] string maraLostFlag = "mara_lost";
         [SerializeField] string boardedFlag = "boarded_halcyon";
@@ -206,6 +208,8 @@ namespace Jupiter.World
             siegeT = 0f;
             siegeSent = 0;
             Queue(halcyonRadio);
+            if (story != null) story.SetFlag(siegeFlag);
+            if (needleVents != null) foreach (var v in needleVents) if (v != null) v.Release();
             var shake = player != null ? player.GetComponentInChildren<CameraShake>() : null;
             if (shake != null) shake.Shake(0.7f, 3f, 2f);
             if (audioSource != null && quakeClip != null) audioSource.PlayOneShot(quakeClip);

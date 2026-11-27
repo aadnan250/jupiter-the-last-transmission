@@ -86,6 +86,7 @@ namespace Jupiter.UI
             if (look != null) look.ApplySettings(settings.Sensitivity, settings.InvertY, settings.HeadBob);
             if (subtitles != null) subtitles.SetTextScale(settings.SubtitleScale);
             AudioListener.volume = settings.Volume;
+            GraphicsQuality.Apply(settings.Quality);
         }
 
         void RestartChapter()
@@ -168,6 +169,12 @@ namespace Jupiter.UI
             changed |= Slider(ref y, x, labelW, sliderW, rowH, k, "Volume", settings.Volume, 0f, 1f, v => settings.Volume = v, $"{settings.Volume * 100f:0}%");
             changed |= Toggle(ref y, x, w, rowH, "Invert Y", settings.InvertY, v => settings.InvertY = v);
             changed |= Toggle(ref y, x, w, rowH, "Head bob", settings.HeadBob, v => settings.HeadBob = v);
+            if (GUI.Button(new Rect(x, y, w, rowH * 0.85f), $"Graphics: {GraphicsQuality.Names[settings.Quality]}", button))
+            {
+                settings.Quality = (settings.Quality + 1) % GraphicsQuality.Names.Length;
+                changed = true;
+            }
+            y += rowH;
             if (changed) Apply();
 
             y += gap;

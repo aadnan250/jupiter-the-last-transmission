@@ -22,6 +22,9 @@ namespace Jupiter.Core
         public float SubtitleScale { get => subtitleScale; set => subtitleScale = Mathf.Clamp(value, MinSubtitleScale, MaxSubtitleScale); }
         /// <summary>Master volume, 0-1.</summary>
         public float Volume { get => volume; set => volume = Mathf.Clamp01(value); }
+        int quality = GraphicsQuality.Medium;
+        /// <summary>Graphics preset (<see cref="GraphicsQuality"/>): Medium by default, for integrated graphics.</summary>
+        public int Quality { get => quality; set => quality = GraphicsQuality.Clamp(value); }
 
         const string Prefix = "jupiter.settings.";
 
@@ -34,6 +37,7 @@ namespace Jupiter.Core
                 HeadBob = PlayerPrefs.GetInt(Prefix + "headBob", 1) == 1,
                 SubtitleScale = PlayerPrefs.GetFloat(Prefix + "subtitleScale", 1f),
                 Volume = PlayerPrefs.GetFloat(Prefix + "volume", 1f),
+                Quality = PlayerPrefs.GetInt(Prefix + "quality", GraphicsQuality.Medium),
             };
         }
 
@@ -44,6 +48,7 @@ namespace Jupiter.Core
             PlayerPrefs.SetInt(Prefix + "headBob", HeadBob ? 1 : 0);
             PlayerPrefs.SetFloat(Prefix + "subtitleScale", SubtitleScale);
             PlayerPrefs.SetFloat(Prefix + "volume", Volume);
+            PlayerPrefs.SetInt(Prefix + "quality", Quality);
             PlayerPrefs.Save();
         }
     }

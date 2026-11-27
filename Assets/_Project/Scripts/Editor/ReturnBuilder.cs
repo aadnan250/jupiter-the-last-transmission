@@ -84,6 +84,7 @@ namespace Jupiter.EditorTools
 
             new GameObject("GameSession").AddComponent<Core.GameSession>();
             var dialogue = rig.GetComponentInChildren<DialogueManager>();
+            MusicKit.Add(dialogue, ("", CombatAudioGenerator.MusicShip, 0.18f), ("sample_decided", CombatAudioGenerator.MusicEnding, 0.22f));
             var story = new GameObject("Story").transform;
 
             // Ashford's canister on its cradle, the colony's piece pulsing inside.
