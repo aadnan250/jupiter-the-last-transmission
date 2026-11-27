@@ -6,7 +6,7 @@ A first-person science-fiction survival-horror game set in 2183, built in **Unit
 
 [![Repository checks](https://github.com/aadnan250/jupiter-the-last-transmission/actions/workflows/repo-checks.yml/badge.svg)](https://github.com/aadnan250/jupiter-the-last-transmission/actions/workflows/repo-checks.yml)
 
-> **[Download v1.0.0 for Windows](https://github.com/aadnan250/jupiter-the-last-transmission/releases/tag/v1.0.0)**: unzip, then double-click `JupiterTheLastTransmission.exe`.
+> **[Download v1.0.0 for Windows](https://github.com/aadnan250/jupiter-the-last-transmission/releases/tag/v1.0.0)**: unzip, then double-click `JupiterTheLastTransmission.exe`. **[Watch the trailer](https://github.com/aadnan250/jupiter-the-last-transmission/releases/download/v1.0.0/JupiterTheLastTransmission-Trailer.mp4)** (65 s).
 >
 > **Status: the whole game plays start to finish.** Ten chapters: the launch from Cabo Lumen, the voyage on the *Meridian*, the landing and the fight on Europa, the siege at the ascent vehicle, the long way home, and an ending that depends on what you did. Fully voiced, with a score, a pause and settings menu, and a Windows build. More than 210 automated tests.
 
@@ -115,6 +115,20 @@ git clone https://github.com/aadnan250/jupiter-the-last-transmission.git
 
 Copy the whole `Builds/Windows` folder to share the game; double-click the `.exe` to play.
 
+### Making the trailer
+
+The trailer is recorded from the running game and cut in Blender, with the game's own music and voices. First record the shots as frames into `Builds/Trailer`:
+
+```powershell
+& "C:\Program Files\Unity\Hub\Editor\6000.6.10f1\Editor\Unity.exe" -batchmode -projectPath . -runTests -testPlatform PlayMode -testFilter Jupiter.Tests.TrailerCapture
+```
+
+Then add the title cards, music and voice lines and render `Builds/Trailer/trailer.mp4`:
+
+```powershell
+& "..\_tools\blender\blender.exe" -b --factory-startup --python Tools/TrailerPipeline/edit_trailer.py -- .
+```
+
 ### Controls
 
 | Action | Keyboard / Mouse | PlayStation (DualSense) | Xbox |
@@ -164,6 +178,7 @@ Assets/_Project/
 Tools/CharacterPipeline/  Blender + MPFB character build script
 Tools/CreaturePipeline/   Blender creature build script (the Stalker and Listener body)
 Tools/VoicePipeline/      Piper voice generation
+Tools/TrailerPipeline/    Blender script that cuts the trailer
 docs/                  Design and technical documentation
 ```
 
