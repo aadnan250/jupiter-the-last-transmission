@@ -34,6 +34,18 @@ namespace Jupiter.Player
         float pitch;
         float bobPhase;
         float bobWeight;
+        float sensitivityScale = 1f;
+
+        public bool InvertY => invertY;
+        public bool HeadBob => headBobEnabled;
+
+        /// <summary>Applies the player's options: a multiplier on look speed, invert Y, and head bob on or off.</summary>
+        public void ApplySettings(float sensitivity, bool invert, bool headBob)
+        {
+            sensitivityScale = Mathf.Max(0.01f, sensitivity);
+            invertY = invert;
+            headBobEnabled = headBob;
+        }
 
         void Start()
         {
@@ -47,8 +59,8 @@ namespace Jupiter.Player
             if (input == null || player == null) return;
             if (Cursor.lockState != CursorLockMode.Locked) return; // no look while UI/cursor is free
 
-            Vector2 delta = input.LookPointer * mouseSensitivity
-                            + input.LookStick * (stickSensitivity * Time.deltaTime);
+            Vector2 delta = (input.LookPointer * mouseSensitivity
+                             + input.LookStick * (stickSensitivity * Time.deltaTime)) * sensitivityScale;
 
             player.transform.Rotate(0f, delta.x, 0f, Space.Self);
             pitch = Mathf.Clamp(pitch + (invertY ? delta.y : -delta.y), minPitch, maxPitch);

@@ -76,6 +76,11 @@ namespace Jupiter.EditorTools
             BuildHud(root.transform, interaction, input);
             CombatRigBuilder.AddCombat(root, input, pivot.transform);
 
+            var pause = root.AddComponent<Jupiter.UI.PauseMenu>();
+            GreyboxKit.Set(pause, "input", input);
+            GreyboxKit.Set(pause, "look", look);
+            GreyboxKit.Set(pause, "subtitles", root.GetComponentInChildren<Jupiter.UI.DialogueUI>(true));
+
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             Object.DestroyImmediate(root);
             return prefab;

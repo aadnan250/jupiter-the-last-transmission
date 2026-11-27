@@ -60,7 +60,7 @@ Small phases, each ending with something playable and tested. `[x]` = done and i
 ## Slice 10: Art and polish
 - [ ] Final Listener model and animation; facial expressions for the crew
 - [ ] Baked lighting, real Jupiter imagery, music cues
-- [ ] Accessibility (subtitles size, invert Y, head-bob toggle), settings menu, pause menu
+- [x] Accessibility (subtitles size, invert Y, head-bob toggle, look sensitivity, volume), settings menu, pause menu (Esc / Options)
 - [ ] Performance pass on Iris Xe (60 fps at 720p)
 
 ## Slice 11: Release
